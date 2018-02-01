@@ -1,6 +1,10 @@
 //API routes for the Company (Company Admins info will be embedded in compnay document)
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+
+const Company = require('./models/company');
 
 router.post('/register', (req, res, next)=>{
     res.send("Register a new Company");

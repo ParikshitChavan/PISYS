@@ -2,6 +2,10 @@
 
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+
+const Candidate = require('./models/candidate');
 
 //API routes for candidate
 router.post('/register', (req, res, next)=>{

@@ -1,6 +1,10 @@
 //API routes for Willings members
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+
+const Member = require('./models/member');
 
 //API routes for candidate
 router.post('/register', (req, res, next)=>{
