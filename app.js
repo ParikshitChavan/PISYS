@@ -24,6 +24,9 @@ app.listen(port,()=>{
 
 //Importing routes files
 const candidate = require('./routes/candidate');
+const member = require('./routes/member');
+const company = require('./routes/company');
+const internship = require('./routes/internship');
 
 //static folder
 app.use(express.static(path.join(__dirname,'public')));
@@ -39,3 +42,6 @@ app.get("/", (req, res)=>{
 
 //subdirectory requests
 app.use('/candidate', candidate);
+app.use('/member', member);
+app.use('/company', company);
+app.use('/internship', internship);

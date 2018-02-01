@@ -3,11 +3,11 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/register', (req, res, next)=>{
-    res.send("on candidate Registration page");
+    res.send("Register a new Company");
 });
 
 router.get('/login', (req, res, next)=>{
-    res.send("on candidate Login page");
+    res.send("One of the admins of Comp trying to login");
 });
 
 router.get('/profile', (req, res, next)=>{

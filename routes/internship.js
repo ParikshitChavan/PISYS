@@ -12,7 +12,7 @@ router.get('/internship', (req, res, next)=>{
     res.send("Getting Intership details");
 });
 
-router.delete('/delete:id', (req, res, next)=>{
+router.delete('/delete', (req, res, next)=>{
     res.send("Deleting an internship");
 });
 
