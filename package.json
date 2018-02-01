@@ -1,0 +1,22 @@
+{
+  "name": "piits",
+  "version": "1.0.0",
+  "description": "PIITS CRM++ system",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "*",
+    "mongoose": "*",
+    "bcryptjs": "*",
+    "cors": "*",
+    "passport": "*",
+    "body-parser": "*",
+    "jsonwebtoken": "*",
+    "passport-jwt": "*"
+  },
+  "author": "Parikshit Chavan",
+  "license": "ISC"
+}
