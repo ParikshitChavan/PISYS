@@ -18,3 +18,9 @@ router.get('/profile', (req, res, next)=>{
 router.post('/authenticate', (req, res, next)=>{
     res.send("on candidate Authentication page");
 });
+
+router.delete('/delete', (req, res, next)=>{
+    res.send("Deleting a Willings Member");
+});
+
+module.exports = router;

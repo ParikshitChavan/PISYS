@@ -16,4 +16,11 @@ router.get('/profile', (req, res, next)=>{
 
 router.post('/authenticate', (req, res, next)=>{
     res.send("on candidate Authentication page");
-}); 
+});
+
+//deleting an admin account
+router.delete('/delete', (req, res, next)=>{
+    res.send("Deleting an Admin");
+});
+
+module.exports = router;

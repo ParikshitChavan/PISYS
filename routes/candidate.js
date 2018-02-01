@@ -20,5 +20,8 @@ router.post('/authenticate', (req, res, next)=>{
     res.send("on candidate Authentication page");
 });
 
+router.delete('/delete', (req, res, next)=>{
+    res.send("Deleting a Candidate");
+});
 
 module.exports = router;
