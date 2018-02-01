@@ -4,7 +4,7 @@ const router = express.Router();
 
 //API routes for candidate
 router.post('/register', (req, res, next)=>{
-    res.send("on candidate Registration page");
+    res.send("Register a new Member");
 });
 
 router.get('/login', (req, res, next)=>{
