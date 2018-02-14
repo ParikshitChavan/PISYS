@@ -2,13 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
 const Intership = require('./models/intership');
+const User = require('./models/user');              //To use authentication functions
 
 //API routes for candidate
-router.post('/register', (req, res, next)=>{
+router.post('/init', (req, res, next)=>{
     res.send("Registering a new Intership");
 });
 
@@ -16,7 +16,7 @@ router.get('/internship', (req, res, next)=>{
     res.send("Getting Intership details");
 });
 
-router.delete('/delete', (req, res, next)=>{
+router.delete('/delete:id', (req, res, next)=>{
     res.send("Deleting an internship");
 });
 

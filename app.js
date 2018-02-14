@@ -2,14 +2,13 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const passport = require('passport');
 const mongoose = require('mongoose');
-const config = require('./config/database');
+const config = require('./config/cfg');
 
 //connect to database and checking connection
 mongoose.connect(config.database);
 mongoose.connection.on('connected', ()=>{
-    console.log("Connection successful");
+    console.log("Connection to database successful");
 });
 mongoose.connection.on('error', (error)=>{
     console.log("Error: "+ error);
@@ -23,8 +22,7 @@ app.listen(port,()=>{
 });
 
 //Importing routes files
-const candidate = require('./routes/candidate');
-const member = require('./routes/member');
+const user = require('./routes/user');
 const company = require('./routes/company');
 const internship = require('./routes/internship');
 
@@ -41,7 +39,6 @@ app.get("/", (req, res)=>{
 });
 
 //subdirectory requests
-app.use('/candidate', candidate);
-app.use('/member', member);
+app.use('/user', user);
 app.use('/company', company);
 app.use('/internship', internship);

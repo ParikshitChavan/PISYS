@@ -12,10 +12,8 @@
     "mongoose": "*",
     "bcryptjs": "*",
     "cors": "*",
-    "passport": "*",
     "body-parser": "*",
-    "jsonwebtoken": "*",
-    "passport-jwt": "*"
+    "jsonwebtoken": "*"
   },
   "author": "Parikshit Chavan",
   "license": "ISC"
