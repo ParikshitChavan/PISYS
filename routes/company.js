@@ -7,11 +7,35 @@ const Company = require('./models/company');
 const User = require('./models/user');              //To use authentication functions
 
 router.post('/register', (req, res, next)=>{
-    res.send("Register a new Company");
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access != 2) return res.status(403).json({ success: false, message: "Not authorised" });
+        let newAdmin = new Admin({
+            isActive: True,
+            name: req.body.adminName,
+            email: req.body.adminEmail,
+            //password: req.body.password, Generate random password and send and email then hash it and save it
+            DOB: req.body.DOB,
+            phNum: { countryCode: req.body.countryCode, number: req.body.number},
+            displayPic: 'defaultURL'
+        })
+    });    
 });
 
 router.get('/info', (req, res, next)=>{
-    res.send("on candidate Profile page");
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        User.getCompany(decoded.id, (err, companyId)=>{
+            if (err) throw err;
+            if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
+            Company.getCompanyById(companyId, (err, company)=>{
+                if(err) throw err;
+                res.json({success: true , companyData: company});
+            });
+        });
+    });    
 });
 
 router.post('/registerAdmin', (req, res, next)=>{
