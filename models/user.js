@@ -42,6 +42,11 @@ const User = module.exports = mongoose.model(User, userSchema);
 
                                     /*====== Functions ======*/
 
+function validateEmail(email) {
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
 module.exports.addUser = function(newUser, callback){
     bcrypt.genSalt(10, (err, salt)=>{
         if(err) throw err;
@@ -70,6 +75,10 @@ module.exports.getCompany = function(userId, callback){
     });
 }
 
+module.exports.addCompany = function(userId, companyId, callback){
+    User.findByIdAndUpdate(userId, { $set: { company: companyId }}, callback);
+}
+
 module.exports.getInternships = function(userId, callback){
     User.findById(id, 'interships', (err, user)=>{
         if (err) return callback(err, null);
@@ -78,12 +87,20 @@ module.exports.getInternships = function(userId, callback){
     });
 }
 
+module.exports.addInternship = function(userId, internshipId, callback){
+    User.findByIdAndUpdate(userId, { $push: { internships: internshipId }}, callback);
+}
+
 module.exports.getInchargeOf = function(userId, callback){
     User.findById(id, 'inchargeOf', (err, user)=>{
         if (err) return callback(err, null);
         if (!user.inchargeOf || user.inchargeOf.length) return callback(null, null);
         callback(null, user.inchargeOf);
     });
+}
+
+module.exports.addInchargeOf = function(userId, internshipId, callback){
+    User.findByIdAndUpdate(userId, { $push: { inchargeOf: internshipId }}, callback);
 }
 
 module.exports.deleteUserById = function(id, callback){

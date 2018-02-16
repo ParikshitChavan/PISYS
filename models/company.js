@@ -31,18 +31,16 @@ const companySchema = Schema({
 
 const Company = module.exports = mongoose.model(Company, companySchema);
 
+function validateEmail(email) {
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
+
                                 /*=====API Functions=====*/
 
 module.exports.getCompanyById = function(id, callback){
     Company.findById(id, callback);
-}
-
-module.exports.addCompany = function(newCompany, callback){
-    let newAdmin = newCompany.admin;
-    User.addUser(newAdmin, (err, admin)=>{
-        if(err) throw err;
-       //save company with  admin _id reference
-    });
 }
 
 module.exports.addAdmin = function(companyId, newAdmin, callback){
