@@ -16,8 +16,15 @@ router.post('/init', (req, res, next)=>{
     //send mail to the company to inform and ask them to fill details 
 });
 
-router.get('/internship', (req, res, next)=>{
-    res.send("Getting Intership details");
+router.get('/internship:id', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        Intership.getIntershipDetails(id, decoded.access, (err, internship)=>{
+            if(err) throw err;
+            res.json(internship);
+        });
+    });
 });
 
 router.delete('/delete:id', (req, res, next)=>{
@@ -47,15 +54,15 @@ router.post('/wrept',(req, res, next)=>{
 
 /*
 candidate
-upsert weekly report
-see/download offer letter
-upload signed offer letter
+upsert weekly report ..post
+see/download offer letter  ..get
+upload signed offer letter ..post 
 
 supervisor
 upsert weekly report
 add feedback and evaluation
 upsert valuation
-upload offer latter
+upload offer letter
 see/download signed offer letter
 
 members
