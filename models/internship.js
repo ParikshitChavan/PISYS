@@ -11,7 +11,7 @@ const internshipSchema = Schema({
     active: Boolean,
     project: String,
     designation: String,
-    supervisor: { type: Schema.Types.ObjectId, ref: 'User'},
+    supervisors: [{ type: Schema.Types.ObjectId, ref: 'User'}],
     location: String,   //Copy Company branch location here...!
     description: String,
     candidate: {type: Schema.Types.ObjectId, ref: 'User'},
@@ -56,8 +56,8 @@ const internshipSchema = Schema({
         required: true
     },
     wReports: [{
-        sReport: {body:String, updated: {type: Date, default: Date.now}},
-        cReport: {body:String, updated: {type: Date, default: Date.now}},
+        sReport: {body:String, updated: Date},
+        cReport: {body:String, updated: Date},
         comments: [{
                 body:String,
                 by:{type:Schema.Types.ObjectId, ref: 'User'},           //Only WL members allowed to comment for now 
@@ -84,3 +84,25 @@ function validateEmail(email) {
 module.exports.getInternshipById = function(id, callback){
     Internship.findById(id, callback);
 }
+
+
+/*
+candidate
+upsert weekly report
+see/download offer letter
+upload signed offer letter
+
+supervisor
+upsert weekly report
+add feedback and evaluation
+upsert valuation
+upload offer latter
+see/download signed offer letter
+
+members
+upsert and remove comment on a week
+upsert and remove accommodation details
+upsert and remove payment details
+upsert and remove suica details
+upsert and remove wifi details
+*/
