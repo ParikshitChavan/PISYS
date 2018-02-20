@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
+const Sitelink = require('./models/sitelink');
 const config = require('./config/database');
 
 //API routes for User
@@ -68,5 +69,26 @@ router.delete('/delete', (req, res, next)=>{
         });        
     });
 });
+
+router.post('/validateSitelink:id', (req, res, next)=>{
+    Sitelink.validateSitelink(req.params.id, (err)=>{
+        if(err) return res.json({success: false, msg: err});
+        res.json({success:true, msg: 'verified link'});
+    });
+});
+
+router.post('/changePassword', (req, res, next)=>{
+    User.changePassword(req.body.uId, req.body.currPass, req.body.newPass, (err, user)=>{
+        if(err) return res.json({success: false, message: "Failed to change the Password"});
+        //disable all the existing sitelinks for the user of the type pass change
+        // read the mongoose document drop Sitelink.find({sentTo: user.email, type: passwordReset}).drop(); 
+        res.json({success: true, message: "Password changed successfully"});
+    })
+});
+
+/*
+/verifyEmail
+/accountinit
+*/
 
 module.exports = router;

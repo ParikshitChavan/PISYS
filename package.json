@@ -8,12 +8,15 @@
     "start": "node app"
   },
   "dependencies": {
+    "aws-sdk": "*",
     "bcryptjs": "*",
     "body-parser": "*",
     "cors": "*",
     "express": "*",
     "jsonwebtoken": "*",
     "mongoose": "*",
+    "multer": "*",
+    "multer-s3": "*",
     "nodemailer": "*"
   },
   "author": "Parikshit Chavan",

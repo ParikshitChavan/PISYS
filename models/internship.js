@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const config = require('./config/cfg');
+
 const Schema = mongoose.Schema;
 
 //importing sub models
@@ -133,8 +134,8 @@ module.exports.upsertSReport = function(intershipId, week, body, callback){
 }
 
 module.exports.uploadAcceptanceLetter = function(intershipId, file, callback){
-    //rename and store the file on the server and get the fileURL
-   
+    //rename and store the file on AWS S3 then get the fileURL
+    var fileURL = 'temporary url';
     Internship.findById(intershipId, (err, internship)=>{
         if(err) throw err;
         internship.jobOffer.accepted = {status: true, on: new Date(), file: fileURL};
@@ -164,8 +165,8 @@ module.exports.upsertValuation = function(intershipId, valuation, callback){
 }
 
 module.exports.uploadOfferLetter = function(intershipId, file, callback){
-    //rename and store the file on the server and get the fileURL
-   
+    //rename and store the file on AWS S3 then get the fileURL
+    var fileURL = 'temporary url';
     Internship.findById(intershipId, (err, internship)=>{
         if(err) throw err;
         internship.jobOffer.offered = {status: true, on: new Date(), file: fileURL};
@@ -236,20 +237,23 @@ module.exports.upsertPayment = function(intershipId, paymentNo, amount, date, ca
 module.exports.deletePayment = function(intershipId, paymentNo, callback){
     Internship.findById(intershipId, 'payments', (err, internship)=>{
         if(err) throw err;
-        //splice..? read about mongoose array pull 
+        internship.payments.splice(paymentNo, 1);
+        internship.save(callback);
     });    
 }
 
 module.exports.deleteWReportComment = function(intershipId, week, commentNo, callback){
     Internship.findById(intershipId, 'wReports', (err, internship)=>{
         if(err) throw err;
-        
+        internship.wReports[week-1].comments.splice(commentNo, 1);
+        internship.save(callback);
     });    
 }
 
 module.exports.deleteFeedbackComment = function(intershipId, paymentNo,commentNo, callback){
     Internship.findById(intershipId, 'feedbacks', (err, internship)=>{
         if(err) throw err;
-        
-    });    
+        internship.feedbacks.comments.splice(commentNo, 1);
+        internship.save(callback);
+    });
 }

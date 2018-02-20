@@ -28,4 +28,55 @@ module.exports.sendActivationMail = function(recipient, link, callback){
     });
 }
 
+module.exports.sendPasswordResetMail = function(recipient, link, callback){
+    if(!recipient || !link) return callback('Missing data');
+    let htmlBody = `
+        <p>Hi ${recipient.name},<br>
+        <br>
+        We received a Password reset request from this email id.<br>
+        Kindly Inform us immediately if you think this wasn't you. otherwise please go through the link to reset your password.<br>
+        kindly node that this link will only be active for 12 hours.<br>
+        <br>
+        <a href='${link}'>${link}</a><br>
+        <br>
+        Thank you.<br>    
+    `;  //es6 template String with back ticks
+    let mailOptions = {
+        from: '"PIITs Team" <piits@willings.co.jp>',
+        to: recipient.email,
+        subject: 'Link to resting your Password',
+        text: '',
+        html: htmlBody
+    };
+    config.nodemailerTransporter.sendMail(mailOptions, (err, info) => {
+        if (err) return callback(err);
+        callback(null);
+    });
+}
+
+module.exports.sendEmailVerificationMail = function(recipient, link, callback){
+    if(!recipient || !link) return callback('Missing data');
+    let htmlBody = `
+        <p>Hi ${recipient.name},<br>
+        <br>
+        We received a email verification request from this email id.<br>
+        Kindly Inform us immediately if you think this wasn't you. otherwise please go through the link to verify your email address.<br>
+        kindly node that this link will only be active for 12 hours.<br>
+        <br>
+        <a href='${link}'>${link}</a><br>
+        <br>
+        Thank you.<br>    
+    `;  //es6 template String with back ticks
+    let mailOptions = {
+        from: '"PIITs Team" <piits@willings.co.jp>',
+        to: recipient.email,
+        subject: 'Link to verifying your email address',
+        text: '',
+        html: htmlBody
+    };
+    config.nodemailerTransporter.sendMail(mailOptions, (err, info) => {
+        if (err) return callback(err);
+        callback(null);
+    });
+}
 

@@ -118,8 +118,30 @@ module.exports.comparePasswords = function(candidatePassword, hash, callback){
     });
 }
 
-////Validation functions\\\\
-//made 3 separate functions to keep access number encapsulated
+module.exports.changePassword = function(userId, currPass, newPass, callback){
+    User.findById(userId, 'password', (err, user)=>{
+        if(err) throw err;
+        bcrypt.compare(currPass, user.password, (err, isMatch)=>{
+            if(err) throw err;
+            if(!isMatch)    return callback('Entered password is not correct');
+            bcrypt.genSalt(10, (err, salt)=>{
+                if(err) throw err;
+                bcrypt.hash(newPass, salt, (err, hash)=>{
+                    if(err) throw err;
+                    user.password = hash
+                    user.save(callback);
+                });
+            });
+        });
+    });
+}
+
+/*
+/verifyEmail
+/accountinit
+*/
+
+////Validation function\\\\
 module.exports.validateToken = function(token, callback){         
     if(!token){                                                     
         return callback("No token provided", 403, null);

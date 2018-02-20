@@ -65,13 +65,14 @@ router.get('/info', (req, res, next)=>{
     });    
 });
 
+//admins adding their colleagues
 router.post('/registerAdmin', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         User.getCompany(decoded.id, (err, companyId)=>{
             if (err) throw err;
-            if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
+            if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the requesting user" });
             let newAdmin = new User({
                 isActive: True,
                 name: req.body.name,
@@ -86,6 +87,7 @@ router.post('/registerAdmin', (req, res, next)=>{
             Company.addAdmin(companyId, newAdmin, (err, company)=>{
                 if (err) throw err;
                  return res.json({ success: true, message: "New admin added to the company" });
+                //send mail
             });
         });  
     });
