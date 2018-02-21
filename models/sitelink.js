@@ -80,7 +80,17 @@ module.exports.validateSitelink = function(token, callback){
             else return callback(null);
         }
         else{
+            if(sitelink.type == 'emailVerification') {
+                User.markEmailVerified(sitelink.sentTo);
+                sitelink.remove((err)=>{
+                    if(err) throw err;
+                });
+            }
             return callback(null);
         }
     });
+}
+
+module.exports.deleteSitelinks = function(email, type, callback){
+    Sitelink.deleteMany({ sentTo: email, type: type }, callback);
 }

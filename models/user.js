@@ -3,10 +3,12 @@ const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('./config/cfg');
+const mailer = require('./helpers/mailer')
 
 //importing other models
 const Company = require('./models/company');
 const Internship = require('./models/internship');
+const Sitelink = require ('./models/sitelink');
 
 const userSchema = Schema({
     isActive: Boolean,
@@ -16,6 +18,10 @@ const userSchema = Schema({
     email: {
         type: String,
         required: true
+    },
+    emailVerified: {
+        type: Boolean,
+        default: false
     },
     username: {
         type: String,
@@ -118,30 +124,61 @@ module.exports.comparePasswords = function(candidatePassword, hash, callback){
     });
 }
 
-module.exports.changePassword = function(userId, currPass, newPass, callback){
-    User.findById(userId, 'password', (err, user)=>{
+module.exports.setPassword = function(userId, newPass, callback){
+    User.findById(userId, 'email password', (err, user)=>{
         if(err) throw err;
-        bcrypt.compare(currPass, user.password, (err, isMatch)=>{
+        bcrypt.genSalt(10, (err, salt)=>{
             if(err) throw err;
-            if(!isMatch)    return callback('Entered password is not correct');
-            bcrypt.genSalt(10, (err, salt)=>{
+            bcrypt.hash(newPass, salt, (err, hash)=>{
                 if(err) throw err;
-                bcrypt.hash(newPass, salt, (err, hash)=>{
-                    if(err) throw err;
-                    user.password = hash
-                    user.save(callback);
-                });
+                user.password = hash
+                user.save(callback);
             });
         });
     });
 }
 
-/*
-/verifyEmail
-/accountinit
-*/
+module.exports.markEmailVerified = function(email){
+    let query = {email: email};
+    User.findOneAndUpdate(query, {emailVerified: true}, (err)=>{
+        if(err) throw err;
+    });
+}
 
-////Validation function\\\\
+module.exports.setupEmailVerification = function(email, callback){
+    if(!email) return callback('no email provided');
+    const query = {email: email};
+    User.findOne(query, (err, user)=>{
+        if(err) throw err;
+        Sitelink.createEmailVerificationLink(email,(err,siteLink)=>{
+            if(err) throw err;
+            let recipient = {name: user.name, email: user.email};
+            mailer.sendEmailVerificationMail(recipient, siteLink, (err)=>{
+                if(err) throw err;
+                callback(null);
+            });
+        });
+    });
+}
+
+module.exports.setupPasswordReset = function(email, callback){
+    if(!email) return callback('no email provided');
+    const query = {email: email};
+    User.findOne(query, (err, user)=>{
+        if(err) throw err;
+        Sitelink.createPasswordResetLink(email,(err,siteLink)=>{
+            if(err) throw err;
+            let recipient = {name: user.name, email: user.email};
+            mailer.sendPasswordResetMail(recipient, siteLink, (err)=>{
+                if(err) throw err;
+                callback(null);
+            });
+        });
+    });
+
+}
+
+//jwt Validation function
 module.exports.validateToken = function(token, callback){         
     if(!token){                                                     
         return callback("No token provided", 403, null);

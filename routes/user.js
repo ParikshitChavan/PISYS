@@ -70,6 +70,25 @@ router.delete('/delete', (req, res, next)=>{
     });
 });
 
+router.post('/requestPasswordReset', (req, res, next)=>{
+    User.setupPasswordReset(req.body.email, (err)=>{
+        if(err) return res.json({success: false, message: err});
+        return res.json({success: true, message: 'Password reset emil sent'});
+    });
+});
+
+router.post('/requestEmailVerification', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        User.setupEmailVerification(req.body.email, (err)=>{
+            if(err) return res.json({success: false, message: err});
+            return res.json({success: true, message: 'Password reset email sent'});
+        });
+    });
+});
+
+//on page load validate the site link and its expiry 
 router.post('/validateSitelink:id', (req, res, next)=>{
     Sitelink.validateSitelink(req.params.id, (err)=>{
         if(err) return res.json({success: false, msg: err});
@@ -77,18 +96,40 @@ router.post('/validateSitelink:id', (req, res, next)=>{
     });
 });
 
-router.post('/changePassword', (req, res, next)=>{
-    User.changePassword(req.body.uId, req.body.currPass, req.body.newPass, (err, user)=>{
-        if(err) return res.json({success: false, message: "Failed to change the Password"});
-        //disable all the existing sitelinks for the user of the type pass change
-        // read the mongoose document drop Sitelink.find({sentTo: user.email, type: passwordReset}).drop(); 
-        res.json({success: true, message: "Password changed successfully"});
-    })
+router.post('/resetPassword', (req, res, next)=>{
+    Sitelink.deleteSitelinks(user.email, 'passwordReset', (err)=>{
+        if(err) throw err;
+        User.setPassword(req.body.userId, req.body.newPass, (err, user)=>{
+            if(err) return res.json({success: false, message: "Failed to change the Password"});
+           res.json({success: true, message: "Password changed successfully"});
+        });
+    });
 });
 
-/*
-/verifyEmail
-/accountinit
-*/
+router.post('/changePassword', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        User.comparePassword(password, user.password, (err, isMatch)=>{
+            if(err) throw err;
+            if(!isMatch) return res.json({success:false, message:'Wrong current password'});
+            User.setPassword(decoded._id, req.body.newPass, (err, user)=>{
+                if(err) throw err;
+                res.json({success: true, message: "Password changed successfully"});
+            });
+        });
+    });
+});
+
+router.post('/initPassword', (req, res, next)=>{
+    User.setPassword(req.body.uId, req.body.newPass, (err, user)=>{
+        if(err) return res.json({success: false, message: "Failed to change the Password"});
+        markEmailVerified(user.email);      //verified because they came from email invitation
+        Sitelink.deleteSitelinks(user.email, 'activation', (err)=>{
+            if(err) throw err;
+            res.json({success: true, message: "Password changed successfully"});
+        });
+    });
+});
 
 module.exports = router;

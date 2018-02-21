@@ -20,7 +20,7 @@ router.get('/internship:id', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        Intership.getIntershipDetails(id, decoded.access, (err, internship)=>{
+        Intership.getIntershipDetails(req.params.id, decoded.access, (err, internship)=>{
             if(err) throw err;
             res.json(internship);
         });
@@ -44,7 +44,7 @@ router.post('/wreptcomp', (req, res, next)=>{
 });
 
 router.put('/wreptcomp', (req, res, next)=>{
-    res.send("Updaing report by company");
+    res.send("Updating report by company");
 });
 
 

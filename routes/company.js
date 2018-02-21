@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const mailer = require('./helpers/mailer')
+const mailer = require('./helpers/mailer');
 
 const Company = require('./models/company');
 const User = require('./models/user');              //To use authentication functions
@@ -38,7 +38,7 @@ router.post('/register', (req, res, next)=>{
                     if(err) throw err;
                     User.addCompany(admin._id, company._id, (err)=>{     //3. add company to the admin account
                         if(err) throw err;
-                        let recipient = {name: admin._name, email: admin._email};
+                        let recipient = {name: admin.name, email: admin.email};
                         mailer.sendActivationMail(recipient, link, (err)=>{
                             if(err) throw err;
                             return res.status(200).json({ success: true, message: "company added and activation mail is sent" });
@@ -86,8 +86,12 @@ router.post('/registerAdmin', (req, res, next)=>{
             });
             Company.addAdmin(companyId, newAdmin, (err, company)=>{
                 if (err) throw err;
-                 return res.json({ success: true, message: "New admin added to the company" });
-                //send mail
+                return res.json({ success: true, message: "New admin added to the company" });
+                let recipient = {name: newAdmin.name, email: newAdmin.email};
+                mailer.sendActivationMail(recipient, link, (err)=>{
+                    if(err) throw err;
+                    return res.status(200).json({ success: true, message: "admin added and activation mail is sent" });
+                });
             });
         });  
     });
