@@ -27,50 +27,73 @@ router.get('/internship:id', (req, res, next)=>{
     });
 });
 
+/*
 router.delete('/delete:id', (req, res, next)=>{
     res.send("Deleting an internship");
+});*/
+
+router.post('/updateCandidateWeeklyReport', (req, res, next)=>{
+    
 });
 
-router.post('/wreptcandi', (req, res, next)=>{
-    res.send("writing a new weekly report by candidate");
+router.post('/updateCandidateWeeklyReport', (req, res, next)=>{
+    
 });
 
-router.put('/wreptcandi', (req, res, next)=>{
-    res.send("Updating a report by candidate");
+router.post('/updateWeeklyReportComment',(req, res, next)=>{
+    
 });
 
-router.post('/wreptcomp', (req, res, next)=>{
-    res.send("writing a new weekly report by company");
+router.delete('/deleteWeeklyReportComment',(req, res, next)=>{
+    
 });
 
-router.put('/wreptcomp', (req, res, next)=>{
-    res.send("Updating report by company");
+router.post('/updateCandidateFeedback',(req, res, next)=>{
+    
 });
 
-
-router.post('/wrept',(req, res, next)=>{
-    res.send("Members commenting on a weeks reports");
+router.post('/updateCompanyFeedback',(req, res, next)=>{
+    
 });
 
-/*
-candidate
-upsert weekly report ..post
-see/download offer letter  ..get
-upload signed offer letter ..post 
+router.post('/updateFeedbackComment',(req, res, next)=>{
+    
+});
 
-supervisor
-upsert weekly report
-add feedback and evaluation
-upsert valuation
-upload offer letter
-see/download signed offer letter
+router.delete('/deleteFeedbackComment',(req, res, next)=>{
+    
+});
 
-members
-upsert and remove comment on a week
-upsert and remove accommodation details
-upsert and remove payment details
-upsert and remove suica details
-upsert and remove wifi details
-*/
+router.post('/updateOfferLetter',(req, res, next)=>{
+    
+});
+
+router.post('/updateAcceptanceLetter',(req, res, next)=>{
+    
+});
+
+router.post('/updateCandidateValuation',(req, res, next)=>{
+    
+});
+
+router.post('/updateAccommodationDetails',(req, res, next)=>{
+    
+});
+
+router.post('/updateSuicaDetails',(req, res, next)=>{
+    
+});
+
+router.post('/updateWifiDetails',(req, res, next)=>{
+    
+});
+
+router.post('/updatePaymentDetails',(req, res, next)=>{
+    
+});
+
+router.delete('/deletePayment',(req, res, next)=>{
+    
+});
 
 module.exports = router;
