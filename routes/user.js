@@ -1,12 +1,43 @@
 const express = require('express');
+const path = require('path');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const aws = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+//models
 const User = require('./models/user');
 const Sitelink = require('./models/sitelink');
-const config = require('./config/database');
+//config
+const config = require('./config/cfg');
+
+//setting up AWS authentication and S3
+aws.config.update(config.awsAuthObj);
+const s3 = new aws.S3();
+
+//multer setup
+const uploadDisplayPic = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'piitscrm',
+        acl: 'public-read',
+        key: function (req, file, cb) {
+          cb(null, file.fieldname + Date.now() + path.extname(file.originalname));
+        }
+    }),
+    fileFilter: function (req, file, cb){
+      const filetypes = /jpeg|jpg|png|gif/;
+      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = filetypes.test(file.mimetype);
+      if(mimetype && extname){
+        return cb(null,true);
+      } else {
+        cb('Error: Please select an Image!');
+      }
+    }
+}).single('displayPicture');
 
 //API routes for User
-
 router.post('/register', (req, res, next)=>{
     let newUser = new User({
         isActive: True,
@@ -15,8 +46,7 @@ router.post('/register', (req, res, next)=>{
         username: req.body.username,
         password: req.body.password,
         DOB: req.body.DOB,
-        phNum: { countryCode: req.body.countryCode, number: req.body.number},
-        displayPic: 'defaultURL'
+        phNum: { countryCode: req.body.countryCode, number: req.body.number}
     });
     User.addUser(newUser, (err, user)=>{
         if(err) return res.json({success: false, message: "Failed to register the User"});
@@ -37,13 +67,7 @@ router.post('/authenticate', (req, res, next)=>{
             const token = jwt.sign(user.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
             res.json({
                 success: true,
-                token: token,
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    access: user.access
-                }
+                token: token
             });
         })
     })
@@ -128,6 +152,28 @@ router.post('/initPassword', (req, res, next)=>{
         Sitelink.deleteSitelinks(user.email, 'activation', (err)=>{
             if(err) throw err;
             res.json({success: true, message: "Password changed successfully"});
+        });
+    });
+});
+
+router.post('/updateDisplayPic', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        User.getDP(decoded._id, (err, DP) => {
+            if(err) return res.json({success: false, message: err});
+            if(DP.key){              //if present, delete current DP from AWS S3 
+                s3.deleteObject({bucket: 'piitscrm', key:DP.key}, (err) => {
+                    if(err) return res.json({success: false, message: err});
+                });
+            }
+            uploadDisplayPic(req, res, next, (err) => {
+                if(err) return res.json({success: false, message: err});
+                User.updateDisplayPicture(decoded._id, req.file.key, req.file.location, (err) => {
+                    if(err) return res.json({success: false, message: err});
+                    res.json({success: false, message: 'display picture updated'});
+                });
+            });
         });
     });
 });

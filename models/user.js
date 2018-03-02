@@ -37,7 +37,7 @@ const userSchema = Schema({
     },
     DOB: Date,
     phNum: { countryCode: String, number: Number},
-    displayPic: String,
+    DP: { key: String, url: String },                 //display picture
     internships: [{ type: Schema.Types.ObjectId, ref: 'Intership' }],       //What intership she/he has done!
     company: {type: Schema.Types.ObjectId, ref: 'Company'},                 //Company that she/he is an admin for
     inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Intership'}]           //Interships for which she/he is a supervisor
@@ -51,6 +51,17 @@ const User = module.exports = mongoose.model(User, userSchema);
 function validateEmail(email) {
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+}
+
+//jwt Validation function
+module.exports.validateToken = function(token, callback){         
+    if(!token){                                                     
+        return callback("No token provided", 403, null);
+    }
+    jwt.verify(token, config.secret, (err, decoded)=>{
+        if(err) return callback("Failed to authenticate the token", 500, decoded);
+        callback(null, 200, decoded);
+    });
 }
 
 module.exports.addUser = function(newUser, callback){
@@ -175,16 +186,15 @@ module.exports.setupPasswordReset = function(email, callback){
             });
         });
     });
-
 }
 
-//jwt Validation function
-module.exports.validateToken = function(token, callback){         
-    if(!token){                                                     
-        return callback("No token provided", 403, null);
-    }
-    jwt.verify(token, config.secret, (err, decoded)=>{
-        if(err) return callback("Failed to authenticate the token", 500, decoded);
-        callback(null, 200, decoded);
+module.exports.getDP = function(userId, callback){
+    User.findById(userId, 'DP', {lean: true}, (err, user) => {
+        if(err) return callback(err, null);
+        return callback(null, user.DP);
     });
+}
+
+module.exports.updateDP = function(userId, awsKey, awsUrl, callback){
+    User.findByIdAndUpdate(userId, { $set: { DP: { key: awsKey, url: awsUrl } }}, callback);
 }

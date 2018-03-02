@@ -80,3 +80,36 @@ module.exports.sendEmailVerificationMail = function(recipient, link, callback){
     });
 }
 
+
+module.exports.initiateInternshipMails = function(companyId, link, callback){
+    if(!companyId || !link) return callback('Missing data');
+    Company.getAdmins(companyId, (err, admins) => {
+        if(err) return callback(false, err);
+        let errArr=[];
+        for(let admin of admins) {
+            let htmlBody = `
+                <p>Hi ${admin.name},<br>
+                <br>
+                We have added a new intership associated with your company.<br>
+                Kindly visit the internship page here:<br>
+                <br>
+                <a href='${link}'>${link}</a><br>
+                <br>
+                We request you to fill in all the necessary basic details for the internship.
+                Thank you.<br>
+            `;  //es6 template String with back ticks
+            let mailOptions = {
+                from: '"PIITs Team" <piits@willings.co.jp>',
+                to: recipient.email,
+                subject: 'Invitation to edit basic details of newly added Internship',
+                text: '',
+                html: htmlBody
+            };
+            config.nodemailerTransporter.sendMail(mailOptions, (err, info) => {
+                if (err)  errArr.push({error: err, mail: admin.mail});
+            });
+        }
+        if(errArr.length == admins.length) return callback(false, 'email sending failed to all the admins');
+        callback(true,null);
+    });
+}

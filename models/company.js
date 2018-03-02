@@ -22,7 +22,7 @@ const companySchema = Schema({
         address: String
     }],
     admins: [{type: Schema.Types.ObjectId, ref: 'User'}],
-    logoURL: String,
+    logo: { key: String, url: String },
     phNum:{
         type: {countryCode: String, number: Number},
         required: true        //Careful for errors
@@ -51,11 +51,25 @@ module.exports.addAdmin = function(companyId, newAdmin, callback){
             company.admins.push(admin._id);
             company.save(callback);
         })
-    });
+    }); 
+}
 
-    //check if the comp id is correct 
-        //yes => newAdmin.save()
-            //   update company
-            //   {success: true}
-        //no => {success: false , err:invalid company id}
+module.exports.getAdmins = function(companyId, callback){
+    Company.findById(companyId, 'admins').lean()
+    .populate({ path: 'admins', select: 'name email' })
+    .exec((err, company)=>{
+        if(err) return callback(err, null);
+        return callback(null, company.admins);
+    });
+}
+
+module.exports.getLogo = function(id, callback){
+    Company.findById(id, 'logo', {lean: true}, (err, company) => {
+        if(err) return callback(err, null);
+        return callback(null, user.logo);
+    });
+}
+
+module.exports.updateLogo = function(companyId, awsKey, awsUrl, callback){
+    Company.findByIdAndUpdate(companyId, { $set: { logo: { key: awsKey, url: awsUrl } }}, callback);
 }

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const config = require('./config/cfg');
+const mailer = require('./helpers/mailer');
 
 const Schema = mongoose.Schema;
 
@@ -69,8 +70,8 @@ const internshipSchema = Schema({
     }],
     valuation: String,
     jobOffer: {
-        offered: {status: Boolean, on: Date, file: String},
-        accepted: {status: Boolean, on: Date, file: String}
+        offered: {status: Boolean, on: Date, file: { name: String, key: String, } },
+        accepted: {status: Boolean, on: Date, file: { name: String, key: String, } }
     },
     feedbacks:{
         sFeedback: {body: String, updated: Date},
@@ -90,29 +91,51 @@ function validateEmail(email) {
     return re.test(String(email).toLowerCase());
 }
 
+function isValidCandidate(internshipId, candidateId, callback){
+    Internship.findById(internshipId, 'candidate', { lean: true }, (err, internship)=>{
+        if(err) return callback(err, null);
+        if(internship.candidate == candidateId) return callback(null, true);
+        callback('Not authorised to access this Internship', false);
+    });
+}
+
+function isValidAdmin(internshipId, supervisorId, callback){
+    Internship.findById(internshipId, 'supervisors', { lean: true }, (err, internship)=>{
+        if(err) return callback(err, null);
+        if(internship.supervisors.includes(supervisorId)) return callback(null, true);
+        callback('Not authorised to access this Internship', false);
+    });
+}
+
                                 /*=====API Functions=====*/
 
-module.exports.getIntershipDetails = function(id, access, callback){
+module.exports.getInternshipDetails = function(id, userId, access, callback){
     switch(access){
-        case 2:{
-            Internship.findById(id).lean()
-            .populate({path: 'supervisors', select: '_id name email displayPic'})
-            .populate({path: 'candidate', select: '_id name email displayPic'})
-            .populate({path: 'company', select: '_id name email displayPic'})
-            .populate({path:'wReports.comments.by', select: '_id name email displayPic'})
-            .exec(callback);
+        case 2: {
+            isValidCandidate(id, userId, (err, isValid)=>{
+                if(err) return callback(err, null);
+                Internship.findById(id).lean()
+                .populate({path: 'supervisors', select: '_id name email displayPic'})
+                .populate({path: 'candidate', select: '_id name email displayPic'})
+                .populate({path: 'company', select: '_id name email displayPic'})
+                .populate({path:'wReports.comments.by', select: '_id name email displayPic'})
+                .exec(callback);
+            });
             break;
         }
-        case 1:{
-            Internship.findById(id).select('-payments -suica -wifi -accommodation.cost -wReports.sReport -wReports.comments').lean()
-            .populate({path: 'supervisors', select: '_id name email displayPic'})
-            .populate({path: 'candidate', select: '_id name email displayPic'})
-            .populate({path: 'company', select: '_id name email displayPic'})
-            .populate({path:'wReports.comments.by', select: '_id name email displayPic'})
-            .exec(callback);
+        case 1: {
+            isValidAdmin(id, userId, (err, isValid)=>{
+                if(err) return callback(err, null);
+                Internship.findById(id).select('-payments -suica -wifi -accommodation.cost -wReports.sReport -wReports.comments').lean()
+                .populate({path: 'supervisors', select: '_id name email displayPic'})
+                .populate({path: 'candidate', select: '_id name email displayPic'})
+                .populate({path: 'company', select: '_id name email displayPic'})
+                .populate({path:'wReports.comments.by', select: '_id name email displayPic'})
+                .exec(callback);
+            });
             break;
         }
-        case 0:{
+        case 0: {
             Internship.findById(id).select('-wReports.cReport -wReports.comments -valuation -accommodation.cost -wifi.cost').lean()
             .populate({path: 'supervisors', select: '_id name email displayPic'})
             .populate({path: 'candidate', select: '_id name email displayPic'})
@@ -125,66 +148,132 @@ module.exports.getIntershipDetails = function(id, access, callback){
 }
 
 //candidate
-module.exports.upsertSReport = function(intershipId, week, body, callback){
-    Internship.findById(id, 'wReports', (err, internship)=>{
-        if(err) throw err;
-        internship.wReports[week-1].sReport = {body: body, updated: new Date()};
-        internship.save(callback);
+module.exports.upsertSReport = function(internshipId, userId, week, body, callback){
+    isValidCandidate(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findById(internshipId, 'wReports', (err, internship)=>{
+            if(err) return callback(err);
+            internship.wReports[week-1].sReport = {body: body, updated: new Date()};
+            internship.save(callback);
+        });
     });
 }
 
-module.exports.uploadAcceptanceLetter = function(intershipId, file, callback){
-    //rename and store the file on AWS S3 then get the fileURL
-    var fileURL = 'temporary url';
-    Internship.findById(intershipId, (err, internship)=>{
-        if(err) throw err;
-        internship.jobOffer.accepted = {status: true, on: new Date(), file: fileURL};
-        internship.save(callback);
+module.exports.getAcceptanceLetter = function(internshipId, userId, callback){
+    isValidCandidate(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findById(internshipId, 'jobOffer', { lean: true }, (err, internship) => {
+            if(err) return callback(err, null);
+            return callback( null, internship.jobOffer.accepted.file);
+        });
     });
 }
 
-module.exports.upsertSFeedback = function(intershipId, body, callback){
-    Internship.findById(id, (err, internship)=>{
-        if(err) throw err;
-        internship.feedbacks.sFeedback = {body: body, updated: new Date()};
-        internship.save(callback);
+module.exports.uploadAcceptanceLetter = function(internshipId, originalName, awsKey, callback){
+    isValidCandidate(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findById(internshipId, 'jobOffer', (err, internship)=>{
+            if(err) return callback(err);
+            internship.jobOffer.accepted = {status: true, on: new Date(), file:  { name: originalName, key: awsKey }};
+            internship.save(callback);
+        });
+    });
+}
+
+module.exports.upsertSFeedback = function(internshipId, userId, body, callback){
+    isValidCandidate(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findById(internshipId, (err, internship)=>{
+            if(err) return callback(err);
+            internship.feedbacks.sFeedback = {body: body, updated: new Date()};
+            internship.save(callback);
+        });
     });
 }
 
 //company admin
-module.exports.upsertCReport = function(intershipId, week, body, callback){
-    Internship.findById(id, 'wReports', (err, internship)=>{
-        if(err) throw err;
-        internship.wReports[week-1].cReport = {body: body, updated: new Date()};
-        internship.save(callback);
+module.exports.upsertCReport = function(internshipId, userId, week, body, callback){
+    isValidAdmin(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findById(internshipId, 'wReports', (err, internship)=>{
+            if(err) throw err;
+            internship.wReports[week-1].cReport = {body: body, updated: new Date()};
+            internship.save(callback);
+        });
     });
 }
 
-module.exports.upsertValuation = function(intershipId, valuation, callback){
-    Internship.findByIdAndUpdate(intershipId, {valuation: valuation}, {upsert: true}, callback);
-}
-
-module.exports.uploadOfferLetter = function(intershipId, file, callback){
-    //rename and store the file on AWS S3 then get the fileURL
-    var fileURL = 'temporary url';
-    Internship.findById(intershipId, (err, internship)=>{
-        if(err) throw err;
-        internship.jobOffer.offered = {status: true, on: new Date(), file: fileURL};
-        internship.save(callback);
+module.exports.upsertValuation = function(internshipId, userId, valuation, callback){
+    isValidAdmin(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findByIdAndUpdate(internshipId, {valuation: valuation}, {upsert: true}, callback);
     });
 }
 
-module.exports.upsertCFeedback = function(intershipId, body, callback){
-    Internship.findById(id, (err, internship)=>{
-        if(err) throw err;
-        internship.feedbacks.cFeedback = {body: body, updated: new Date()};
-        internship.save(callback);
+module.exports.getOfferLetter = function(internshipId, userId, callback){
+    isValidAdmin(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err, null);
+        Internship.findById(internshipId, 'jobOffer', { lean: true }, (err, internship) => {
+            if(err) return callback(err);
+            return callback(null, internship.jobOffer.offered.file);
+        });
     });
 }
 
-//members
-module.exports.upsertWReportComment = function(intershipId, week, commentNo, body, memberId, callback){
-    Internship.findById(id, 'wReports', (err, internship)=>{
+module.exports.uploadOfferLetter = function(internshipId, userId, originalName, awsKey, callback){
+    isValidAdmin(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findById(internshipId, (err, internship)=>{
+            if(err) return callback(err);
+            internship.jobOffer.offered = {status: true, on: new Date(), file: { name: originalName, key: awsKey }};
+            internship.save(callback);
+        });
+    });
+}
+
+module.exports.upsertCFeedback = function(internshipId, userId, body, callback){
+    isValidAdmin(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findById(internshipId, (err, internship)=>{
+            if(err) throw err;
+            internship.feedbacks.cFeedback = {body: body, updated: new Date()};
+            internship.save(callback);
+        });
+    });
+}
+
+module.exports.upsertBasicInfo = function(internshipId, userId, basicInfo, callback){
+    isValidAdmin(internshipId, userId, (err, isValid)=>{
+        if(err) return callback(err);
+        Internship.findById(internshipId, (err, internship)=>{
+            if(err) throw err;
+            internship.project = basicInfo.projectName,
+            internship.designation = basicInfo.designation,
+            internship.supervisors = basicInfo.supervisors,
+            internship.location = basicInfo.location,
+            internship.description = basicInfo.description;
+            internship.save((err) => {
+                if(err) return callback(err);
+                /*let intershiplink =
+                mailer.studentNotification()*/
+            });
+        });
+    });
+}
+
+//members only
+module.exports.create = function(newInternship, callback){
+    newInternship.save((err, internship)=>{
+        if(err) return callback(err);
+        mailer.initiateInternshipMails(intership.company, link, (err, success)=>{
+            if(!success) return callback(err);
+            return callback(null);
+        });
+    });
+}
+
+module.exports.upsertWReportComment = function(internshipId, week, commentNo, body, memberId, callback){
+    Internship.findById(internshipId, 'wReports', (err, internship)=>{
         if(err) throw err;
         if(commentNo){
             internship.wReports[week-1].comments[commentNo] = {body: body, by:memberId, updated: new Date()};
@@ -196,8 +285,8 @@ module.exports.upsertWReportComment = function(intershipId, week, commentNo, bod
     });
 }
 
-module.exports.upsertFeedbacksComment = function(intershipId, commentNo, body, memberId, callback){
-    Internship.findById(id, 'feedbacks', (err, internship)=>{
+module.exports.upsertFeedbacksComment = function(internshipId, commentNo, body, memberId, callback){
+    Internship.findById(internshipId, 'feedbacks', (err, internship)=>{
         if(err) throw err;
         if(commentNo){
             internship.feedbacks.comments[commentNo] = {body: body, by:memberId, updated: new Date()};
@@ -209,21 +298,21 @@ module.exports.upsertFeedbacksComment = function(intershipId, commentNo, body, m
     });
 }
 
-module.exports.updateAccommodation = function(intershipId, accommodation, callback){
-    Internship.findByIdAndUpdate(intershipId, {accommodation: accommodation}, callback);
+module.exports.updateAccommodation = function(internshipId, accommodation, callback){
+    Internship.findByIdAndUpdate(internshipId, {accommodation: accommodation}, callback);
 }
 
-module.exports.updateSuica = function(intershipId, suica, callback){
-    Internship.findByIdAndUpdate(intershipId, {suica: suica}, callback);
+module.exports.updateSuica = function(internshipId, suica, callback){
+    Internship.findByIdAndUpdate(internshipId, {suica: suica}, callback);
 }
 
-module.exports.updateWifi = function(intershipId, wifi, callback){
-    Internship.findByIdAndUpdate(intershipId, {wifi: wifi}, callback);
+module.exports.updateWifi = function(internshipId, wifi, callback){
+    Internship.findByIdAndUpdate(internshipId, {wifi: wifi}, callback);
 }
 
-module.exports.upsertPayment = function(intershipId, paymentNo, amount, date, callback){
-    Internship.findById(intershipId, 'payments', (err, internship)=>{
-        if(err) throw err;
+module.exports.upsertPayment = function(internshipId, paymentNo, amount, date, callback){
+    Internship.findById(internshipId, 'payments', (err, internship)=>{
+        if(err) return callback(err);
         if(paymentNo){
             internship.feedbacks.payments[paymentNo] = { amount: amount, date: date};
         }
@@ -234,25 +323,27 @@ module.exports.upsertPayment = function(intershipId, paymentNo, amount, date, ca
     });
 }
 
-module.exports.deletePayment = function(intershipId, paymentNo, callback){
-    Internship.findById(intershipId, 'payments', (err, internship)=>{
-        if(err) throw err;
+module.exports.deletePayment = function(internshipId, paymentNo, callback){
+    Internship.findById(internshipId, 'payments', (err, internship)=>{
+        if(err) return callback(err);
         internship.payments.splice(paymentNo, 1);
         internship.save(callback);
     });    
 }
 
-module.exports.deleteWReportComment = function(intershipId, week, commentNo, callback){
-    Internship.findById(intershipId, 'wReports', (err, internship)=>{
-        if(err) throw err;
+module.exports.deleteWReportComment = function(internshipId, week, commentNo, userId, callback){
+    Internship.findById(internshipId, 'wReports', (err, internship)=>{
+        if(err) return callback(err);
+        if(internship.wReports[week-1].comments[commentNo].by != userId) return callback('not authorised to delete the comment')
         internship.wReports[week-1].comments.splice(commentNo, 1);
         internship.save(callback);
     });    
 }
 
-module.exports.deleteFeedbackComment = function(intershipId, paymentNo,commentNo, callback){
-    Internship.findById(intershipId, 'feedbacks', (err, internship)=>{
+module.exports.deleteFeedbackComment = function(internshipId, commentNo, userId, callback){
+    Internship.findById(internshipId, 'feedbacks', (err, internship)=>{
         if(err) throw err;
+        if(internship.feedbacks.comments[commentNo].by != userId) return callback('not authorised to delete the comment');
         internship.feedbacks.comments.splice(commentNo, 1);
         internship.save(callback);
     });
