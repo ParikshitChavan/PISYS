@@ -3,16 +3,16 @@ const express = require('express');
 const path = require('path');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const mailer = require('./helpers/mailer');
 const aws = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
+const mailer = require('../helpers/mailer');
 //models
-const Company = require('./models/company');
-const User = require('./models/user');
-const Sitelink = require ('./models/sitelink');
+const Company = require('../models/company');
+const User = require('../models/user');
+const Sitelink = require ('../models/sitelink');
 //config
-const config = require('./config/cfg');
+const config = require('../config/cfg');
 
 //setting up AWS authentication and S3
 aws.config.update(config.awsAuthObj);

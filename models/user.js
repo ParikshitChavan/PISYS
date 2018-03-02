@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const config = require('./config/cfg');
-const mailer = require('./helpers/mailer')
+const config = require('../config/cfg');
+const mailer = require('../helpers/mailer')
 
 //importing other models
-const Company = require('./models/company');
-const Internship = require('./models/internship');
-const Sitelink = require ('./models/sitelink');
+const Company = require('../models/company');
+const Internship = require('../models/internship');
+const Sitelink = require ('../models/sitelink');
 
 const userSchema = Schema({
     isActive: Boolean,
@@ -32,7 +32,7 @@ const userSchema = Schema({
         required: true
     },
     access: {
-        type: number,               //2 = Willings member | 1 = Company Admin | 0 = Candidate
+        type: Number,               //2 = Willings member | 1 = Company Admin | 0 = Candidate
         required: true              
     },
     DOB: Date,
@@ -44,7 +44,7 @@ const userSchema = Schema({
     //gender: Number,              //1.Male, 2.Female, 3.Other, 4.Do not wish to disclose
 });
 
-const User = module.exports = mongoose.model(User, userSchema);
+const User = module.exports = mongoose.model('User', userSchema);
 
                                     /*====== Functions ======*/
 

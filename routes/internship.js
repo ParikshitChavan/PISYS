@@ -2,15 +2,15 @@ const express = require('express');
 const path = require('path');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const mailer = require('./helpers/mailer');
 const aws = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
+const mailer = require('../helpers/mailer');
 //models
-const Internship = require('./models/internship');
-const User = require('./models/user');              
+const Internship = require('../models/internship');
+const User = require('../models/user');              
 //config
-const config = require('./config/cfg');
+const config = require('../config/cfg');
 
 //setting up AWS authentication and S3
 aws.config.update(config.awsAuthObj);

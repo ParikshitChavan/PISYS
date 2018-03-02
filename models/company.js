@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
-const config = require('./config/cfg');
+const config = require('../config/cfg');
 
 //importing Other models
-const Internship = require('./models/internship');
-const User = require('./models/user');
+const Internship = require('../models/internship');
+const User = require('../models/user');
 
 const companySchema = Schema({
     isActive: Boolean,
@@ -29,7 +29,7 @@ const companySchema = Schema({
     }
 });
 
-const Company = module.exports = mongoose.model(Company, companySchema);
+const Company = module.exports = mongoose.model('Company', companySchema);
 
 function validateEmail(email) {
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

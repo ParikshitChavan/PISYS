@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const config = require('./config/cfg');
+const config = require('../config/cfg');
 
 module.exports.sendActivationMail = function(recipient, link, callback){
     if(!recipient || !link) return callback('Missing data');

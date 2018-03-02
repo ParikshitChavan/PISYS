@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const config = require('./config/cfg');
-const mailer = require('./helpers/mailer');
+const config = require('../config/cfg');
+const mailer = require('../helpers/mailer');
 
 const Schema = mongoose.Schema;
 
 //importing sub models
-const Company = require('./models/company');
-const User = require('./models/user');
+const Company = require('../models/company');
+const User = require('../models/user');
 
 const internshipSchema = Schema({
     active: Boolean,
@@ -84,7 +84,7 @@ const internshipSchema = Schema({
     }
 });
 
-const Internship = module.exports = mongoose.model(Internship, internshipSchema);
+const Internship = module.exports = mongoose.model('Internship', internshipSchema);
 
 function validateEmail(email) {
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
