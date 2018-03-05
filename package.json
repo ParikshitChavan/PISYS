@@ -17,7 +17,8 @@
     "mongoose": "*",
     "multer": "*",
     "multer-s3": "*",
-    "nodemailer": "*"
+    "nodemailer": "*",
+    "npm": "^5.7.1"
   },
   "author": "Parikshit Chavan",
   "license": "ISC"
