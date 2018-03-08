@@ -29,7 +29,7 @@ const internshipSchema = Schema({
             phNum: {countryCode: String, number: Number}
         }
     },
-    payments: [{ amount: Number, date: Date}],
+    payments: [{ amount: Number, date: Date, acptd: Boolean}],
     suica: {
         cardNo: Number,
         line: String,
@@ -37,7 +37,8 @@ const internshipSchema = Schema({
         to: String,
         name: String,
         issued: Date,
-        expiry: Date
+        expiry: Date,
+        acptd: Boolean
     },
     wifi: {
         cost: Number,
@@ -48,7 +49,8 @@ const internshipSchema = Schema({
         },
         startDate: Date,
         returnDate: Date,
-        details: String
+        details: String,
+        acptd: Boolean
     },
     startDate: {
         type: Date,
@@ -60,13 +62,19 @@ const internshipSchema = Schema({
     },
     wReports: [{
         sReport: {body:String, updated: Date},      //student report
-        cReport: {body:String, updated: Date},      //company report 
+        cReport: {body:String, updated: Date},      //company report not used as of now as we do the hearing
         comments: [{
                 body:String,
                 by:{type:Schema.Types.ObjectId, ref: 'User'},           //Only WL members allowed to comment for now 
                 updated: Date
             }],
         week:{startDate: Date, endDate: Date}
+    }],
+    hearingRepts:[{
+        rept: String,
+        by:{type:Schema.Types.ObjectId, ref: 'User'},
+        hearingOn: Date,
+        updated: Date
     }],
     valuation: String,
     jobOffer: {
@@ -254,7 +262,7 @@ module.exports.upsertBasicInfo = function(internshipId, userId, basicInfo, callb
             internship.description = basicInfo.description;
             internship.save((err) => {
                 if(err) return callback(err);
-                /*let intershiplink =
+                /*let intershipLink =
                 mailer.studentNotification()*/
             });
         });
