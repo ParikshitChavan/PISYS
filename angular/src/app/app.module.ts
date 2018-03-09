@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-
 import { HomeComponent } from './components/home/home.component';
 import { RegisterComponent } from './components/register/register.component';
 import { InternshipsComponent } from './components/internships/internships.component';
@@ -20,6 +19,8 @@ import { WifiComponent } from './components/wifi/wifi.component';
 import { AccommodationComponent } from './components/accommodation/accommodation.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { JobOfferComponent } from './components/job-offer/job-offer.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 
 const appRoutes: Routes =[
   {},
@@ -45,7 +46,9 @@ const appRoutes: Routes =[
     WifiComponent,
     AccommodationComponent,
     FeedbackComponent,
-    JobOfferComponent
+    JobOfferComponent,
+    ResetPasswordComponent,
+    VerifyEmailComponent
   ],
   imports: [
     BrowserModule,
