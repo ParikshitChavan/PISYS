@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MaterializeModule } from 'angular2-materialize';
 import { AppComponent } from './app.component';
+import { FormsModule }   from '@angular/forms';
+import { HttpModule } from '@angular/http';
 
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -21,12 +23,30 @@ import { FeedbackComponent } from './components/feedback/feedback.component';
 import { JobOfferComponent } from './components/job-offer/job-offer.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { SuicaComponent } from './components/suica/suica.component';
+import { WeeklyReportsComponent } from './components/weekly-reports/weekly-reports.component';
 
 const appRoutes: Routes =[
-  {},
-  {},
-  {},
-  {},
+  {path: '', component: HomeComponent, pathMatch: 'full'},
+  {path: 'internships', component: InternshipsComponent, pathMatch: 'full'},
+  {path: 'dashboard', component: DashboardComponent},
+  {path: 'profile', component: ProfileComponent},
+  {path: 'company', component: CompanyComponent},
+  {path: 'companies', component: CompaniesComponent},
+  {
+    path: 'internship',
+    component: InternshipComponent,
+    pathMatch: 'full',
+    children: [
+      {path: 'wifi', component: WifiComponent},
+      {path: 'accommodation', component: AccommodationComponent},
+      {path: 'suica', component: SuicaComponent},
+      {path: 'payments', component: PaymentsComponent},
+      {path: 'feedback', component: FeedbackComponent},
+      {path: 'jobOffer', component: JobOfferComponent},
+      {path: 'weeklyReports', component: WeeklyReportsComponent}
+    ]
+  }
 ];
 
 @NgModule({
@@ -48,10 +68,14 @@ const appRoutes: Routes =[
     FeedbackComponent,
     JobOfferComponent,
     ResetPasswordComponent,
-    VerifyEmailComponent
+    VerifyEmailComponent,
+    SuicaComponent,
+    WeeklyReportsComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    HttpModule,
     MaterializeModule,
     RouterModule.forRoot(appRoutes)
   ],
