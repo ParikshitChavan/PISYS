@@ -43,10 +43,10 @@ router.post('/register', (req, res, next)=>{
         isActive: true,
         name: req.body.name,
         email: req.body.email,
-        username: req.body.username,
+        //username: req.body.username,
         password: req.body.password,
         DOB: req.body.DOB,
-        phNum: { countryCode: req.body.countryCode, number: req.body.number},
+        phNum: req.body.phNum,
         access: 0
     });
     User.addUser(newUser, (err, user)=>{

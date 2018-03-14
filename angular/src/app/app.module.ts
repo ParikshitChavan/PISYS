@@ -5,7 +5,9 @@ import { MaterializeModule } from 'angular2-materialize';
 import { AppComponent } from './app.component';
 import { FormsModule }   from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { InternationalPhoneModule } from 'ng4-intl-phone';
 
+//components
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HomeComponent } from './components/home/home.component';
@@ -25,6 +27,10 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 import { SuicaComponent } from './components/suica/suica.component';
 import { WeeklyReportsComponent } from './components/weekly-reports/weekly-reports.component';
+
+//services
+import { ValidationService } from './services/validation/validation.service';
+import { AuthService } from './services/auth/auth.service';
 
 const appRoutes: Routes =[
   {path: '', component: HomeComponent, pathMatch: 'full'},
@@ -77,9 +83,13 @@ const appRoutes: Routes =[
     FormsModule,
     HttpModule,
     MaterializeModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    InternationalPhoneModule
   ],
-  providers: [],
+  providers: [
+    ValidationService,
+    AuthService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

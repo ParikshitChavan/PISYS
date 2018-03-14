@@ -1,3 +1,41 @@
-<p>
-  home works!
-</p>
+<div class="row">
+  <form class="col s12" (onsubmit)="registerUser()">
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="name" name="name" [(ngModel)]="name" type="text" class="validate">
+        <label for="name">Name</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="email" type="email" name="email" [(ngModel)]="email" class="validate">
+        <label for="email">Email</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="DOB" type="text" name="DOB" [(ngModel)]="DOB" class="datepicker" materialize="pickadate" [materializeParams]="[{selectMonths: true}, {selectYears: 100}, {today: 'Today'}, {clear: 'Clear'}, {close: 'Ok'}]" >
+        <label for="DOB">Birth Date</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <int-phone-prefix [(ngModel)]="phNum" name="phNum" id="phNum" ></int-phone-prefix>
+        <label for="phNum">Phone Number</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="password" name="password" [(ngModel)]="password" type="password" class="validate">
+        <label for="password">Password</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <button class="btn waves-effect waves-light" type="submit">Submit
+          <i class="material-icons right">send</i>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

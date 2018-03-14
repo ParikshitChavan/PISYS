@@ -25,10 +25,10 @@ const userSchema = Schema({
         type: Boolean,
         default: false
     },
-    username: {
+    /*username: {
         type: String,
         required: true,
-    },
+    },*/
     password: {
         type: String,
         required: true
