@@ -6,12 +6,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
-  dpAvail = false;
-  name = 'Parikshit Chavan';
-
-  ngOnInit() {
-    $(document).ready(function(){
-      
-    });
-  }
+  
+  ngOnInit() { }
 }

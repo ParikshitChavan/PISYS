@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MaterializeModule } from 'angular2-materialize';
 import { AppComponent } from './app.component';
-import { FormsModule }   from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { InternationalPhoneModule } from 'ng4-intl-phone';
 
@@ -31,6 +31,9 @@ import { WeeklyReportsComponent } from './components/weekly-reports/weekly-repor
 //services
 import { ValidationService } from './services/validation/validation.service';
 import { AuthService } from './services/auth/auth.service';
+
+//directives
+import { EqualValidatorDirective } from './directives/equal-validator.directive';
 
 const appRoutes: Routes =[
   {path: '', component: HomeComponent, pathMatch: 'full'},
@@ -76,7 +79,8 @@ const appRoutes: Routes =[
     ResetPasswordComponent,
     VerifyEmailComponent,
     SuicaComponent,
-    WeeklyReportsComponent
+    WeeklyReportsComponent,
+    EqualValidatorDirective
   ],
   imports: [
     BrowserModule,

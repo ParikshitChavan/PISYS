@@ -13,7 +13,8 @@ const Sitelink = require ('../models/sitelink');
 const userSchema = Schema({
     isActive: Boolean,
     name: {
-        type: String
+        type: String,
+        required: true
     },
     email: {
         type: String,
@@ -38,7 +39,7 @@ const userSchema = Schema({
         required: true              
     },
     DOB: Date,
-    phNum: { countryCode: String, number: Number},
+    phNum: String,
     DP: { key: String, url: String },                 //display picture
     internships: [{ type: Schema.Types.ObjectId, ref: 'Intership' }],       //What intership she/he has done!
     company: {type: Schema.Types.ObjectId, ref: 'Company'},                 //Company that she/he is an admin for

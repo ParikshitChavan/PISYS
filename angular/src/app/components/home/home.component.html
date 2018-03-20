@@ -1,41 +1,120 @@
 <div class="row">
-  <form class="col s12" (onsubmit)="registerUser()">
-    <div class="row">
-      <div class="input-field col s12">
-        <input id="name" name="name" [(ngModel)]="name" type="text" class="validate">
-        <label for="name">Name</label>
+  <div class="loginFormArea">
+    <h3>Login</h3>
+    <div  [hidden]="!loginSubmitted">
+      <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="input-field col s12">
-        <input id="email" type="email" name="email" [(ngModel)]="email" class="validate">
-        <label for="email">Email</label>
+    <div [hidden]="loginSubmitted">
+      <div [hidden]="!loginError" class="red-text">
+      {{loginMessage}}
       </div>
+      <form class="col s12" (submit)="onLoginUser(loginForm.valid)" #loginForm="ngForm">
+        <div class="form-group">
+          <div class="row">
+            <div class="input-field col s12 l6">
+              <label for="loginEmail">Email</label>
+              <input id="loginEmail" type="email" name="loginEmail" [(ngModel)]="loginUser.loginEmail" class="form-control" #loginEmail="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+              <div [hidden]= "loginEmail.valid || (loginEmail.pristine && !loginForm.submitted)" class="red-text">
+                Please input a valid Email address.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12 l6">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" name="loginPassword" [(ngModel)]="loginUser.loginPassword" type="password" class="form-control" #loginPassword="ngModel" required>
+              <div [hidden]= "loginPassword.valid || (loginPassword.pristine && !loginForm.submitted)" class="red-text">
+                Please input a Password.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12">
+              <button class="btn waves-effect waves-light" type="submit">Submit
+                <i class="material-icons right">send</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
-    <div class="row">
-      <div class="input-field col s12">
-        <input id="DOB" type="text" name="DOB" [(ngModel)]="DOB" class="datepicker" materialize="pickadate" [materializeParams]="[{selectMonths: true}, {selectYears: 100}, {today: 'Today'}, {clear: 'Clear'}, {close: 'Ok'}]" >
-        <label for="DOB">Birth Date</label>
-      </div>
+  </div>
+  <div class="regFormArea">
+    <h3>Register</h3>
+    <div [hidden]="!regSubmitted">
+      {{regMessage}}
     </div>
-    <div class="row">
-      <div class="input-field col s12">
-        <int-phone-prefix [(ngModel)]="phNum" name="phNum" id="phNum" ></int-phone-prefix>
-        <label for="phNum">Phone Number</label>
-      </div>
+    <div [hidden]="regSubmitted">
+      <form class="col s12" (submit)="onRegisterUser(regForm.valid)" #regForm="ngForm">
+        <div class="form-group">
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="name" name="name" [(ngModel)]="registerUser.name" type="text" class="form-control" #name="ngModel" required>
+              <label for="name">Name</label>
+              <div [hidden]= "name.valid || (name.pristine && !regForm.submitted)" class="red-text">
+                Please input a Name.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <label for="email">Email</label>
+              <input id="email" type="email" name="email" [(ngModel)]="registerUser.email" class="form-control" #email="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+              <div [hidden]= "email.valid || (email.pristine && !regForm.submitted)" class="red-text">
+                Please input a valid Email address.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="DOB" type="text" name="DOB" [(ngModel)]="registerUser.DOB" class="datepicker" materialize="pickadate" [materializeParams]="[{selectMonths: true}, {selectYears: 100}, {today: 'Today'}, {clear: 'Clear'}, {close: 'Ok'}]" #DOB="ngModel">
+              <label for="DOB">Birth Date</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input type="text" [(ngModel)]="registerUser.phNum" name="phNum" id="phNum" #phNum="ngModel">
+              <label for="phNum">Phone Number</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <label for="password">Password</label>
+              <input id="password" name="password" [(ngModel)]="registerUser.password" type="password" class="form-control" #password="ngModel"  required validateEqual="cnfPass" reverse="true">
+              <div [hidden]= "password.valid || (password.pristine && !regForm.submitted)" class="red-text">
+                Please input a Password.
+              </div>
+            </div>
+            <div class="input-field col s6">
+                <label for="cnfPass">Confirm Password</label>
+                <input id="cnfPass" name="cnfPass" [(ngModel)]="registerUser.cnfPass" type="password" class="form-control" #cnfPass="ngModel"  required validateEqual="password" reverse="false">
+                <div [hidden]= "cnfPass.valid || (cnfPass.pristine && !regForm.submitted)" class="red-text">
+                  Passwords do not match.
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12">
+              <button class="btn waves-effect waves-light" type="submit">Submit
+                <i class="material-icons right">send</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
-    <div class="row">
-      <div class="input-field col s12">
-        <input id="password" name="password" [(ngModel)]="password" type="password" class="validate">
-        <label for="password">Password</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s12">
-        <button class="btn waves-effect waves-light" type="submit">Submit
-          <i class="material-icons right">send</i>
-        </button>
-      </div>
-    </div>
-  </form>
+  </div>
 </div>
+  
