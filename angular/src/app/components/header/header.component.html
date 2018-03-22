@@ -2,17 +2,20 @@
   <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile']">Profile</a></li>
   <li class="divider"></li>
   <li><a href="#" (click)="logout()">Logout</a></li>
-</ul>    
+</ul>
 <nav>
   <div class="nav-wrapper">
     <a href="" class="brand-logo">Logo</a>
-    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+    <a data-activates="mobile-demo" class="button-collapse" materialize="sideNav"><i class="material-icons">menu</i></a>
     <ul class="right hide-on-med-and-down">
       <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/dashboard']" >Dashboard</a></li>
       <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" >Internships</a></li>
       <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/login']" >Login</a></li>
       <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/register']" >Register</a></li>
-      <li><a class="dropdown-button" href="#!" data-activates="dropdown1"><img *ngIf="dpAvail" src="" alt="" class="circle responsive-img"><span>{{name}}</span><i class="material-icons right">arrow_drop_down</i></a></li>
+      <li><a class="dropdown-button" data-activates="dropdown1" 
+        materialize="dropdown" [materializeParams]="[{ inDuration: 300, outDuration: 225, belowOrigin: true}]">
+        <img *ngIf="dpAvail" src="" alt="" class="circle responsive-img"><span>{{name}}</span><i class="material-icons right">arrow_drop_down</i>
+      </a></li>
     </ul>
     <ul class="side-nav" id="mobile-demo">
       <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/dashboard']" >Dashboard</a></li>

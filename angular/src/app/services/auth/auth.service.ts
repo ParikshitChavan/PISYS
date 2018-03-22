@@ -31,6 +31,7 @@ export class AuthService {
   }
 
   destroyToken(){
+    this.authToken = null;
     localStorage.removeItem('authToken');
   }
 
