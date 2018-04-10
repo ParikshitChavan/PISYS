@@ -1,0 +1,52 @@
+#overlay {
+    position: fixed;
+    width: 100%; 
+    height: 100%; 
+    top: 0; 
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 10000;
+}
+
+#infoEditBtn {
+    position: absolute;
+    right: 2%;
+    bottom: 0%;
+    transform: translateY(+70%);
+}
+
+#overlayCloseBtn {
+    position: absolute;
+    top: 2%;
+    right: 2%;
+}
+
+.rawInfo, .imgArea{
+position: relative;
+}
+
+.imgArea:hover img{
+    opacity:0.5;
+}
+
+.imgArea:hover a {
+    display: block;
+}
+
+.imgArea a {
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    display:none;
+    transform: translateY(-50%) translateX(-50%);
+}
+
+H3{
+    text-align: center;
+}
+
+.imgArea{
+    text-align: center;
+}

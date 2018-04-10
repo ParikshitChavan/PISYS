@@ -12,7 +12,7 @@ export class HomeComponent implements OnInit {
   registerUser = {
     name: "",
     email: "",
-    DOB: new Date(),
+    DOB: "",
     password: "",
     cnfPass: "",
     phNum: ""
@@ -27,11 +27,16 @@ export class HomeComponent implements OnInit {
   loginMessage :String;
   
   regSubmitted = false;
+  loginSubmitted = false;
   loginError = false; 
 
   constructor(private authService: AuthService, private router:Router) { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    if(this.authService.isLoggedIn()){
+      this.router.navigate(['/dashboard']);
+    }
+  }
 
   onRegisterUser(validForm: boolean){
     if(!validForm) return false;
@@ -44,17 +49,18 @@ export class HomeComponent implements OnInit {
   }
 
   onLoginUser(validForm: boolean){
-    console.log(this.loginUser);
     if(!validForm) return false;
+    this.loginSubmitted = true;
     const user = {email:this.loginUser.loginEmail, password: this.loginUser.loginPassword};
     this.authService.login(user).subscribe(data => {
       if(data.success) {
-        this.authService.saveToken(data.token);
+        this.authService.loginSuccess(data);
         this.router.navigate(['dashboard']);
       }
       else {
         this.loginError = true;
         this.loginMessage = data.message;
+        this.loginSubmitted = false;
       }
     });
   }

@@ -8,17 +8,17 @@
     "start": "node app"
   },
   "dependencies": {
-    "aws-sdk": "*",
+    "aws-sdk": "^2.215.1",
     "bcryptjs": "*",
     "body-parser": "*",
     "cors": "*",
-    "express": "*",
-    "jsonwebtoken": "*",
-    "mongoose": "*",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.2.0",
+    "mongoose": "^5.0.12",
     "multer": "*",
     "multer-s3": "*",
-    "nodemailer": "*",
-    "npm": "^5.7.1"
+    "nodemailer": "^4.6.3",
+    "npm": "^5.8.0"
   },
   "author": "Parikshit Chavan",
   "license": "ISC"

@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
@@ -22,14 +21,13 @@ const uploadDisplayPic = multer({
         bucket: 'piitscrm',
         acl: 'public-read',
         key: function (req, file, cb) {
-          cb(null, file.fieldname + Date.now() + path.extname(file.originalname));
+          cb(null, file.fieldname + Date.now());
         }
     }),
     fileFilter: function (req, file, cb){
       const filetypes = /jpeg|jpg|png|gif/;
-      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
       const mimetype = filetypes.test(file.mimetype);
-      if(mimetype && extname){
+      if(mimetype){
         return cb(null,true);
       } else {
         cb('Error: Please select an Image!');
@@ -47,7 +45,8 @@ router.post('/register', (req, res, next)=>{
         password: req.body.password,
         DOB: req.body.DOB,
         phNum: req.body.phNum,
-        access: 0
+        access: 0,
+        DP: {key:"", url:"https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png"}
     });
     User.addUser(newUser, (err, user)=>{
         if(err) return res.json({success: false, message: "Failed to register the User   "+ err});
@@ -59,27 +58,45 @@ router.post('/authenticate', (req, res, next)=>{
     const email = req.body.email;
     const password = req.body.password;
 
-    User.getUserByEmail(email,(err, user)=>{
+    User.getUserByEmail(email, (err, user)=>{
         if(err) throw err;
         if(!user) return res.json({success: false, message:'email address is not registered with us'});
         User.comparePasswords(password, user.password, (err, isMatch)=>{
             if(err) throw err;
             if(!isMatch) return res.json({success:false, message:'Wrong password'});
+            const userData = {name: user.name, email: user.email, DPUrl:user.DP.url};
             const token = jwt.sign(user.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
             res.json({
                 success: true,
-                token: token
+                token: token,
+                userData: userData
             });
         })
     })
 });
 
-router.get('/profile', (req, res, next)=>{
+router.get('/userInfo', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.getUserById(decoded._id, (err, user)=>{
+        User.getUserInfoById(decoded._id, (err, user)=>{
             res.status(serverStatus).json({ success: true, profileData: user });
+        });
+    });
+});
+
+router.post('/updateUserInfo', (req, res, next)=>{
+    let userInfo ={
+        name: req.body.name,
+        DOB: req.body.DOB,
+        phNum: req.body.phNum
+    }
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        User.updateInfoById(decoded._id, userInfo, (err)=>{
+            if(err) throw err;
+            res.status(serverStatus).json({ success: true, message: "User info updated successfully" });
         });
     });
 });
@@ -160,21 +177,30 @@ router.post('/initPassword', (req, res, next)=>{
 router.post('/updateDisplayPic', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
         User.getDP(decoded._id, (err, DP) => {
-            if(err) return res.json({success: false, message: err});
+            if(err) return res.json({success: false, error: err});
             if(DP.key){              //if present, delete current DP from AWS S3 
-                s3.deleteObject({bucket: 'piitscrm', key:DP.key}, (err) => {
-                    if(err) return res.json({success: false, message: err});
+                s3.deleteObject({Bucket: 'piitscrm', Key:DP.key}, (err) => {
+                    if(err) return res.json({success: false, error: err});
+                    uploadDisplayPic(req, res, (err) => {
+                        if(err) return res.json({success: false, error: err});
+                        User.updateDisplayPic(decoded._id, req.file.key, req.file.location, (err) => {
+                            if(err) return res.json({success: false, error: err});
+                            res.json({success: true, newLink: req.file.location});
+                        });
+                    });
                 });
             }
-            uploadDisplayPic(req, res, next, (err) => {
-                if(err) return res.json({success: false, message: err});
-                User.updateDisplayPicture(decoded._id, req.file.key, req.file.location, (err) => {
-                    if(err) return res.json({success: false, message: err});
-                    res.json({success: false, message: 'display picture updated'});
+            else{
+                uploadDisplayPic(req, res, (err) => {
+                    if(err) return res.json({success: false, error: err});
+                    User.updateDisplayPic(decoded._id, req.file.key, req.file.location, (err) => {
+                        if(err) return res.json({success: false, error: err});
+                        res.json({success: true, newLink: req.file.location});
+                    });
                 });
-            });
+            }
         });
     });
 });

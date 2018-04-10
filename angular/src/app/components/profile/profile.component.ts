@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from "../../services/auth/auth.service";
+import { toast } from 'angular2-materialize';
+import { ImageCropperComponent, CropperSettings, Bounds } from "ngx-img-cropper";
+
+declare let Materialize:any;
 
 @Component({
   selector: 'app-profile',
@@ -8,19 +12,124 @@ import {AuthService} from "../../services/auth/auth.service";
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  
-  user: Object;
+  editing: Boolean = false;
+  userDetails: {
+    name: String,
+    DOB : any,
+    phNum: String,
+    DP: {key:String, url:String}
+  }= {name: "", DOB: "", phNum: "", DP: {key:"", url:""}};
+  userInfoMsg: String;
+  displayPicMsg: String;
+  showOverlay: Boolean = false;
+  imgName: String;
+  imgData: any;
+  cropperSettings :CropperSettings;
+  croppedWidth: Number;
+  croppedHeight: Number;
 
-  constructor(private authService: AuthService, private router:Router) { }
+  @ViewChild('cropper', undefined) cropper:ImageCropperComponent;
+
+  constructor(private authService: AuthService, private router:Router) { 
+    this.cropperSettings = new CropperSettings();
+    this.cropperSettings.width = 200;
+    this.cropperSettings.height = 200;
+
+    this.cropperSettings.croppedWidth = 200;
+    this.cropperSettings.croppedHeight = 200;
+
+    this.cropperSettings.canvasWidth = 800;
+    this.cropperSettings.canvasHeight = 450;
+
+    this.cropperSettings.minWidth = 10;
+    this.cropperSettings.minHeight = 10;
+
+    this.cropperSettings.rounded = true;
+    //this.cropperSettings.keepAspect = false;
+
+    this.cropperSettings.dynamicSizing = true;
+
+    this.cropperSettings.cropperDrawSettings.strokeColor = 'rgba(255,255,255,1)';
+    this.cropperSettings.cropperDrawSettings.strokeWidth = 2;
+
+    this.imgData = {};
+   }
 
   ngOnInit() {
-    this.authService.getProfile().subscribe(resp => {
+    this.authService.getUserInfo().subscribe(resp => {
       if(!resp.success) return false;
-      this.user = resp.profileData;
+      this.userDetails = resp.profileData;
     }, err => {
       console.log(err);
       return false;
     });
   }
+  
+  cropped(bounds:Bounds) {
+    this.croppedHeight =bounds.bottom-bounds.top;
+    this.croppedWidth = bounds.right-bounds.left;
+  }
+  
+  fileChangeListener($event) {
+    let image:any = new Image();
+    let file:File = $event.target.files[0];
+    let myReader:FileReader = new FileReader();
+    let that = this;
+    myReader.onloadend = function (loadEvent:any) {
+      image.src = loadEvent.target.result;
+      that.cropper.setImage(image);
+    };
+    myReader.readAsDataURL(file);
+  }
 
+  convertToBlob(base64Str:string){
+
+    let binary = atob(base64Str.split(',')[1]);
+    let array = [];
+    let mimeString= base64Str.split(',')[0].split(':')[1].split(';')[0];
+    for(let i = 0; i< binary.length; i++){
+      array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {type: mimeString});
+  }
+
+  editInfoClick(){
+    this.editing = true;
+    Materialize.updateTextFields();
+  }
+
+  userInfoSubmit(validForm: boolean){
+    if(!validForm) return false;
+    this.editing = false;
+    this.authService.updateUserInfo(this.userDetails).subscribe(resp =>{
+      resp.success ? this.userInfoMsg = "User information updated successfully." : this.userInfoMsg = "Some error occurred, please try agin later.";
+      toast(this.userInfoMsg, 3000);
+    });
+  }
+
+  onDPUpdateClick(){
+    this.showOverlay = true;
+  }
+
+  onOverlayCloseClick(){
+    this.showOverlay = false;
+    this.imgData = {};
+  }
+
+  onDPUploadClick(){
+    let formData:FormData = new FormData();
+    let blob = this.convertToBlob( this.imgData.image);
+    formData.append('displayPicture', blob);
+    this.authService.updateDisplayPic(formData).subscribe(resp =>{
+      console.log(resp);
+      if (resp.success){
+        this.userDetails.DP.url =  resp.newLink;
+        this.displayPicMsg = "Display Picture updated successfully."
+      }
+      else {
+        this.displayPicMsg = "Some error occurred, please try agin later."
+      }
+      toast(this.displayPicMsg, 3000);
+    });
+  }
 }

@@ -1,0 +1,11 @@
+nav .nav-wrapper .brand-logo img {
+    height: 54px;
+    margin: 5px 0;
+}
+
+.dropdown-button img{
+    max-height: 54px;
+    margin: 5px 0;
+    vertical-align: middle;
+}
+

@@ -220,7 +220,7 @@ router.post('/updateOfferLetter/:id',(req, res, next)=>{
                 if(err) return res.json({success: false, msg: err});
                 Internship.uploadOfferLetter(req.params.id, decoded._id, req.file.originalname, req.file.key, (err)=>{
                     if(err) return res.json({success: false, msg: err});
-                    res.json({success: true, msg: 'Comment deleted successfully'});
+                    res.json({success: true, msg: 'Offer letter uploaded successfully'});
                 });
             });
         });

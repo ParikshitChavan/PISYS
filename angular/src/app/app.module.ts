@@ -28,24 +28,32 @@ import { VerifyEmailComponent } from './components/verify-email/verify-email.com
 import { SuicaComponent } from './components/suica/suica.component';
 import { WeeklyReportsComponent } from './components/weekly-reports/weekly-reports.component';
 
+//3rd party module
+import { ImageCropperModule } from "ngx-img-cropper";
+
 //services
 import { ValidationService } from './services/validation/validation.service';
 import { AuthService } from './services/auth/auth.service';
+
+//guards
+import {AuthGuard} from "./guards/auth.guard"
 
 //directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
 
 const appRoutes: Routes =[
   {path: '', component: HomeComponent, pathMatch: 'full'},
-  {path: 'internships', component: InternshipsComponent, pathMatch: 'full'},
-  {path: 'dashboard', component: DashboardComponent},
-  {path: 'profile', component: ProfileComponent},
-  {path: 'company', component: CompanyComponent},
-  {path: 'companies', component: CompaniesComponent},
+  {path: 'internships', component: InternshipsComponent, pathMatch: 'full', canActivate: [AuthGuard]},
+  {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
+  {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  {path: 'company', component: CompanyComponent, canActivate: [AuthGuard]},
+  {path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
   {
     path: 'internship',
     component: InternshipComponent,
     pathMatch: 'full',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       {path: 'wifi', component: WifiComponent},
       {path: 'accommodation', component: AccommodationComponent},
@@ -88,11 +96,13 @@ const appRoutes: Routes =[
     HttpModule,
     MaterializeModule,
     RouterModule.forRoot(appRoutes),
-    InternationalPhoneModule
+    InternationalPhoneModule,
+    ImageCropperModule
   ],
   providers: [
     ValidationService,
-    AuthService
+    AuthService,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })

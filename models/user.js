@@ -78,13 +78,17 @@ module.exports.addUser = function(newUser, callback){
     });
 }
 
-module.exports.getUserById = function(id, callback){
-    User.findById(id, callback);
+module.exports.getUserInfoById = function(userId, callback){
+    User.findById(userId,'name email phNum DP DOB', callback);
 }
 
 module.exports.getUserByEmail = function(email, callback){
     const query = {email: email};
-    User.findOne(query, callback);
+    User.findOne(query, 'name email DP password', callback);
+}
+
+module.exports.updateInfoById = function(userId, userInfo, callback){
+    User.findByIdAndUpdate(userId, { $set: { name: userInfo.name, DOB: userInfo.DOB, phNum: userInfo.phNum }}, callback);
 }
 
 module.exports.getCompany = function(userId, callback){
@@ -198,6 +202,6 @@ module.exports.getDP = function(userId, callback){
     });
 }
 
-module.exports.updateDP = function(userId, awsKey, awsUrl, callback){
+module.exports.updateDisplayPic = function(userId, awsKey, awsUrl, callback){
     User.findByIdAndUpdate(userId, { $set: { DP: { key: awsKey, url: awsUrl } }}, callback);
 }
