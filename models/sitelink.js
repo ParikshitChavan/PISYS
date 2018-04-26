@@ -22,7 +22,7 @@ function validateEmail(email) {
 }
 
 module.exports.createActivationLink = function(email, callback){
-    if(!validateEmail(email)) return callback(err, null);
+    if(!validateEmail(email)) return callback('Invalid Email', null);
     let newSitelink = new Sitelink({
         _id: new mongoose.Types.ObjectId(),
         sentTo: email,
@@ -37,7 +37,7 @@ module.exports.createActivationLink = function(email, callback){
 }
 
 module.exports.createPasswordResetLink = function(email, callback){
-    if(!validateEmail(email)) return callback(err, null);
+    if(!validateEmail(email)) return callback('Invalid Email', null);
     let expiry = new Date();
     expiry.setHours(expiry.getHours() + 12);
     let newSitelink = new Sitelink({
@@ -55,7 +55,7 @@ module.exports.createPasswordResetLink = function(email, callback){
 }
 
 module.exports.createEmailVerificationLink = function(email, callback){
-    if(!validateEmail(email)) return callback(err, null);
+    if(!validateEmail(email)) return callback('Invalid Email', null);
     let newSitelink = new Sitelink({
         _id: new mongoose.Types.ObjectId(),
         sentTo: email,
@@ -70,23 +70,34 @@ module.exports.createEmailVerificationLink = function(email, callback){
     });
 }
 
-module.exports.validateSitelink = function(token, callback){
+module.exports.validateSitelink = function(token, callback){        //callback(err, userId)
     Sitelink.findById(token, (err, sitelink)=>{
         if(err) throw err;
-        if(!sitelink) return callback('sitelink not valid');             //callback(err)
-        if(sitelink.expires){
+        if(!sitelink) return callback('sitelink not valid', null);
+        if(sitelink.expiry){
             var currDate = new Date();
-            if(expiry - currDate < 0) return callback('sitelink expired');
-            else return callback(null);
+            if(expiry - currDate < 0) return callback('sitelink expired', null);
+            else {
+                User.getUserIdByEmail(sitelink.sentTo, (err, userId)=>{
+                    if(err) throw err;
+                    return callback(null, userId);
+                });
+            }
         }
         else{
+            if(sitelink.type == 'activation'){
+                User.getUserIdByEmail(sitelink.sentTo, (err, userId)=>{
+                    if(err) throw err;
+                    return callback(null, userId);
+                });
+            }
             if(sitelink.type == 'emailVerification') {
                 User.markEmailVerified(sitelink.sentTo);
                 sitelink.remove((err)=>{
                     if(err) throw err;
+                    return callback(null, null);
                 });
             }
-            return callback(null);
         }
     });
 }

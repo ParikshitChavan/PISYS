@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import {Router} from '@angular/router';
 import {AuthService} from "../../services/auth/auth.service";
 import { toast } from 'angular2-materialize';
@@ -14,19 +15,21 @@ declare let Materialize:any;
 export class ProfileComponent implements OnInit {
   editing: Boolean = false;
   userDetails: {
-    name: String,
+    _id: any
+    name: string,
     DOB : any,
-    phNum: String,
-    DP: {key:String, url:String}
-  }= {name: "", DOB: "", phNum: "", DP: {key:"", url:""}};
-  userInfoMsg: String;
-  displayPicMsg: String;
-  showOverlay: Boolean = false;
-  imgName: String;
+    phNum: string,
+    DP: {key:string, url:string},
+  }= {_id:'', name: "", DOB: "", phNum: "", DP: {key:"", url:""}};
+  currPass: string; newPass:string; cnfPass: string;
+  passwordMsg: string;
+  userInfoMsg: string;
+  displayPicMsg: string;
+  imgName: string;
   imgData: any;
   cropperSettings :CropperSettings;
-  croppedWidth: Number;
-  croppedHeight: Number;
+  croppedWidth: number;
+  croppedHeight: number;
 
   @ViewChild('cropper', undefined) cropper:ImageCropperComponent;
 
@@ -86,11 +89,11 @@ export class ProfileComponent implements OnInit {
 
     let binary = atob(base64Str.split(',')[1]);
     let array = [];
-    let mimeString= base64Str.split(',')[0].split(':')[1].split(';')[0];
+    let mimestring= base64Str.split(',')[0].split(':')[1].split(';')[0];
     for(let i = 0; i< binary.length; i++){
       array.push(binary.charCodeAt(i));
     }
-    return new Blob([new Uint8Array(array)], {type: mimeString});
+    return new Blob([new Uint8Array(array)], {type: mimestring});
   }
 
   editInfoClick(){
@@ -107,15 +110,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  onDPUpdateClick(){
-    this.showOverlay = true;
-  }
-
-  onOverlayCloseClick(){
-    this.showOverlay = false;
-    this.imgData = {};
-  }
-
   onDPUploadClick(){
     let formData:FormData = new FormData();
     let blob = this.convertToBlob( this.imgData.image);
@@ -130,6 +124,20 @@ export class ProfileComponent implements OnInit {
         this.displayPicMsg = "Some error occurred, please try agin later."
       }
       toast(this.displayPicMsg, 3000);
+    });
+  }
+
+  passwordChangeSubmit(validForm: boolean){
+    if(!validForm) return false;
+    if(this.newPass!=this.cnfPass) return false;
+    let userData={userId:this.userDetails._id, newPass:this.newPass}
+    this.authService.resetPassword(userData).subscribe( resp =>{
+      if(!resp.success) {
+        toast('Some Error occurred. Please try again later.',3000);
+        return null;
+      }
+      this.authService.loginSuccess(resp);
+      toast('Password updated successfully.',3000);;
     });
   }
 }

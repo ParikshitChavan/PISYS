@@ -5,40 +5,40 @@ import { AuthService } from '../../services/auth/auth.service';
 import { toast } from 'angular2-materialize';
 
 @Component({
-  selector: 'app-reset-password',
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css']
+  selector: 'app-init-account',
+  templateUrl: './init-account.component.html',
+  styleUrls: ['./init-account.component.css']
 })
-export class ResetPasswordComponent implements OnInit {
+export class InitAccountComponent implements OnInit {
   validLink: boolean = false;
   userData : {
-    userId:any,
+    uId:any,
     newPass: string
-  }={userId:null, newPass: ''}
+  }={uId:null, newPass: ''}
   pass: string;
   cnfPass: string;
-
+  
   constructor(private activatedRoute: ActivatedRoute,
     private sitelinkAPIService: SitelinkApiService,
     private authService:AuthService,
-    private router:Router) { }
+    private router:Router ) { }
 
   ngOnInit() {
     let data = {id: this.activatedRoute.snapshot.params.token};
     this.sitelinkAPIService.validateAccInit(data).subscribe( resp =>{
       if(resp.success){
         this.validLink = true;
-        this.userData.userId = resp.userId;   
+        this.userData.uId = resp.userId;   
       } 
       else toast('Some error occurred. Please try again later.',3000);
     });
   }
 
-  passwordResetSubmit(formValid: boolean){
+  passwordInitSubmit(formValid: boolean){
     if(!formValid) return false;
     if(this.pass!=this.cnfPass) return false;
     this.userData.newPass = this.pass;
-    this.authService.resetPassword(this.userData).subscribe( resp =>{
+    this.authService.initPassword(this.userData).subscribe( resp =>{
       if(!resp.success) {
         toast('Some Error occurred. Please try again later.',3000);
         return null;
@@ -47,5 +47,5 @@ export class ResetPasswordComponent implements OnInit {
       this.router.navigate(['dashboard']);
     });
   }
-
+  
 }

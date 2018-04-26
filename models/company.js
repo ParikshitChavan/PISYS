@@ -9,11 +9,8 @@ const User = require('../models/user');
 
 const companySchema = Schema({
     isActive: Boolean,
-    name: {
-        type: String,
-        required: true
-    },
-    established: {
+    name: { type: String, required: true },
+    est: {
         type: Date
     },
     branches:[{
@@ -23,10 +20,7 @@ const companySchema = Schema({
     }],
     admins: [{type: Schema.Types.ObjectId, ref: 'User'}],
     logo: { key: String, url: String },
-    phNum:{
-        type: {countryCode: String, number: Number},
-        required: true        //Careful for errors
-    }
+    phNum: { type: String, required: true }
 });
 
 const Company = module.exports = mongoose.model('Company', companySchema);
@@ -40,7 +34,15 @@ function validateEmail(email) {
                                 /*=====API Functions=====*/
 
 module.exports.getCompanyById = function(id, callback){
-    Company.findById(id, callback);
+    Company.findById(id, "-isActive").populate('admins', 'name email').exec(callback);
+}
+
+module.exports.getCompanyNames = function (callback){
+    Company.find({ isActive: true },"name", callback);
+}
+
+module.exports.updateCmpInfoById = function(id, cmpInfo, callback){
+    Company.findByIdAndUpdate(id,{ $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, branches: cmpInfo.branches }}, callback);
 }
 
 module.exports.addAdmin = function(companyId, newAdmin, callback){

@@ -1,6 +1,5 @@
 //API routes for the Company (Company Admins info will be embedded in company document)
 const express = require('express');
-const path = require('path');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
@@ -25,14 +24,13 @@ const uploadCompanyLogo = multer({
         bucket: 'piitscrm',
         acl: 'public-read',
         key: function (req, file, cb) {
-          cb(null, file.fieldname + Date.now() + path.extname(file.originalname));
+          cb(null, file.fieldname + Date.now());
         }
     }),
     fileFilter: function (req, file, cb){
       const filetypes = /jpeg|jpg|png|gif/;
-      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
       const mimetype = filetypes.test(file.mimetype);
-      if(mimetype && extname){
+      if(mimetype){
         return cb(null,true);
       } else {
         cb('Error: Please select an Image!');
@@ -46,21 +44,20 @@ router.post('/register', (req, res, next)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access != 2) return res.status(403).json({ success: false, message: "Not authorised" });
         Sitelink.createActivationLink(req.body.adminEmail, (err, link)=>{
-            let newAdmin = new Admin({
+            let newAdmin = new User({
                 isActive: True,
                 name: req.body.adminName,
                 email: req.body.adminEmail,
                 password: link,                 //save the link as the password until they use activation link to set password
-                DOB: req.body.DOB,
-                phNum: { countryCode: req.body.countryCode, number: req.body.number},
-                DP: {key: '', url: ''}
+                phNum: req.body.phNum,
+                DP: {key:"", url:"https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png"}
             });
             newAdmin.save((err, admin)=>{                               //1.save admin
                 if(err) throw err;
                 let newCompany = new Company({
                     isActive: true,
                     name: req.body.companyName,
-                    established: req.body.established,
+                    est: req.body.established,
                     branches:[{ name: req.body.branchName, isHead: true, address: req.body.companyAddress }],
                     admins: [admin._id],
                     logo: {key: '', url: ''},
@@ -97,6 +94,39 @@ router.get('/info', (req, res, next)=>{
     });    
 });
 
+router.get('/companyNames', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access!=2) return res.status(403).json({ success: false, message: "you are not authorised" });
+        User.getCompanyNames((err, companies)=>{
+            if (err) throw err;
+            res.json({success: true , companies: companies});
+        });
+    });    
+});
+
+router.post('/updateInfo', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        User.getCompany(decoded.id, (err, companyId)=>{
+            if (err) throw err;
+            if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
+            const companyData = {
+                name:req.body.name,
+                est:req.body.est,
+                phNum:req.body.phNum,
+                branches:req.body.branches
+            }
+            Company.updateCmpInfoById(companyId,  (err)=>{
+                if(err) throw err;
+                res.json({success: true , message: 'Company info updated successfully'});
+            });
+        });
+    });    
+});
+
 //admins adding their colleagues
 router.post('/registerAdmin', (req, res, next) => {
     let token = req.headers['x-access-token'];
@@ -105,24 +135,24 @@ router.post('/registerAdmin', (req, res, next) => {
         User.getCompany(decoded.id, (err, companyId) => {
             if (err) throw err;
             if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the requesting user" });
-            let newAdmin = new User({
-                isActive: True,
-                name: req.body.name,
-                email: req.body.email,
-                username: req.body.username,
-                password: req.body.password,
-                DOB: req.body.DOB,
-                phNum: { countryCode: req.body.countryCode, number: req.body.number},
-                DP: {key: '', url: ''},
-                company: companyId
-            });
-            Company.addAdmin(companyId, newAdmin, (err, company) => {
+            Sitelink.createActivationLink(req.body.email, (err, link)=>{
                 if (err) throw err;
-                return res.json({ success: true, message: "New admin added to the company" });
-                let recipient = {name: newAdmin.name, email: newAdmin.email};
-                mailer.sendActivationMail(recipient, link, (err) => {
-                    if(err) throw err;
-                    return res.status(200).json({ success: true, message: "admin added and activation mail is sent" });
+                let newAdmin = new User({
+                    isActive: True,
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: link,  //save the link as the password until they use activation link to set password
+                    access: 1,
+                    DP: {key:"", url:"https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png"},
+                    company: companyId
+                });
+                Company.addAdmin(companyId, newAdmin, (err, company) => {
+                    if (err) throw err;
+                    let recipient = {name: newAdmin.name, email: newAdmin.email};
+                    mailer.sendActivationMail(recipient, link, (err) => {
+                        if(err) throw err;
+                        return res.json({ success: true, message: "admin added and activation mail is sent" });
+                    });
                 });
             });
         });  

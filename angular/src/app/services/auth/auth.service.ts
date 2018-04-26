@@ -83,4 +83,23 @@ export class AuthService {
     headers.append('x-access-token', this.authToken);
     return this.http.post('http://localhost:3000/user/updateDisplayPic', uploadData, {headers: headers}).map(res => res.json());
   }
+
+  initPassword(data){
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    return this.http.post('http://localhost:3000/user/initPassword', data, {headers: headers}).map(res => res.json());
+  }
+
+  resetPassword(data){
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    return this.http.post('http://localhost:3000/user/resetPassword', data, {headers: headers}).map(res => res.json());
+  }
+
+  updatePassword(data){
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    return this.http.post('http://localhost:3000/user/updatePassword', data, {headers: headers}).map(res => res.json());
+  }
+
 }

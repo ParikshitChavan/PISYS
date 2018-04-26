@@ -65,7 +65,7 @@ router.post('/authenticate', (req, res, next)=>{
             if(err) throw err;
             if(!isMatch) return res.json({success:false, message:'Wrong password'});
             const userData = {name: user.name, email: user.email, DPUrl:user.DP.url};
-            const token = jwt.sign(user.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
+            const token = jwt.sign(userData.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
             res.json({
                 success: true,
                 token: token,
@@ -131,10 +131,10 @@ router.post('/requestEmailVerification', (req, res, next)=>{
 });
 
 //on page load validate the site link and its expiry 
-router.post('/validateSitelink:id', (req, res, next)=>{
-    Sitelink.validateSitelink(req.params.id, (err)=>{
-        if(err) return res.json({success: false, msg: err});
-        res.json({success:true, msg: 'verified link'});
+router.post('/validateSitelink', (req, res, next)=>{
+    Sitelink.validateSitelink(req.body.id, (err, userId)=>{
+        if(err) return res.json({success: false, userId: userId, msg: err});
+        res.json({success:true, userId: userId, msg: 'verified link'});
     });
 });
 
@@ -142,22 +142,32 @@ router.post('/resetPassword', (req, res, next)=>{
     Sitelink.deleteSitelinks(user.email, 'passwordReset', (err)=>{
         if(err) throw err;
         User.setPassword(req.body.userId, req.body.newPass, (err, user)=>{
-            if(err) return res.json({success: false, message: "Failed to change the Password"});
-           res.json({success: true, message: "Password changed successfully"});
+           if(err) return res.json({success: false, message: "Failed to change the Password"});
+           const userData = {name: user.name, email: user.email, DPUrl:user.DP.url};
+           const token = jwt.sign(userData.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
+           res.json({
+                success: true,
+                token: token,
+                userData: userData
+            });
         });
     });
 });
 
 router.post('/changePassword', (req, res, next)=>{
+    const currPass = req.body.currentPassword;
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.comparePassword(password, user.password, (err, isMatch)=>{
+        User.getUserPassById(decoded._id, (err, user)=>{
             if(err) throw err;
-            if(!isMatch) return res.json({success:false, message:'Wrong current password'});
-            User.setPassword(decoded._id, req.body.newPass, (err, user)=>{
+            User.comparePassword(currPass, user.password, (err, isMatch)=>{
                 if(err) throw err;
-                res.json({success: true, message: "Password changed successfully"});
+                if(!isMatch) return res.json({success:false, message:'Wrong current password'});
+                User.setPassword(decoded._id, req.body.newPass, (err, user)=>{
+                    if(err) throw err;
+                    res.json({success: true, message: "Password changed successfully"});
+                });
             });
         });
     });
@@ -169,7 +179,13 @@ router.post('/initPassword', (req, res, next)=>{
         markEmailVerified(user.email);      //verified because they came from email invitation
         Sitelink.deleteSitelinks(user.email, 'activation', (err)=>{
             if(err) throw err;
-            res.json({success: true, message: "Password changed successfully"});
+            const userData = {name: user.name, email: user.email, DPUrl:user.DP.url};
+            const token = jwt.sign(userData.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
+            res.json({
+                success: true,
+                token: token,
+                userData: userData
+            });
         });
     });
 });

@@ -82,9 +82,21 @@ module.exports.getUserInfoById = function(userId, callback){
     User.findById(userId,'name email phNum DP DOB', callback);
 }
 
+module.exports.getUserPassById = function(userId, callback){
+    User.findById(userId, 'password', callback);
+}
+
 module.exports.getUserByEmail = function(email, callback){
     const query = {email: email};
     User.findOne(query, 'name email DP password', callback);
+}
+
+module.exports.getUserIdByEmail = function(userId, callback){ //callback(err, id)
+    const query = {email: email};
+    User.findOne(query, 'name', { lean: true }, (err, user)=>{
+        if(err) callback(err, null);
+        callback(null, user._id);
+    });
 }
 
 module.exports.updateInfoById = function(userId, userInfo, callback){
@@ -143,7 +155,7 @@ module.exports.comparePasswords = function(candidatePassword, hash, callback){
 }
 
 module.exports.setPassword = function(userId, newPass, callback){
-    User.findById(userId, 'email password', (err, user)=>{
+    User.findById(userId, 'name email password DP', (err, user)=>{
         if(err) throw err;
         bcrypt.genSalt(10, (err, salt)=>{
             if(err) throw err;

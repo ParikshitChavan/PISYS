@@ -5,13 +5,11 @@ import { MaterializeModule } from 'angular2-materialize';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { InternationalPhoneModule } from 'ng4-intl-phone';
 
 //components
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HomeComponent } from './components/home/home.component';
-import { RegisterComponent } from './components/register/register.component';
 import { InternshipsComponent } from './components/internships/internships.component';
 import { InternshipComponent } from './components/internship/internship.component';
 import { CompaniesComponent } from './components/companies/companies.component';
@@ -27,6 +25,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 import { SuicaComponent } from './components/suica/suica.component';
 import { WeeklyReportsComponent } from './components/weekly-reports/weekly-reports.component';
+import { InitAccountComponent } from './components/init-account/init-account.component';
 
 //3rd party module
 import { ImageCropperModule } from "ngx-img-cropper";
@@ -34,6 +33,9 @@ import { ImageCropperModule } from "ngx-img-cropper";
 //services
 import { ValidationService } from './services/validation/validation.service';
 import { AuthService } from './services/auth/auth.service';
+import { SitelinkApiService } from './services/sitelinkAPI/sitelink-api.service';
+import { CompanyApiService } from './services/companyAPI/company-api.service';
+import { InternshipApiService } from './services/internshipAPI/internship-api.service';
 
 //guards
 import {AuthGuard} from "./guards/auth.guard"
@@ -41,8 +43,12 @@ import {AuthGuard} from "./guards/auth.guard"
 //directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
 
+
 const appRoutes: Routes =[
   {path: '', component: HomeComponent, pathMatch: 'full'},
+  {path: 'initAccount', component: InitAccountComponent},
+  {path: 'resetPassword', component: ResetPasswordComponent},
+  {path: 'verifyEmail', component: VerifyEmailComponent},
   {path: 'internships', component: InternshipsComponent, pathMatch: 'full', canActivate: [AuthGuard]},
   {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
@@ -72,7 +78,6 @@ const appRoutes: Routes =[
     HeaderComponent,
     FooterComponent,
     HomeComponent,
-    RegisterComponent,
     InternshipsComponent,
     InternshipComponent,
     CompaniesComponent,
@@ -88,7 +93,8 @@ const appRoutes: Routes =[
     VerifyEmailComponent,
     SuicaComponent,
     WeeklyReportsComponent,
-    EqualValidatorDirective
+    EqualValidatorDirective,
+    InitAccountComponent
   ],
   imports: [
     BrowserModule,
@@ -96,13 +102,15 @@ const appRoutes: Routes =[
     HttpModule,
     MaterializeModule,
     RouterModule.forRoot(appRoutes),
-    InternationalPhoneModule,
     ImageCropperModule
   ],
   providers: [
     ValidationService,
     AuthService,
-    AuthGuard
+    AuthGuard,
+    SitelinkApiService,
+    CompanyApiService,
+    InternshipApiService
   ],
   bootstrap: [AppComponent]
 })
