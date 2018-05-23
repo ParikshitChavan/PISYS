@@ -1,3 +1,45 @@
-<p>
-  accommodation works!
-</p>
+<form (submit)="upsertAcmdationInfo(AcmdationForm.valid)" #AcmdationForm=ngForm>
+  <div *ngIf= 'isWLMember' class="input-field col s12">
+    <label for="cost">Card Number</label>
+    <input id="cost" name='cost' type="text" [(ngModel)]="acmdationInfo.cost" required [disabled]="!editingAcmdationInfo" #cost="ngModel">
+    <div [hidden]= "cost.valid || (cost.pristine && !AcmdationForm.submitted)" class="red-text">
+      Please input a valid cost.
+    </div>
+  </div>
+  <div class="input-field col s12">
+    <label for="address">Address</label>
+    <input id="address" name='address' type="text" [(ngModel)]="acmdationInfo.address" required [disabled]="!editingAcmdationInfo" #address="ngModel">
+    <div [hidden]= "address.valid || (address.pristine && !AcmdationForm.submitted)" class="red-text">
+      Please input a valid address.
+    </div>
+  </div>
+  <div class="input-field col s12">
+    <label for="agName">Agency name</label>
+    <input id="agName" name='name' type="text" [(ngModel)]="acmdationInfo.agency.name" [disabled]="!editingAcmdationInfo">
+  </div>
+  <div class="input-field col s12">
+    <label for="agEmail">Agency contact email address</label>
+    <input id="agEmail" name='email' type="text" [(ngModel)]="acmdationInfo.agency.email" [disabled]="!editingAcmdationInfo">
+  </div>
+  <div class="input-field col s12">
+    <label for="agPhNum">Agency contact number</label>
+    <input id="agPhNum" name='phNum' type="text" [(ngModel)]="acmdationInfo.agency.phNum" [disabled]="!editingAcmdationInfo">
+  </div>
+  <div class="input-field">
+    <label for="mIn" class="active">Issued on</label>
+    <input id="mIn" type="text" name="mIn" [(ngModel)]="acmdationInfo.mIn" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
+  </div>
+  <div class="input-field">
+    <label for="mOut" class="active">Return date</label>
+    <input id="mOut" type="text" name="mOut" [(ngModel)]="acmdationInfo.mOut" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
+  </div>
+  <div *ngIf= 'isWLMember' class="input-field col s12">
+    <label for="cmnts">additional remarks/comments</label>
+    <textarea id="cmnts" class="materialize-textarea" name='cmnts' [(ngModel)]="acmdationInfo.cmnts" [disabled]="!editingAcmdationInfo"></textarea>
+  </div>
+  <div id="acmdationInfoFormActions" [hidden]="!editingAcmdationInfo">
+    <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+    <button type="button" (click)="editingAcmdationInfo = false" class="btn btn-cancel">Cancel</button>
+  </div>
+  <a *ngIf= 'isWLMember' id="acmdationInfoEditBtn" (click)="editingAcmdationInfo = true" class="btn-floating btn-large waves-effect waves-light red" [hidden]="editingAcmdationInfo"><i class="material-icons">edit</i></a>
+</form>  

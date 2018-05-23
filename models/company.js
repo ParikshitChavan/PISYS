@@ -38,7 +38,7 @@ module.exports.getCompanyById = function(id, callback){
 }
 
 module.exports.getCompanyNames = function (callback){
-    Company.find({ isActive: true },"name", callback);
+    Company.find({ isActive: true }, "name" , callback);
 }
 
 module.exports.updateCmpInfoById = function(id, cmpInfo, callback){
@@ -74,4 +74,23 @@ module.exports.getLogo = function(id, callback){
 
 module.exports.updateLogo = function(companyId, awsKey, awsUrl, callback){
     Company.findByIdAndUpdate(companyId, { $set: { logo: { key: awsKey, url: awsUrl } }}, callback);
+}
+
+module.exports.getSuggestions = function(searchTerm, callback){
+    let query = {name: { $regex : '.*' + searchTerm + '.*', $options: 'i' }};
+    Company.find(query).select('name logo').limit(10).lean().exec((err, companies)=>{
+        if(err) callback(err, null);
+        data = {};
+        for( let company of companies){
+            data[company.name] = company.logo.url
+        }
+        callback(null, data);
+    });
+}
+
+module.exports.getCompanyIdByName = function(name, callback){
+    Company.findOne({name:name}, '_id', {lean: true}, (err, company) =>{
+        if(err) callback(err, null);
+        callback(null, company._id);
+    });
 }

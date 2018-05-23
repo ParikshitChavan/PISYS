@@ -1,3 +1,42 @@
-<p>
-  suica works!
-</p>
+<form (submit)="upsertSuicaInfo(suicaForm.valid)" #suicaForm=ngForm>
+  <div class="input-field col s12">
+    <label for="cardNo">Card Number</label>
+    <input id="cardNo" name='cardNo' type="text" [(ngModel)]="suicaInfo.cardNo" required [disabled]="!editingSuicaInfo" #cardNo="ngModel">
+    <div [hidden]= "cardNo.valid || (cardNo.pristine && !suicaForm.submitted)" class="red-text">
+        Please input a valid card number.
+    </div>
+  </div>
+  <div class="input-field col s12">
+    <label for="line">Train line</label>
+    <input id="line" name='line' type="text" [(ngModel)]="suicaInfo.line" [disabled]="!editingSuicaInfo">
+  </div>
+  <div class="input-field col s12">
+    <label for="from">From station</label>
+    <input id="from" name='from' type="text" [(ngModel)]="suicaInfo.from" [disabled]="!editingSuicaInfo">
+  </div>
+  <div class="input-field col s12">
+    <label for="to">To station</label>
+    <input id="to" name='to' type="text" [(ngModel)]="suicaInfo.to" [disabled]="!editingSuicaInfo">
+  </div>
+  <div class="input-field col s12">
+    <label for="name">Issuing company</label>
+    <input id="name" name='name' type="text" [(ngModel)]="suicaInfo.name" [disabled]="!editingSuicaInfo">
+  </div>
+  <div class="input-field">
+    <label for="issuedOn" class="active">Issued On</label>
+    <input id="issuedOn" type="text" name="issuedOn" [(ngModel)]="suicaInfo.issuedOn" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
+  </div>
+  <div class="input-field">
+    <label for="expiry" class="active">Expiry</label>
+    <input id="expiry" type="text" name="expiry" [(ngModel)]="suicaInfo.expiry" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
+  </div>
+  <div *ngIf= 'isWLMember' class="input-field col s12">
+    <label for="cmnts">Additional remarks/comments</label>
+    <textarea id="cmnts" class="materialize-textarea" name='cmnts' [(ngModel)]="suicaInfo.cmnts" [disabled]="!editingSuicaInfo"></textarea>
+  </div>
+  <div id="suicaInfoFormActions" [hidden]="!editingSuicaInfo">
+      <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+      <button type="button" (click)="editingSuicaInfo = false" class="btn btn-cancel">Cancel</button>
+  </div>
+  <a *ngIf= 'isWLMember' id="suicaInfoEditBtn" (click)="editingSuicaInfo = true" class="btn-floating btn-large waves-effect waves-light red" [hidden]="editingSuicaInfo"><i class="material-icons">edit</i></a>
+</form>

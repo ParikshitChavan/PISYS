@@ -1,3 +1,105 @@
-<p>
-  weekly-reports works!
-</p>
+<div class="row">
+ <div class="tabs-vertical">
+    <div class="col s5 m4 l3">
+      <ul class="tabs">
+        <li *ngFor='let report of wReports; let i= index' (click)='onWeekClick(i)'>
+          <a (click)='onWeekClick(i)'>{{report.week.sDate}}~{{report.week.eDate}}</a>
+        </li>
+      </ul>
+      <a id="reptCreateBtn" (click)="editCreateReptClicked(-1)" class="btn-floating waves-effect waves-light red"><i class="material-icons">add</i></a>
+    </div>
+    <div class="col s7 m8 l9">
+      <div class="wrapper">
+        <p>{{wReports[viewingRept].rept.body}}</p>
+        <a id="reptEditBtn" (click)="editCreateReptClicked(viewingRept)" class="btn-floating waves-effect waves-light red"><i class="material-icons">edit</i></a>
+      </div>
+      <p class="right">{{wReports[viewingRept].rept.updated}}</p>
+      <div id="comments">
+        <div class="comment row" *ngFor='let comment of comments; let i = index'>
+          <div class="col s1">
+              <img src="comment.by.DP.url" alt="comment.by.name" class="col s1">
+          </div>
+          <div class="col s11">
+              <p>{{comment.by.name}}    {{comment.updated}}</p>
+              <p>{{comment.body}}</p>
+              <div id="cmtOptions" *ngIf="comment.by._id == decodedToken._id" class="fixed-action-btn" materialize ="floatingActionButton" [materializeParams]="[{direction: 'left', hoverEnabled: false}]">
+                <a class="btn-floating btn-large red"><i class="material-icons">more_horiz</i></a>
+                <ul>
+                  <li><a (click)='editComment(i)' class="btn-floating red"><i class="material-icons">edit</i></a></li>
+                  <li><a (click)='deleteComment(i)' class="btn-floating yellow darken-1"><i class="material-icons">delete</i></a></li>
+                </ul>
+              </div>
+          </div>
+        </div>
+        <form (submit)='creteComment(cmtForm.valid)' #cmtForm=ngForm>
+          <div class="input-field">
+            <label for="editingComment">Comment</label>
+            <textarea id="editingComment" class="materialize-textarea" name="body" [(ngModel)]="newCmt" #editingComment="ngModel" required></textarea>
+            <div [hidden]= "editingComment.valid || (editingComment.pristine && !cmtForm.submitted)" class="red-text">
+              Please input the daily report body.
+            </div>
+            <button type="submit" class="btn btn-submit">Comment<i class="material-icons right">send</i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+ </div>
+</div>
+
+<div id="modalRept" class="modal">
+  <div class="modal-content">
+    <h4>Create/Edit weekly report</h4>
+    <form (submit)="upsertWeeklyReport(formRpt.valid)" #formRpt=ngForm>
+      <div class="row">
+        <div class="col s6">
+          <div class="input-field">
+            <label for="sDate" class="active">Start Date</label>
+            <input id="sDate" type="text" name="DOB" [(ngModel)]="upsertWRept.sDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]" #reptSDate="ngModel" required>
+            <div [hidden]= "reptSDate.valid || (reptSDate.pristine && !formRpt.submitted)" class="red-text">
+                Please input the daily report body.
+              </div>
+          </div>
+        </div>
+        <div class="col s6">
+          <div class="input-field">
+            <label for="eDate" class="active">End Date</label>
+            <input id="eDate" type="text" name="DOB" [(ngModel)]="upsertWRept.eDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]" #reptEDate="ngModel" required>
+            <div [hidden]= "reptEDate.valid || (reptEDate.pristine && !formRpt.submitted)" class="red-text">
+                Please input the daily report body.
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="input-field">
+        <label for="report">Report body</label>
+        <textarea id="report" class="materialize-textarea" name="rept" [(ngModel)]="upsertWRept.rept" #reportBody="ngModel" required></textarea>
+        <div [hidden]= "reportBody.valid || (reportBody.pristine && !formRpt.submitted)" class="red-text">
+          Please input the daily report body.
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a (click)="formRpt.ngSubmit.emit()" class="modal-close waves-effect waves-green btn-flat">Save</a>
+    <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+  </div>
+</div>
+
+<div id="modalCmt" class="modal">
+  <div class="modal-content">
+    <h4>Create/Edit comment</h4>
+    <form (submit)="updateCommentReport(formCmtEdit.valid)" #formCmtEdit=ngForm>
+      <div class="input-field">
+        <label for="editingComment">Comment</label>
+        <textarea id="editingComment" class="materialize-textarea" name="body" [(ngModel)]="upsertCmt.body" #editingComment="ngModel" required></textarea>
+        <div [hidden]= "editingComment.valid || (editingComment.pristine && !formCmtEdit.submitted)" class="red-text">
+          Please input the Comment body.
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a (click)="formCmtEdit.ngSubmit.emit()" class="modal-close waves-effect waves-green btn-flat">Save</a>
+    <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+  </div>
+</div>

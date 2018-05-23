@@ -217,3 +217,22 @@ module.exports.getDP = function(userId, callback){
 module.exports.updateDisplayPic = function(userId, awsKey, awsUrl, callback){
     User.findByIdAndUpdate(userId, { $set: { DP: { key: awsKey, url: awsUrl } }}, callback);
 }
+
+module.exports.getSuggestions = function(searchTerm, callback){
+    let query = {name: { $regex : '.*' + searchTerm + '.*', $options: 'i' }};
+    User.find(query).select('email DP').limit(10).lean().exec((err, users)=>{
+        if(err) callback(err, null);
+        data = {};
+        for( let user of users){
+            data[user.email] = user.DP.url
+        }
+        callback(null, data);
+    });
+}
+
+module.exports.getUserIdByEmail = function(email, callback){
+    User.findOne( { email: email }, '_id', {lean: true}, (err, user) =>{
+        if(err) callback(err, null);
+        callback(null, user._id);
+    });
+}

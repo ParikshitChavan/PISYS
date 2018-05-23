@@ -1,3 +1,71 @@
-<p>
-  internship works!
-</p>
+<div id="basicInfo row">
+    <form (submit)='onBasicInfoSubmit(basicInfoForm.valid)' #basicInfoFrom="ngForm">
+        <div class="row">
+            <div class="col s12 l6">
+                <div class="input-field col s12">
+                    <label for="title">Title</label>
+                    <input id="title" name='title' type="text" [(ngModel)]="internship.title" required [disabled]="!editingBasicInfo" #title="ngModel">
+                    <div [hidden]= "title.valid || (title.pristine && !basicInfoForm.submitted)" class="red-text">
+                        Please input a valid title for the project.
+                    </div>
+                </div>
+                <div class="input-field col s12">
+                    <label for="description">Description</label>
+                    <input id="description" name='description' type="text" [(ngModel)]="internship.description" [disabled]="!editingBasicInfo">
+                </div>
+                <div class="input-field col s12">
+                    <label for="company">Company</label>
+                    <input id="company" name="company" type="text" [(ngModel)]="internship.company" disabled>
+                </div>
+                <div class="input-field col s6">
+                    <label for="startDate">Start Date</label>
+                    <input id="startDate" name='startDate' type="text" [(ngModel)]="internship.startDate" required [disabled]="!editingBasicInfo" #startDate="ngModel">
+                    <div [hidden]= "startDate.valid || (startDate.pristine && !basicInfoForm.submitted)" class="red-text">
+                        Please input a valid start date for the project.
+                    </div>
+                </div>
+                <div class="input-field col s6">
+                    <label for="endDate">Start Date</label>
+                    <input id="endDate" name='endDate' type="text" [(ngModel)]="internship.endDate" required [disabled]="!editingBasicInfo" #endDate="ngModel">
+                    <div [hidden]= "endDate.valid || (endDate.pristine && !basicInfoForm.submitted)" class="red-text">
+                        Please input a valid end date for the project.
+                    </div>
+                </div>
+            </div>
+            <div id="basicInfoRt" class="col s12 l6 right">
+                <div class="row">
+                    <img class="responsive-img" id="candiDP" src="internship.candidate.DP.url" alt="Candidate profile picture">
+                </div>
+                <div class="input-field col s12">
+                    <label for="candiName">Name</label>
+                    <input id="candiName" name='name' type="text" [(ngModel)]="internship.candidate.name" disabled>
+                </div>
+                <div class="input-field col s12">
+                    <label for="designation">Designation</label>
+                    <input id="designation" name='designation' type="text" [(ngModel)]="internship.designation" [disabled]="!editingBasicInfo">
+                </div>
+                <div class="input-field col s12">
+                    <label for="cmpGivenEmail">Company email id</label>
+                    <input id="cmpGivenEmail" name="cmpGivenEmail" type="text" [(ngModel)]="internship.cmpGivenEmail" [disabled]="!editingBasicInfo">
+                </div>
+            </div>
+            <div id="basicInfoFormActions" [hidden]="!editingBasicInfo">
+                <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+                <button type="button" (click)="editingBasicInfo = false" class="btn btn-cancel">Cancel</button>
+            </div>
+            <a id="BasicInfoEditBtn" (click)="editingBasicInfo = true" class="btn-floating btn-large waves-effect waves-light red" [hidden]='editingBasicInfo'><i class="material-icons">edit</i></a>
+        </div>
+    </form>
+</div>
+<div class="col s12">
+    <ul class="tabs">
+        <li class="tab"><a class="active" href="/weeklyReports">Weekly Reports</a></li>
+        <li class="tab"><a href="/accmmodation">Accommodation</a></li>
+        <li class="tab"><a href="/suica">Suica</a></li>
+        <li class="tab"><a href="/stipend">Stipend</a></li>
+        <li class="tab"><a href="/wifi">Wi-Fi</a></li>
+        <li class="tab"><a href="/feedback">Feedback</a></li>
+        <li class="tab"><a href="/joboffer">Job Offer</a></li>
+    </ul>
+</div>
+<router-outlet></router-outlet>

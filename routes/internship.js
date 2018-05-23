@@ -63,21 +63,31 @@ const uploadS3AcceptanceLetter = multer({
 //API routes for Internship data
 router.post('/init', (req, res, next)=>{
     let token = req.headers['x-access-token'];
-    User.validateToken(token, (err, serverStatus, decoded)=>{
+    User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
-        newInternship = new Internship({
-            candidate: req.body.candidateId,
-            company: req.body.companyId,
-        });
-        Internship.create((err)=>{
-            if(err) return res.json({success: false, message:err});
-            res.json({success:true, message: 'Internship created successfully and mail sent to company'});
+        Company.getIdByName(req.body.company, (err, companyId)=>{
+            if(err) res.json({success: false, message: err});
+            User.getIdByEmail(req.body.user, (err, candidateId) =>{
+                if(err) res.json({success: false, message: err});
+                newInternship = new Internship({
+                    company: companyId,
+                    candidate: candidateId,
+                    accommodation = {cost: 0, address: '', agency: { name: '', email: '', phNum: '' }, mIn: '', mOut: '', cmnts: ''},
+                    suica = { cardNo: 0, line: '', from: '', to: '', name: '', issued: '', expiry: '', acptd: false, cmnts:'' },
+                    wifi = {cost: 0, dId: 0, agency: { name: '', email: '', phNum: '' }, sDate: '', rDate: '', cmnts: '', acptd: false},
+                    payments = []
+                });
+                Internship.create(newInternship, (err) => {
+                    if(err) return res.json({success: false, message:err});
+                    res.json({success:true, message: 'Internship created successfully and mail sent to company'});
+                });
+            });
         });
     });
 });
 
-router.post('/upsertBasicInfo/:id', (req, res, next)=>{
+router.post('/upsertBasicInfo', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
@@ -88,7 +98,7 @@ router.post('/upsertBasicInfo/:id', (req, res, next)=>{
             location: req.body.location,
             description: req.body.description
         }
-        Internship.upsertBasicInfo(req.params.id, decoded._id, basicInfo, (err)=>{
+        Internship.upsertBasicInfo(req.body.id, decoded._id, basicInfo, (err)=>{
             if(err) throw err;
             res.json({success:true, message: 'Internship basic information updated successfully'});
         });
@@ -111,11 +121,17 @@ router.delete('/delete/:id', (req, res, next)=>{
     res.send("Deleting an internship");
 });*/
 
-router.post('/updateCandidateWeeklyReport/:id', (req, res, next)=>{
+router.post('/updateCandidateWeeklyReport', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        Internship.upsertSReport(req.params.id, decoded._id, (err)=>{
+        let data = {
+            id: req.body.intnshpId,
+            rept: req.body.rept,
+            week: req.body.week,
+            index: req.body.index
+        }
+        Internship.upsertSReport(data, (err)=>{
             if(err) throw err;
             res.json({success: true, msg: 'report updated successfully'});
         });
@@ -133,25 +149,35 @@ router.post('/updateCompanyWeeklyReport/:id', (req, res, next)=>{
     });
 });
 
-router.post('/updateWeeklyReportComment/:id',(req, res, next)=>{
+router.post('/updateWeeklyReportComment',(req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
-        let commentNumber = req.body.commentNumber ? req.body.commentNumber: null;
-        Internship.upsertWReportComment(req.params.id, req.body.week, commentNumber, req.body.comment, decoded._id, (err)=>{
+        let data = {
+            id: req.body.intnshpId,
+            reptIndex: req.body.wReportIndex,
+            body: req.body.body,
+            cmtIndex: req.body.index
+        }
+        Internship.upsertWReportComment(data, decoded._id, (err)=>{
             if(err) throw err;
             res.json({success: true, msg: 'report updated successfully'});
         });
     });
 });
 
-router.delete('/deleteWeeklyReportComment/:id',(req, res, next)=>{
+router.delete('/deleteWeeklyReportComment',(req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
-        Internship.deleteWReportComment(req.params.id, req.body.week, commentNumber, decoded._id, (err)=>{
+        let data = {
+            id: req.body.intnshpId,
+            reptIndex: req.body.wReportIndex,
+            cmtIndex: req.body.index
+        };
+        Internship.deleteWReportComment(data, decoded._id, (err)=>{
             if(err) throw err;
             res.json({success: true, msg: 'report deleted successfully'});
         });
@@ -230,7 +256,7 @@ router.post('/updateOfferLetter/:id',(req, res, next)=>{
 router.get('/downloadOfferLetter/:id', (req, res, next) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
         Internship.getOfferLetter(req.params.id, decoded._id, (err, file) => {
             if(err) return res.json({success: false, msg: err});
             if(!file.key) return res.json({success: false, msg: 'no file present'});
@@ -288,7 +314,18 @@ router.post('/updateCandidateValuation/:id',(req, res, next)=>{
     });
 });
 
-router.post('/updateAccommodationDetails/:id',(req, res, next)=>{
+router.post('/getAccommodationDetails',(req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        Internship.getAccommodation(req.body.intnshpId , decoded, (err, accommodation)=>{
+            if(err) throw err;
+            res.json({success: true, accommodation: accommodation});
+        });
+    });
+});
+
+router.post('/updateAccommodationDetails',(req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
@@ -296,47 +333,69 @@ router.post('/updateAccommodationDetails/:id',(req, res, next)=>{
         let accommodation = {
             cost: req.body.cost,
             address: req.body.address,
-            moveIn: req.body.moveInDate,
-            moveOut: req.body.moveOutDate,
-            agency: {
-                name: req.body.agencyName,
-                email: req.body.agencyEmail,
-                phNum: {countryCode: req.body.countryCode, number: req.body.phNum}
-            }
+            agency: req.body.agency,
+            mIn: req.body.mIn,
+            mOut: req.body.mOut,
+            cmnts: req.body.cmnts
         };
-        Internship.updateAccommodation(req.params.id, accommodation, (err)=>{
+        Internship.upsertAccommodation(req.body.intnshpId, accommodation, (err, newAccommodation)=>{
             if(err) throw err;
-            res.json({success: true, msg: 'Accommodation information updated successfully'});
+            res.json({success: true, accommodation: newAccommodation});
         });
     });
 });
 
-router.post('/updateSuicaDetails/:id',(req, res, next)=>{
+router.post('/getSuicaDetails',(req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        if(decoded.access==1) return res.status(401).json({ success: false, error: 'Unauthorised' });
+        Internship.getSuica(req.body.intnshpId , decoded, (err, suica)=>{
+            if(err) throw err;
+            res.json({success: true, suica: suica});
+        });
+    });
+});
+
+router.post('/updateSuicaDetails',(req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
         let suica = {
             cardNo: req.body.cardNo,
-            line: req.body.subwayLine,
-            from: req.body.fromStation,
-            to: req.body.toStation,
-            name: req.body.candidateName,
-            issued: req.body.IssuedOn,
-            expiry: req.body.expiryDate
+            line: req.body.line,
+            from: req.body.from,
+            to: req.body.to,
+            name: req.body.name,
+            issued: req.body.Issued,
+            expiry: req.body.expiry,
+            acptd: req.body.acptd
         }
-        Internship.updateSuica(req.params.id, suica, (err)=>{
+        Internship.upsertSuica(req.params.id, suica, (err, newSuica)=>{
             if(err) throw err;
-            res.json({success: true, msg: 'Suica information updated successfully'});
+            res.json({success: true, suica:newSuica});
         });
     });
 });
 
-router.post('/updateWifiDetails/:id',(req, res, next)=>{
+router.post('/getWiFiDetails',(req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
-        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        if(decoded.access==1) return res.status(401).json({ success: false, error: 'Unauthorised' });
+        Internship.getWiFi(req.body.intnshpId , decoded, (err, wifi)=>{
+            if(err) throw err;
+            res.json({success: true, wifi: wifi});
+        });
+    });
+});
+
+router.post('/updateWifiDetails',(req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        if(decoded.access!=2) return res.status(401).json({ success: false, error: 'Unauthorised' });
         let wifi = {
             cost: req.body.cost,
             agency: {
@@ -348,36 +407,67 @@ router.post('/updateWifiDetails/:id',(req, res, next)=>{
             returnDate: req.body.returnDate,
             details: req.body.extraDetails
         }
-        Internship.updateWifi(req.params.id, wifi, (err)=>{
+        Internship.upsertWifi(req.params.id, wifi, (err, newWifi)=>{
             if(err) throw err;
-            res.json({success: true, msg: 'Wifi information updated successfully'});
+            res.json({success: true, wifi:newWifi});
         });
     }); 
 });
 
-router.post('/updatePaymentDetails/:id',(req, res, next)=>{
+router.post('/getPayments',(req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
-        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
-        let paymentNumber = req.body.paymentNumber ? req.body.paymentNumber : null;
-        Internship.upsertPayment(req.params.id, paymentNumber, req.body.amount, req.body.date, (err)=>{
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        if(decoded.access==1) return res.status(401).json({ success: false, error: 'Unauthorised' });
+        Internship.getPayments(req.body.intnshpId , decoded, (err, payments)=>{
             if(err) throw err;
-            res.json({success: true, msg: 'Payment information updated successfully'});
+            res.json({success: true, payments: payments});
         });
     });
 });
 
-router.delete('/deletePayment/:id',(req, res, next)=>{
+router.post('/updatePayments',(req, res, next)=>{
     let token = req.headers['x-access-token'];
+    let payment = {
+        index: req.body.index,
+        amount: req.body.amount,
+        on: req.body.on
+    }
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
-        Internship.deletePayment(req.params.id, paymentNumber, (err)=>{
+        let paymentNumber = req.body.paymentNumber ? req.body.paymentNumber : null;
+        Internship.upsertPayment(req.params.id, paymentNumber, req.body.amount, req.body.date, (err, payments)=>{
             if(err) throw err;
-            res.json({success: true, msg: 'Payment deleted successfully'});
+            res.json({success: true, payments: payments});
+        });
+    });
+});
+
+router.post('/deletePayment',(req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        if(decoded.access!=2) return res.status(401).json({ success: false, error: 'Unauthorised' });
+        Internship.deletePayment(req.params.id, paymentNumber, (err, payments)=>{
+            if(err) throw err;
+            res.json({success: true, payments: payments});
         });
     }); 
 });
+
+router.post('/markPaymentAccepted',(req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        if(decoded.access==1) return res.status(401).json({ success: false, error: 'Unauthorised' });
+        Internship.markPaymentAccepted(req.params.id, decoded, paymentNumber, (err, payments)=>{
+            if(err) throw err;
+            res.json({success: true, payments: payments});
+        });
+    }); 
+});
+
+
 
 module.exports = router;

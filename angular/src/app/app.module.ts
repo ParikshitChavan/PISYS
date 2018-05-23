@@ -6,6 +6,9 @@ import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
+//3rd party module
+import { ImageCropperModule } from "ngx-img-cropper";
+
 //components
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -27,16 +30,13 @@ import { SuicaComponent } from './components/suica/suica.component';
 import { WeeklyReportsComponent } from './components/weekly-reports/weekly-reports.component';
 import { InitAccountComponent } from './components/init-account/init-account.component';
 
-//3rd party module
-import { ImageCropperModule } from "ngx-img-cropper";
-
 //services
 import { ValidationService } from './services/validation/validation.service';
 import { AuthService } from './services/auth/auth.service';
 import { SitelinkApiService } from './services/sitelinkAPI/sitelink-api.service';
 import { CompanyApiService } from './services/companyAPI/company-api.service';
 import { InternshipApiService } from './services/internshipAPI/internship-api.service';
-
+import { AutocompleteApiService } from './services/autocompleteAPI/autocomplete-api.service';
 //guards
 import {AuthGuard} from "./guards/auth.guard"
 
@@ -64,7 +64,7 @@ const appRoutes: Routes =[
       {path: 'wifi', component: WifiComponent},
       {path: 'accommodation', component: AccommodationComponent},
       {path: 'suica', component: SuicaComponent},
-      {path: 'payments', component: PaymentsComponent},
+      {path: 'stipend', component: PaymentsComponent},
       {path: 'feedback', component: FeedbackComponent},
       {path: 'jobOffer', component: JobOfferComponent},
       {path: 'weeklyReports', component: WeeklyReportsComponent}
@@ -110,7 +110,8 @@ const appRoutes: Routes =[
     AuthGuard,
     SitelinkApiService,
     CompanyApiService,
-    InternshipApiService
+    InternshipApiService,
+    AutocompleteApiService
   ],
   bootstrap: [AppComponent]
 })

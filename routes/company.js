@@ -190,4 +190,17 @@ router.delete('/delete', (req, res, next)=>{
     res.send("Deleting an Admin");
 });
 
+router.post('/suggestions', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        let searchTerm = req.body.searchTerm;
+        Company.getSuggestions(searchTerm, (err, suggestions) => {
+            if(err) return res.json({success: false, message:err});
+            res.json({success:true, data: suggestions});
+        });
+    });
+});
+
 module.exports = router;

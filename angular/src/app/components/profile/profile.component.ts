@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import {Router} from '@angular/router';
-import {AuthService} from "../../services/auth/auth.service";
+import { Router } from '@angular/router';
+import { AuthService } from "../../services/auth/auth.service";
 import { toast } from 'angular2-materialize';
 import { ImageCropperComponent, CropperSettings, Bounds } from "ngx-img-cropper";
 
@@ -21,7 +20,11 @@ export class ProfileComponent implements OnInit {
     phNum: string,
     DP: {key:string, url:string},
   }= {_id:'', name: "", DOB: "", phNum: "", DP: {key:"", url:""}};
-  currPass: string; newPass:string; cnfPass: string;
+  passwords: {
+    currPass: string,
+    newPass:string,
+    cnfPass: string,
+  } = {currPass: '', newPass: '', cnfPass:''}
   passwordMsg: string;
   userInfoMsg: string;
   displayPicMsg: string;
@@ -129,8 +132,8 @@ export class ProfileComponent implements OnInit {
 
   passwordChangeSubmit(validForm: boolean){
     if(!validForm) return false;
-    if(this.newPass!=this.cnfPass) return false;
-    let userData={userId:this.userDetails._id, newPass:this.newPass}
+    if(this.passwords.newPass!=this.passwords.cnfPass) return false;
+    let userData={userId:this.userDetails._id, newPass:this.passwords.newPass}
     this.authService.resetPassword(userData).subscribe( resp =>{
       if(!resp.success) {
         toast('Some Error occurred. Please try again later.',3000);

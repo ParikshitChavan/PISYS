@@ -81,8 +81,8 @@ module.exports.sendEmailVerificationMail = function(recipient, link, callback){
 }
 
 
-module.exports.initiateInternshipMails = function(companyId, link, callback){
-    if(!companyId || !link) return callback('Missing data');
+module.exports.initiateInternshipMails = function(companyId, link, callback){       //callback(success, error)
+    if(!companyId || !link) return callback(false, 'Missing data');
     Company.getAdmins(companyId, (err, admins) => {
         if(err) return callback(false, err);
         let errArr=[];
@@ -100,7 +100,7 @@ module.exports.initiateInternshipMails = function(companyId, link, callback){
             `;  //es6 template String with back ticks
             let mailOptions = {
                 from: '"PIITs Team" <piits@willings.co.jp>',
-                to: recipient.email,
+                to: admin.email,
                 subject: 'Invitation to edit basic details of newly added Internship',
                 text: '',
                 html: htmlBody
@@ -110,6 +110,7 @@ module.exports.initiateInternshipMails = function(companyId, link, callback){
             });
         }
         if(errArr.length == admins.length) return callback(false, 'email sending failed to all the admins');
-        callback(true,null);
+        else if(errArr.length) return callback(true, 'Email sending failed to some of the admins')
+        callback(true , null);
     });
 }

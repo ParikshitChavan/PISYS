@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { CompanyApiService } from "../../services/cmpAPI/company-api.service";
+import { CompanyApiService } from "../../services/companyAPI/company-api.service";
 import { toast } from 'angular2-materialize';
 import { ImageCropperComponent, CropperSettings, Bounds } from "ngx-img-cropper";
 

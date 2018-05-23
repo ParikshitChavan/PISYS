@@ -1,3 +1,43 @@
-<p>
-  payments works!
-</p>
+<div id="tblContent">
+  <table>
+    <tr>
+      <th>Amount</th>
+      <th>On</th>
+      <th>Received</th>
+    </tr>
+    <tr *ngFor="let payment of payments; let i = index" (click)='editCretePaymentClicked(i)'>
+      <td>{{payment.amount}}</td>
+      <td>{{payment.date}}</td>
+      <td>{{payment.acptd}}</td>
+    </tr>
+  </table>
+  <a *ngIf='isWLMember' (click)='editCretePaymentClicked(-1)' id="createIntnshpBtn" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+</div>
+
+<div id="stipendEditModal" class="modal modal-fixed-footer" materialize="modal">
+  <div class="modal-content">
+    <form (submit)='onUpsertSubmit(paymentForm.valid)' #paymentForm=ngForm>
+      <div class="row">
+        <div class="input-field col s6">
+          <label for="amount"> Stipend amount</label>
+          <input id="amount" name="amt" [(ngModel)]="upsertPayment.amt" type="text" required #amt="ngModel">
+          <div [hidden]= "amt.valid || (amt.pristine && !paymentForm.submitted)" class="red-text">
+            Please input a valid Amount.
+          </div>
+        </div>
+        <div class="input-field col s6">
+          <label for="on">Date</label>
+          <input id="on" name="date" [(ngModel)]="upsertPayment.date" type="text" required #date="ngModel">
+          <div [hidden]= "date.valid || (date.pristine && !paymentForm.submitted)" class="red-text">
+            Please input a valid date.
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a (click)="paymentForm.ngSubmit.emit()" class="modal-action modal-close waves-effect waves-green btn-flat ">Create</a>
+    <a class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
+    <a [hidden]="upsertPayment.index == -1" class="modal-action modal-close waves-effect waves-green btn-flat ">Delete</a>
+  </div>
+</div>

@@ -34,7 +34,7 @@
       </div>
       <div class="row">
         <div class="col s5">Date of birth</div>
-        <div class="col s7">{{userDetails.DOB | Date:'longDate'}}</div>
+        <div class="col s7">{{userDetails.DOB | date:'longDate'}}</div>
       </div>
       <div class="row">
         <div class="col s5">Phone:</div>
@@ -58,22 +58,21 @@
       <form (submit)="passwordChangeSubmit(form.valid)" #form2=ngForm>
         <div class="input-field col s6">
           <label for="currPass"> Current password</label>
-          <input id="currPass" name="currPass" [(ngModel)]="currPass" type="password" #currPass="ngModel"  required>
+          <input id="currPass" name="currPass" [(ngModel)]="passwords.currPass" type="password" #currPass="ngModel"  required>
           <div [hidden]= "currPass.valid || (currPass.pristine && !form2.submitted)" class="red-text">
             Please input current password.
           </div>
         </div>
         <div class="input-field col s6">
           <label for="newPass"> New password</label>
-          <input id="newPass" name="newPass" [(ngModel)]="newPass" type="password" #newPass="ngModel"  required validateEqual="cnfPass" reverse="true">
+          <input id="newPass" name="newPass" [(ngModel)]="passwords.newPass" type="password" #newPass="ngModel"  required validateEqual="cnfPass" reverse="true">
           <div [hidden]= "newPass.valid || (newPass.pristine && !form2.submitted)" class="red-text">
             Please input new Password.
           </div>
         </div>
-        </div>
         <div class="input-field col s6">
           <label for="cnfPass">Confirm Password</label>
-          <input id="cnfPass" name="cnfPass" [(ngModel)]="cnfPass" type="password" #cnfPass="ngModel"  required validateEqual="password" reverse="false">
+          <input id="cnfPass" name="cnfPass" [(ngModel)]="passwords.cnfPass" type="password" #cnfPass="ngModel"  required validateEqual="password" reverse="false">
           <div [hidden]= "cnfPass.valid || (cnfPass.pristine && !form2.submitted)" class="red-text">
             Passwords do not match.
           </div>
