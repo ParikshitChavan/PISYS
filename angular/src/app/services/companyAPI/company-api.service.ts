@@ -18,7 +18,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/comapny/info', {headers: headers}).map(res => res.json());
+    return this.http.get('http://localhost:3000/company/info', {headers: headers}).map(res => res.json());
   }
 
   getCmpNames(){
@@ -26,7 +26,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/comapny/companyNames', {headers: headers}).map(res => res.json());
+    return this.http.get('http://localhost:3000/company/companyNames', {headers: headers}).map(res => res.json());
   }
 
   updateCmpInfo(cmpInfo){
@@ -34,14 +34,14 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/comapny/updateInfo', cmpInfo, {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/company/updateInfo', cmpInfo, {headers: headers}).map(res => res.json());
   }
 
   updateLogo(uploadData){
     this.loadToken();
     let headers = new Headers;
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/updatelogo', uploadData, {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/company/updateLogo', uploadData, {headers: headers}).map(res => res.json());
   }
 
   addAdmin(newAdmin){
@@ -49,7 +49,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/comapny/registerAdmin', newAdmin, {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/company/registerAdmin', newAdmin, {headers: headers}).map(res => res.json());
   }
 
   createCompany(newCmp){
@@ -57,7 +57,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/comapny/register', newCmp, {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/company/register', newCmp, {headers: headers}).map(res => res.json());
   }
 
 }

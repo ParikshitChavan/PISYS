@@ -5,10 +5,6 @@ const mailer = require('../helpers/mailer');
 
 const Schema = mongoose.Schema;
 
-//importing sub models
-const Company = require('../models/company');
-const User = require('../models/user');
-
 const internshipSchema = Schema({
     active: Boolean,
     project: String,
@@ -151,6 +147,14 @@ module.exports.getInternshipDetails = function(id, userId, access, callback){
     }
 }
 
+module.exports.getInternshipsOfYear = function(year, callback){
+    query = {startDate: {$gte: new Date(year, 00, 00), $lt: new Date(year, 11, 32)}};
+    Internship.find(query)
+    .populate({path: 'candidate', select: 'name'})
+    .populate({path: 'company', select: 'name'})
+    .exec(callback);
+}
+
 module.exports.upsertSReport = function(data, callback){
     isValidCandidate(internshipId, userId, (err, isValid)=>{
         if(err) return callback(err);
@@ -268,17 +272,6 @@ module.exports.upsertBasicInfo = function(internshipId, userId, basicInfo, callb
                 /*let intershipLink =
                 mailer.studentNotification()*/
             });
-        });
-    });
-}
-
-module.exports.create = function(newInternship, callback){
-    newInternship.save((err, internship)=>{
-        if(err) return callback(err);
-        let link = 'https://www.willings.com/piits/internship/' + internship._id;
-        mailer.initiateInternshipMails(intership.company, link, (err, success)=>{
-            if(!success) return callback(err);
-            return callback(null);
         });
     });
 }

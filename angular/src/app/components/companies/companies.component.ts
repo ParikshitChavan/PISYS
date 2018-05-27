@@ -12,6 +12,7 @@ import { toast, MaterializeAction } from 'angular2-materialize';
 export class CompaniesComponent implements OnInit {
   autocompleteData = {};
   autocompleteActions = new EventEmitter<string|MaterializeAction>();
+  modalActions = new EventEmitter<string|MaterializeAction>();
   autocompleteParams = [{ data: this.autocompleteData}];
   newCmp: {
     name: string,
@@ -19,17 +20,19 @@ export class CompaniesComponent implements OnInit {
     address:any,
     admin: {adminName:string, adminEmail:string},
     phNum: string
-  } = {name:"", est:"", address:"", admin:{adminName:"", adminEmail:""}, phNum:""};
+  } = {name: "", est: "", address: "", admin: {adminName: "", adminEmail: ""}, phNum:""};
   newCmpMsg = "";
+  loadedCmps = [];
 
   constructor(private companyAPIService: CompanyApiService, private router:Router) { }
 
   ngOnInit() {
     this.companyAPIService.getCmpNames().subscribe(resp => {
-      if(!resp.success) return false;
-      for(let company in resp.companies){
-        let name = resp.companies[company].name
-        this.autocompleteData = {...this.autocompleteData, ...{name : null}};
+      if(!resp.success) return toast("Companies did not load, please try again later", 3000);
+      this.loadedCmps = resp.companies;
+      let cmpLength = this.loadedCmps.length;
+      for(let i=0; i<cmpLength; i++){
+        this.autocompleteData[this.loadedCmps[i].name] = null;
       }
       setTimeout(()=>{
         this.autocompleteActions.emit("autocomplete");
@@ -45,7 +48,12 @@ export class CompaniesComponent implements OnInit {
     this.companyAPIService.createCompany(this.newCmp).subscribe(resp =>{
       resp.success ? this.newCmpMsg = "New company created successfully" : this.newCmpMsg = "Some error occurred, please try agin later.";
       toast(this.newCmpMsg, 3000);
+      this.modalActions.emit({action:"modal",params:['close']});
     });
+  }
+
+  openCompanyPage(){
+
   }
 
 }

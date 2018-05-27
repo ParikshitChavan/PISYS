@@ -14,7 +14,6 @@ export class HeaderComponent implements OnInit {
     DPUrl: ""
   }
   dropdownActions = new EventEmitter<string|MaterializeAction>();
-  dropdownActions2 = new EventEmitter<string|MaterializeAction>();
   dropdownParams = [{ inDuration: 300, outDuration: 225, belowOrigin: true}];
 
   constructor(public authService: AuthService, private router:Router) { }
@@ -24,7 +23,6 @@ export class HeaderComponent implements OnInit {
       this.user = headerData;
       setTimeout(()=>{
         this.dropdownActions.emit("dropdown");
-        this.dropdownActions2.emit("dropdown");
       });
     });
 

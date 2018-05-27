@@ -25,6 +25,7 @@
           </div>
         </div>
         <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+        <button type="button" (click)='cancelInfoEditClick()' class="btn red">cancel</button>
       </form>
     </div>
     <div class="rawInfo" [hidden]="editing">
@@ -55,24 +56,24 @@
   <div class="col s12">
     <div class="container">
       <h3>Change password</h3>
-      <form (submit)="passwordChangeSubmit(form.valid)" #form2=ngForm>
-        <div class="input-field col s6">
+      <form (submit)="passwordChangeSubmit(form2.valid)" #form2=ngForm>
+        <div class="input-field col s12">
           <label for="currPass"> Current password</label>
           <input id="currPass" name="currPass" [(ngModel)]="passwords.currPass" type="password" #currPass="ngModel"  required>
           <div [hidden]= "currPass.valid || (currPass.pristine && !form2.submitted)" class="red-text">
             Please input current password.
           </div>
         </div>
-        <div class="input-field col s6">
+        <div class="input-field col s12">
           <label for="newPass"> New password</label>
-          <input id="newPass" name="newPass" [(ngModel)]="passwords.newPass" type="password" #newPass="ngModel"  required validateEqual="cnfPass" reverse="true">
+          <input id="newPass" name="newPass" [(ngModel)]="passwords.newPass" type="password" #newPass="ngModel" required validateEqual="cnfPass" reverse="true">
           <div [hidden]= "newPass.valid || (newPass.pristine && !form2.submitted)" class="red-text">
             Please input new Password.
           </div>
         </div>
-        <div class="input-field col s6">
+        <div class="input-field col s12">
           <label for="cnfPass">Confirm Password</label>
-          <input id="cnfPass" name="cnfPass" [(ngModel)]="passwords.cnfPass" type="password" #cnfPass="ngModel"  required validateEqual="password" reverse="false">
+          <input id="cnfPass" name="cnfPass" [(ngModel)]="passwords.cnfPass" type="password" #cnfPass="ngModel" required validateEqual="newPass" reverse="false">
           <div [hidden]= "cnfPass.valid || (cnfPass.pristine && !form2.submitted)" class="red-text">
             Passwords do not match.
           </div>

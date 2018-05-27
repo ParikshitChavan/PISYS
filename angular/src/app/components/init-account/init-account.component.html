@@ -1,19 +1,19 @@
 <div class="row">
-  <div class="col s12">
+  <div *ngIf='validLink' class="col s12">
     <div class="container">
       <h3>Password setup</h3>
       <form (submit)="passwordInitSubmit(form.valid)" #form=ngForm>
         <div class="input-field col s6">
           <label for="password">Password</label>
-          <input id="password" name="password" [(ngModel)]="registerUser.password" type="password" #password="ngModel"  required validateEqual="cnfPass" reverse="true">
+          <input id="password" name="password" [(ngModel)]="pass" type="password" #password="ngModel"  required validateEqual="cnfPassword" reverse="true">
           <div [hidden]= "password.valid || (password.pristine && !form.submitted)" class="red-text">
             Please input a Password.
           </div>
         </div>
         <div class="input-field col s6">
           <label for="cnfPass">Confirm Password</label>
-          <input id="cnfPass" name="cnfPass" [(ngModel)]="registerUser.cnfPass" type="password" #cnfPass="ngModel"  required validateEqual="password" reverse="false">
-          <div [hidden]= "cnfPass.valid || (cnfPass.pristine && !form.submitted)" class="red-text">
+          <input id="cnfPass" name="cnfPass" [(ngModel)]="cnfPass" type="password" #cnfPassword="ngModel"  required validateEqual="password" reverse="false">
+          <div [hidden]= "cnfPassword.valid || (cnfPassword.pristine && !form.submitted)" class="red-text">
             Passwords do not match.
           </div>
         </div>

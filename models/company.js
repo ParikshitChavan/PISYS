@@ -3,22 +3,15 @@ const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 const config = require('../config/cfg');
 
-//importing Other models
-const Internship = require('../models/internship');
-const User = require('../models/user');
-
 const companySchema = Schema({
     isActive: Boolean,
     name: { type: String, required: true },
     est: {
         type: Date
     },
-    branches:[{
-        name: String,
-        isHead: Boolean,
-        address: String
-    }],
+    address: String,
     admins: [{type: Schema.Types.ObjectId, ref: 'User'}],
+    internships: [{type: Schema.Types.ObjectId, ref: 'Internship'}],
     logo: { key: String, url: String },
     phNum: { type: String, required: true }
 });
@@ -42,7 +35,7 @@ module.exports.getCompanyNames = function (callback){
 }
 
 module.exports.updateCmpInfoById = function(id, cmpInfo, callback){
-    Company.findByIdAndUpdate(id,{ $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, branches: cmpInfo.branches }}, callback);
+    Company.findByIdAndUpdate(id,{ $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address }}, callback);
 }
 
 module.exports.addAdmin = function(companyId, newAdmin, callback){
@@ -56,19 +49,25 @@ module.exports.addAdmin = function(companyId, newAdmin, callback){
     }); 
 }
 
-module.exports.getAdmins = function(companyId, callback){
-    Company.findById(companyId, 'admins').lean()
+module.exports.addInternshipAndGetAdmins = function(companyId, InternshipId, callback){
+    let admins = [];
+    Company.findById(companyId)
     .populate({ path: 'admins', select: 'name email' })
     .exec((err, company)=>{
         if(err) return callback(err, null);
-        return callback(null, company.admins);
+        admins = company.admins;
+        company.internships.push(InternshipId);
+        company.save((err)=>{
+            if(err) return callback(err, null);
+            callback(null, admins);
+        });
     });
 }
 
 module.exports.getLogo = function(id, callback){
     Company.findById(id, 'logo', {lean: true}, (err, company) => {
         if(err) return callback(err, null);
-        return callback(null, user.logo);
+        return callback(null, company.logo);
     });
 }
 

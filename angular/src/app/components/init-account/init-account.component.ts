@@ -24,7 +24,7 @@ export class InitAccountComponent implements OnInit {
     private router:Router ) { }
 
   ngOnInit() {
-    let data = {id: this.activatedRoute.snapshot.params.token};
+    let data = { id: this.activatedRoute.snapshot.params.token };
     this.sitelinkAPIService.validateAccInit(data).subscribe( resp =>{
       if(resp.success){
         this.validLink = true;

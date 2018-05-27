@@ -3,11 +3,6 @@ const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 const config = require('../config/cfg');
 
-//importing Other models
-const Internship = require('../models/internship');
-const User = require('../models/user');
-const Company = require('../models/company');
-
 const sitelinkSchema = Schema({
     sentTo: {type: String, required: true},
     expiry: Date,
@@ -67,38 +62,6 @@ module.exports.createEmailVerificationLink = function(email, callback){
         if(err) return callback(err, null);
         let link = "http:/localhost:3000/users/verifyemail/:" + newSitelink._id;
         callback(null, link);
-    });
-}
-
-module.exports.validateSitelink = function(token, callback){        //callback(err, userId)
-    Sitelink.findById(token, (err, sitelink)=>{
-        if(err) throw err;
-        if(!sitelink) return callback('sitelink not valid', null);
-        if(sitelink.expiry){
-            var currDate = new Date();
-            if(expiry - currDate < 0) return callback('sitelink expired', null);
-            else {
-                User.getUserIdByEmail(sitelink.sentTo, (err, userId)=>{
-                    if(err) throw err;
-                    return callback(null, userId);
-                });
-            }
-        }
-        else{
-            if(sitelink.type == 'activation'){
-                User.getUserIdByEmail(sitelink.sentTo, (err, userId)=>{
-                    if(err) throw err;
-                    return callback(null, userId);
-                });
-            }
-            if(sitelink.type == 'emailVerification') {
-                User.markEmailVerified(sitelink.sentTo);
-                sitelink.remove((err)=>{
-                    if(err) throw err;
-                    return callback(null, null);
-                });
-            }
-        }
     });
 }
 

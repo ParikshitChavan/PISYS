@@ -8,7 +8,8 @@ const multerS3 = require('multer-s3');
 const mailer = require('../helpers/mailer');
 //models
 const Internship = require('../models/internship');
-const User = require('../models/user');              
+const User = require('../models/user');
+const Company = require('../models/company');       
 //config
 const config = require('../config/cfg');
 
@@ -61,28 +62,52 @@ const uploadS3AcceptanceLetter = multer({
 }).single('acceptanceLetter');
 
 //API routes for Internship data
-router.post('/init', (req, res, next)=>{
+router.post('/initInternship', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
-        Company.getIdByName(req.body.company, (err, companyId)=>{
-            if(err) res.json({success: false, message: err});
-            User.getIdByEmail(req.body.user, (err, candidateId) =>{
-                if(err) res.json({success: false, message: err});
+        Company.getCompanyIdByName(req.body.companyName, (err, companyId)=>{
+            if(err) return res.json({success: false, message: err});
+            User.getUserIdByEmail(req.body.candidateEmail, (err, candidateId) =>{
+                if(err) return res.json({success: false, message: err});
                 newInternship = new Internship({
                     company: companyId,
                     candidate: candidateId,
-                    accommodation = {cost: 0, address: '', agency: { name: '', email: '', phNum: '' }, mIn: '', mOut: '', cmnts: ''},
-                    suica = { cardNo: 0, line: '', from: '', to: '', name: '', issued: '', expiry: '', acptd: false, cmnts:'' },
-                    wifi = {cost: 0, dId: 0, agency: { name: '', email: '', phNum: '' }, sDate: '', rDate: '', cmnts: '', acptd: false},
-                    payments = []
+                    accommodation: {cost: 0, address: '', agency: { name: '', email: '', phNum: '' }, mIn: '', mOut: '', cmnts: ''},
+                    suica : { cardNo: 0, line: '', from: '', to: '', name: '', issued: '', expiry: '', acptd: false, cmnts:'' },
+                    wifi: {cost: 0, dId: 0, agency: { name: '', email: '', phNum: '' }, sDate: '', rDate: '', cmnts: '', acptd: false},
+                    payments: []
                 });
-                Internship.create(newInternship, (err) => {
-                    if(err) return res.json({success: false, message:err});
-                    res.json({success:true, message: 'Internship created successfully and mail sent to company'});
+                newInternship.save((err, internship) => {
+                    if(err) return res.json({success: false, error:err});
+                    let link = 'https://www.willings.com/piits/internship/' + internship._id;
+                    Company.addInternshipAndGetAdmins(companyId, internship._id, (err, admins)=>{
+                        if(err) return res.json({success: false, error: err });
+                        User.addInternship(candidateId, internship._id, (err)=>{
+                            if(err) return res.json({success: false, error: err });
+                            mailer.initiateInternshipMails(admins, link, (success, ErrorMsg)=>{
+                                if(!success) return res.json({ success: false, error: ErrorMsg });
+                                res.json({ success: true, error: 'Internship created successfully and mail sent to company' });
+                            });
+                        });
+                    });
                 });
             });
+        });
+    });
+});
+
+router.post('/yearInternships', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    let year = req.body.year;
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        if(year=='' || year==null) return res.status(401).json({ success: false, message: 'No Year provided' });
+        Internship.getInternshipsOfYear(year, (err, internships)=>{
+            if(err) return res.json({success: false, message: err});
+            res.json({success:true, internships: internships});
         });
     });
 });

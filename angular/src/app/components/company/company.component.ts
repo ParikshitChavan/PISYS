@@ -19,9 +19,9 @@ export class CompanyComponent implements OnInit {
     est : any,
     phNum: String,
     admins:any[],
-    branches: any[],
+    address:string,
     logo: {key:String, url:String}
-  }= {name: "", est: "", phNum: "", admins:[], branches:[{address:''}], logo: {key:"", url:""}};
+  }= {name: "", est: "", phNum: "", admins:[], address:'', logo: {key:"", url:""}};
   newAdmin = {
     name:'',
     email:''
@@ -62,6 +62,11 @@ export class CompanyComponent implements OnInit {
     this.imgData = {};
    }
 
+   cropped(bounds:Bounds) {
+    this.croppedHeight = bounds.bottom-bounds.top;
+    this.croppedWidth = bounds.right-bounds.left;
+  }
+
   ngOnInit() {
     this.companyAPIService.getCmpInfo().subscribe(resp => {
       if(!resp.success) return false;
@@ -70,10 +75,6 @@ export class CompanyComponent implements OnInit {
       console.log(err);
       return false;
     });
-  }
-  cropped(bounds:Bounds) {
-    this.croppedHeight = bounds.bottom-bounds.top;
-    this.croppedWidth = bounds.right-bounds.left;
   }
   
   fileChangeListener($event) {
@@ -104,6 +105,11 @@ export class CompanyComponent implements OnInit {
     Materialize.updateTextFields();
   }
 
+  cancelInfoEditClick(){
+    this.editing = false;
+    Materialize.updateTextFields();
+  }
+
   addAdminClick(){
     this.editingAdmin = true;
     Materialize.updateTextFields();
@@ -131,12 +137,11 @@ export class CompanyComponent implements OnInit {
     });
   }
 
-  onDPUploadClick(){
+  onLogoUploadClick(){
     let formData:FormData = new FormData();
     let blob = this.convertToBlob( this.imgData.image);
     formData.append('companyLogo', blob);
     this.companyAPIService.updateLogo(formData).subscribe(resp =>{
-      console.log(resp);
       if (resp.success){
         this.companyDetails.logo.url =  resp.newLink;
         this.logoMsg = "Company logo updated successfully."

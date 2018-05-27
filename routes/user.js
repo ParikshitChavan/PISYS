@@ -64,8 +64,8 @@ router.post('/authenticate', (req, res, next)=>{
         User.comparePasswords(password, user.password, (err, isMatch)=>{
             if(err) throw err;
             if(!isMatch) return res.json({success:false, message:'Wrong password'});
-            const userData = {name: user.name, email: user.email, DPUrl:user.DP.url};
-            const token = jwt.sign(userData.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
+            const userData = {_id:user._id, name: user.name, access:user.access, email: user.email, DPUrl:user.DP.url};
+            const token = jwt.sign(userData, config.secret, {expiresIn: 604800});   //create token with 1 week validity
             res.json({
                 success: true,
                 token: token,
@@ -80,6 +80,7 @@ router.get('/userInfo', (req, res, next)=>{
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         User.getUserInfoById(decoded._id, (err, user)=>{
+            if(err) throw err;
             res.status(serverStatus).json({ success: true, profileData: user });
         });
     });
@@ -132,23 +133,26 @@ router.post('/requestEmailVerification', (req, res, next)=>{
 
 //on page load validate the site link and its expiry 
 router.post('/validateSitelink', (req, res, next)=>{
-    Sitelink.validateSitelink(req.body.id, (err, userId)=>{
+    User.validateSitelink(req.body.id, (err, userId)=>{
         if(err) return res.json({success: false, userId: userId, msg: err});
         res.json({success:true, userId: userId, msg: 'verified link'});
     });
 });
 
 router.post('/resetPassword', (req, res, next)=>{
-    Sitelink.deleteSitelinks(user.email, 'passwordReset', (err)=>{
+    User.getUserInfoById(req.body.userId, (err, user)=>{
         if(err) throw err;
-        User.setPassword(req.body.userId, req.body.newPass, (err, user)=>{
-           if(err) return res.json({success: false, message: "Failed to change the Password"});
-           const userData = {name: user.name, email: user.email, DPUrl:user.DP.url};
-           const token = jwt.sign(userData.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
-           res.json({
-                success: true,
-                token: token,
-                userData: userData
+        Sitelink.deleteSitelinks(user.email, 'passwordReset', (err)=>{
+            if(err) throw err;
+            User.setPassword(user._id, req.body.newPass, (err, user)=>{
+               if(err) return res.json({success: false, message: "Failed to change the Password"});
+               const userData = {_id:user._id, name: user.name, access:user.access, email: user.email, DPUrl:user.DP.url};
+               const token = jwt.sign(userData, config.secret, {expiresIn: 604800});   //create token with 1 week validity
+               res.json({
+                    success: true,
+                    token: token,
+                    userData: userData
+                });
             });
         });
     });
@@ -176,17 +180,18 @@ router.post('/changePassword', (req, res, next)=>{
 router.post('/initPassword', (req, res, next)=>{
     User.setPassword(req.body.uId, req.body.newPass, (err, user)=>{
         if(err) return res.json({success: false, message: "Failed to change the Password"});
-        markEmailVerified(user.email);      //verified because they came from email invitation
-        Sitelink.deleteSitelinks(user.email, 'activation', (err)=>{
-            if(err) throw err;
-            const userData = {name: user.name, email: user.email, DPUrl:user.DP.url};
-            const token = jwt.sign(userData.toJSON(), config.secret, {expiresIn: 604800});   //create token with 1 week validity
-            res.json({
-                success: true,
-                token: token,
-                userData: userData
+        User.markEmailVerified(user.email, ()=>{        //verified because they came from email invitation
+            Sitelink.deleteSitelinks(user.email, 'activation', (err)=> {
+                if(err) throw err;
+                const userData = {_id:user._id, name: user.name, access:user.access, email: user.email, DPUrl:user.DP.url};
+                const token = jwt.sign(userData, config.secret, {expiresIn: 604800});   //create token with 1 week validity
+                res.json({
+                    success: true,
+                    token: token,
+                    userData: userData
+                });
             });
-        });
+        });      
     });
 });
 
@@ -239,6 +244,7 @@ router.get('/isWLMember', (req ,res, next)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access == 2) return res.json({ success: true, isWLMember: true });
         res.json({ success: true, isWLMember: false });
+    });
 });
 
 module.exports = router;

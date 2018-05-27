@@ -1,6 +1,25 @@
 <div class="row">
   <div class="col s12 l6" id="basicInfo">
     <h3>Basic Details</h3>
+    <div class="rawInfo" [hidden]="editing">
+      <div class="row">
+        <div class="col s5">Name:</div>
+        <div class="col s7">{{companyDetails.name}}</div>
+      </div>
+      <div class="row">
+        <div class="col s5">Address:</div>
+        <div class="col s7">{{companyDetails.address}}</div>
+      </div>
+      <div class="row">
+        <div class="col s5">Establishment date:</div>
+        <div class="col s7">{{companyDetails.est | date:'longDate'}}</div>
+      </div>
+      <div class="row">
+        <div class="col s5">Phone:</div>
+        <div class="col s7">{{companyDetails.phNum}}</div>
+      </div>
+      <a id="infoEditBtn" (click)="editInfoClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
+    </div>
     <div class="formArea" [hidden]="!editing">
       <form (submit)="cmpInfoSubmit(form.valid)" #form=ngForm>
         <div class="row">
@@ -14,8 +33,8 @@
         </div>
         <div class="row">
           <div class="input-field">
-            <input id="address" type="text" name="address" [(ngModel)]="companyDetails.branches[0].address">
-            <label for="address" class="active">Established</label>
+            <input id="address" type="text" name="address" [(ngModel)]="companyDetails.address">
+            <label for="address" class="active">Address</label>
           </div>
         </div>
         <div class="row">
@@ -31,26 +50,8 @@
           </div>
         </div>
         <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+        <button type="button" (click)='cancelInfoEditClick()' class="btn red">cancel</button>
       </form>
-    </div>
-    <div class="rawInfo" [hidden]="editing">
-      <div class="row">
-        <div class="col s5">Name:</div>
-        <div class="col s7">{{companyDetails.name}}</div>
-      </div>
-      <div class="row">
-        <div class="col s5">Address:</div>
-        <div class="col s7">{{companyDetails.branches[0].address}}</div>
-      </div>
-      <div class="row">
-        <div class="col s5">Establishment date:</div>
-        <div class="col s7">{{companyDetails.est | date:'longDate'}}</div>
-      </div>
-      <div class="row">
-        <div class="col s5">Phone:</div>
-        <div class="col s7">{{companyDetails.phNum}}</div>
-      </div>
-      <a id="infoEditBtn" (click)="editInfoClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
     </div>
   </div>
   <div class="col s12 l6" id="logo">
@@ -60,7 +61,9 @@
       <a href="#logoUploadModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
     </div>
   </div>
-  <div class="col s12" id="adminManagement">
+</div>
+<div class="col s12" id="adminManagement">
+    <h3>Admins management</h3>
     <div class="container">
       <table class="striped centered">
         <thead>
@@ -72,23 +75,23 @@
         </thead>
         <tbody>
           <tr *ngFor="let admin of companyDetails.admins; let i = index">
-            <td>{{i}}</td>
+            <td>{{i+1}}</td>
             <td>{{admin.name}}</td>
             <td>{{admin.email}}</td>
           </tr>
         </tbody>      
       </table>
       <div id="addAdminArea">
-        <div id="addAdminBtn" [hidden]="editingAdmin">
-          <a (click)="addAdminClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+        <div id="addAdminBtnArea" [hidden]="editingAdmin">
+          <a (click)="addAdminClick()" id="addAdminBtn" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
         </div>
         <div id="addAdminForm" [hidden]="!editingAdmin">
           <form (submit)="adminInfoSubmit(adminForm.valid)" #adminForm=ngForm>
             <div class="row">
               <div class="col s12 l6 input-field">
                 <label for="adminName">Name</label>
-                <input type="text" name="name" id="adminName" [(ngModel)]="newAdmin.name" required>
-                <div [hidden]= "email.valid || (email.pristine && !adminForm.submitted)" class="red-text">
+                <input type="text" name="name" id="adminName" [(ngModel)]="newAdmin.name" required #name="ngModel">
+                <div [hidden]= "name.valid || (name.pristine && !adminForm.submitted)" class="red-text">
                   Please input a name.
                 </div>
               </div>
@@ -106,8 +109,8 @@
         </div>
       </div>
     </div>
-  </div>
 </div>
+
 <div id="logoUploadModal" class="modal modal-fixed-footer" materialize="modal">
   <div class="modal-content">
     <img-cropper [image]="imgData" [settings]="cropperSettings" (onCrop)="cropped($event)"></img-cropper>

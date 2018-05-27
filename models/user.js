@@ -5,9 +5,6 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/cfg');
 const mailer = require('../helpers/mailer')
 
-//importing other models
-const Company = require('../models/company');
-const Internship = require('../models/internship');
 const Sitelink = require ('../models/sitelink');
 
 const userSchema = Schema({
@@ -88,7 +85,7 @@ module.exports.getUserPassById = function(userId, callback){
 
 module.exports.getUserByEmail = function(email, callback){
     const query = {email: email};
-    User.findOne(query, 'name email DP password', callback);
+    User.findOne(query, 'name email DP access password', callback);
 }
 
 module.exports.getUserIdByEmail = function(userId, callback){ //callback(err, id)
@@ -104,9 +101,9 @@ module.exports.updateInfoById = function(userId, userInfo, callback){
 }
 
 module.exports.getCompany = function(userId, callback){
-    User.findById(id, 'company', (err, user)=>{
+    User.findById(userId, 'company', {lean: true}, (err, user)=>{
         if (err) return callback(err, null);
-        if (!user.company) return callback(null, null);
+        if (!user.hasOwnProperty('company')) return callback(null, null);
         callback(null, user.company);
     });
 }
@@ -168,10 +165,11 @@ module.exports.setPassword = function(userId, newPass, callback){
     });
 }
 
-module.exports.markEmailVerified = function(email){
+module.exports.markEmailVerified = function(email, callback){
     let query = {email: email};
     User.findOneAndUpdate(query, {emailVerified: true}, (err)=>{
         if(err) throw err;
+        callback();
     });
 }
 
@@ -234,5 +232,37 @@ module.exports.getUserIdByEmail = function(email, callback){
     User.findOne( { email: email }, '_id', {lean: true}, (err, user) =>{
         if(err) callback(err, null);
         callback(null, user._id);
+    });
+}
+
+module.exports.validateSitelink = function(token, callback){        //callback(err, userId)
+    Sitelink.findById(token, (err, sitelink)=>{
+        if(err) throw err;
+        if(!sitelink) return callback('sitelink not valid', null);
+        if(sitelink.expiry){
+            var currDate = new Date();
+            if(expiry - currDate < 0) return callback('sitelink expired', null);
+            else {
+                User.getUserIdByEmail(sitelink.sentTo, (err, userId)=>{
+                    if(err) throw err;
+                    return callback(null, userId);
+                });
+            }
+        }
+        else{
+            if(sitelink.type == 'activation'){
+                User.getUserIdByEmail(sitelink.sentTo, (err, userId)=>{
+                    if(err) throw err;
+                    return callback(null, userId);
+                });
+            }
+            if(sitelink.type == 'emailVerification') {
+                User.markEmailVerified(sitelink.sentTo);
+                sitelink.remove((err)=>{
+                    if(err) throw err;
+                    return callback(null, null);
+                });
+            }
+        }
     });
 }

@@ -1,7 +1,7 @@
 <ul>
-  <li *ngfor="let year of yearArr" class="tab"><a id="year" (click)="onYearTabClick(year)">{{year}}</a></li>
+  <li *ngFor="let year of yearArr" class="tab"><a id="year" (click)="onYearTabClick(year)">{{year}}</a></li>
 </ul>
-<div class="intershipsList">
+<div *ngIf="internships.length" class="intershipsList">
   <table>
     <thead>
       <tr>
@@ -17,7 +17,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngfor="let internship of internships; let i = index" (click)="onIntnshpClick(i)">
+      <tr *ngFor ="let internship of internships; let i = index" (click)="onIntnshpClick(i)">
         <td>
           {{i + 1}}
         </td>
@@ -31,29 +31,29 @@
     </tbody>
   </table>
 </div>
-<a href="#IntnshpCreateModal" id="addPaymentBtn" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+<a href="#initIntenshpModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
 
-<div id="IntnshpCreateModal" class="modal modal-fixed-footer" materialize="modal">
+<div id="initIntenshpModal" class="modal modal-fixed-footer" materialize="modal">
   <div class="modal-content">
-    <form (submit)"onIntnshpCreateClick(form.valid)" #form=ngForm>
+    <form (ngSubmit)="onIntnshpCreateClick(form.valid)" #form=ngForm>
       <div class="input-field col s12">
         <label for="company"> Company Name</label>
-        <input id="company" name="companyName" [(ngModel)]="newIntnshp.companyName" type="text" #cmpName="ngModel" required [formControl]="companySearchControl" materialize="autocomplete" [materializeParams]="companyAutocompleteParams" [materializeActions]="companySearchBoxAction">
-        <div [hidden]= "cmpName.valid || (cmpName.pristine && !form.submitted)" class="red-text">
+        <input id="company" type="text" name="companyName" [formControl]="companySearchControl" [(ngModel)]="newIntnshp.companyName" required  materialize="autocomplete" [materializeParams]="companyAutocompleteParams" [materializeActions]="companySearchBoxAction">
+        <!--<div [hidden]= "cmpName.valid || (cmpName.pristine && !form.submitted)" class="red-text">
           Please input a valid company name.
-        </div>
+        </div>-->
       </div>
       <div class="input-field col s12">
-        <label for="candidate"> Candidate Name</label>
-        <input id="candidate" name="candidateName" [(ngModel)]="newIntnshp.candidateName" type="text" #candidateName="ngModel" required [formControl]="candidateSearchControl" materialize="autocomplete" [materializeParams]="candidateAutocompleteParams" [materializeActions]="candidateSearchBoxAction">
-        <div [hidden]= "candidateName.valid || (candidateName.pristine && !form.submitted)" class="red-text">
+        <label for="candidate"> Candidate email address</label>
+        <input id="candidate" type="text" name="candidateEmail" [(ngModel)]="newIntnshp.candidateEmail" required [formControl]="candidateSearchControl" materialize="autocomplete" [materializeParams]="candidateAutocompleteParams" [materializeActions]="candidateSearchBoxAction">
+        <!--<div [hidden]= "candidateName.valid || (candidateName.pristine && !form.submitted)" class="red-text">
           Please input a valid candidate name.
-        </div>
+        </div>-->
       </div>
     </form>
   </div>
   <div class="modal-footer">
-    <a (click)="form.ngSubmit.emit()" class="modal-action modal-close waves-effect waves-green btn-flat ">Create</a>
+    <a (click)="form.ngSubmit.emit()" class="waves-effect waves-green btn-flat ">Create</a>
     <a class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
   </div>
 </div>

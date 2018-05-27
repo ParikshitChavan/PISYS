@@ -13,14 +13,14 @@ import { MaterializeAction } from 'angular2-materialize'
   styleUrls: ['./internships.component.css']
 })
 export class InternshipsComponent implements OnInit {
-  yearArr : number[];
-  internships: any[];
+  yearArr = [];
+  internships= [];
   newIntnshp: {
     companyName: string,
-    candidateName: string
-  }={ companyName:'',candidateName:'' };
-  companyAutocompleteData={};
-  candidateAutocompleteData={};
+    candidateEmail: string
+  }={ companyName:'',candidateEmail:'' };
+  companyAutocompleteParams = [];
+  candidateAutocompleteParams = [];
   companySearchControl : FormControl;
   candidateSearchControl : FormControl;
   companySearchBoxAction =  new EventEmitter<string|MaterializeAction>();
@@ -36,8 +36,8 @@ export class InternshipsComponent implements OnInit {
     this.companySearchControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe(term => {
-        this.autocompleteService.getCompanySuggestions(term).subscribe(data=>{
-          this.companyAutocompleteData = [{data:data}];
+        this.autocompleteService.getCompanySuggestions(term).subscribe(resp=>{
+          this.companyAutocompleteParams = [{data: resp.data}];
           setTimeout(()=>{
             this.companySearchBoxAction.emit('autocomplete');
           });          
@@ -46,8 +46,8 @@ export class InternshipsComponent implements OnInit {
     this.candidateSearchControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe(term => {
-        this.autocompleteService.getCandidateSuggestions(term).subscribe(data=>{
-          this.candidateAutocompleteData = [{data:data}];
+        this.autocompleteService.getCandidateSuggestions(term).subscribe(resp=>{
+          this.candidateAutocompleteParams = [{data: resp.data}];
           setTimeout(()=>{
             this.candidateSearchBoxAction.emit('autocomplete');
           });
@@ -63,8 +63,9 @@ export class InternshipsComponent implements OnInit {
   }
 
   onYearTabClick(year){
-    this.internshipService.getInternships(year).subscribe(internships => {
-      this.internships = internships;
+    this.internshipService.getInternships(year).subscribe(resp => {
+      if(!resp.success) return toast("Some error occurred, Please try again later.", 3000);
+      this.internships = resp.internships;
     });
   }
 
@@ -73,9 +74,12 @@ export class InternshipsComponent implements OnInit {
   }
 
   onIntnshpCreateClick(isValidForm){
-    if(!isValidForm) return false;
-    this.internshipService.createInternship(this.newIntnshp).subscribe(response=>{
-      if(!response.success) console.log(response.error);
+    if(this.newIntnshp.companyName =="" || this.newIntnshp.candidateEmail == "") return toast("Please fill in both the candidate and company name", 3000);
+    this.internshipService.createInternship(this.newIntnshp).subscribe(resp=>{
+      if(!resp.success) {
+        console.log(resp.error);
+        return toast('Some error occurred, please try again later.', 3000);
+      }
       toast('Intership Created successfully and email sent to companies', 3000);
     });
   }

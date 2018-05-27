@@ -58,7 +58,7 @@ export class PaymentsComponent implements OnInit {
     this.intnshpService.upsertStipend(this.intnshpId, this.upsertPayment).subscribe(resp => {
       if(!resp.success){
         console.log(resp.error);
-        return toast("some error occurred, please try agin later.", 3000);
+        toast("some error occurred, please try agin later.", 3000);
         this.upsertPayment = { index:-1, amt: 0, date: '', acptd: false};
         return false;
       }

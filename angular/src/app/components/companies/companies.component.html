@@ -9,54 +9,59 @@
     </div>
   </div>
 </div>
-<div id="createCmpModal" class="modal modal-fixed-footer" materialize="modal">
+<a id="addCompanyBtn" class="btn-floating btn-large waves-effect waves-light red modal-trigger" href="#createCmpModal"><i class="material-icons">add</i></a>
+
+<div id="createCmpModal" class="modal modal-fixed-footer" materialize="modal" [materializeActions]="modalActions">
   <div class="modal-content">
-    <form (submit)="cmpCreateSubmit(form.valid)" #form=ngForm>
-      <div class="row">
-        <div class="input-field">
-          <input id="name" name="name" [(ngModel)]="newCmp.name" type="text" #name="ngModel" required>
-          <label for="name" class="active">Name</label>
-          <div [hidden]= "name.valid || (name.pristine && !form.submitted)" class="red-text">
-            Please input a valid company name.
+    <div class="container">
+      <h3>Create a company</h3>
+      <form (submit)="cmpCreateSubmit(form.valid)" #form=ngForm>
+        <div class="row">
+          <div class="input-field">
+            <input id="name" name="name" [(ngModel)]="newCmp.name" type="text" #name="ngModel" required>
+            <label for="name" class="active">Name</label>
+            <div [hidden]= "name.valid || (name.pristine && !form.submitted)" class="red-text">
+              Please input a valid company name.
+            </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="input-field col s6">
-          <label for="adminName" class="active">Admin Name</label>
-          <input type="text" [(ngModel)]="newCmp.admin.adminName" name="adminName" id="adminName" #adminName="ngModel" required>
-          <div [hidden]= "adminName.valid || (adminName.pristine && !form.submitted)" class="red-text">
-            Please input a valid admin name.
+        <div class="row">
+          <div class="input-field col s6">
+            <label for="adminName" class="active">Admin Name</label>
+            <input type="text" [(ngModel)]="newCmp.admin.adminName" name="adminName" id="adminName" #adminName="ngModel" required>
+            <div [hidden]= "adminName.valid || (adminName.pristine && !form.submitted)" class="red-text">
+              Please input a valid admin name.
+            </div>
+          </div>
+          <div class="input-field col s6">
+            <label for="adminEmail" class="active">Admin Email</label>
+            <input type="email" [(ngModel)]="newCmp.admin.adminEmail" name="adminEmail" id="adminEmail" #adminEmail="ngModel" required>
+            <div [hidden]= "adminEmail.valid || (adminEmail.pristine && !form.submitted)" class="red-text">
+              Please input a valid email address.
+            </div>
           </div>
         </div>
-        <div class="input-field col s6">
-          <label for="adminEmail" class="active">Admin Email</label>
-          <input type="email" [(ngModel)]="newCmp.admin.adminEmail" name="adminEmail" id="adminEmail" #adminEmail="ngModel" required>
-          <div [hidden]= "adminEmail.valid || (adminEmail.pristine && !form.submitted)" class="red-text">
-            Please input a valid email address.
+        <div class="row">
+          <div class="input-field">
+            <input id="address" type="text" name="address" [(ngModel)]="newCmp.address">
+            <label for="address" class="active">Address</label>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="input-field">
-          <input id="address" type="text" name="address" [(ngModel)]="newCmp.address">
-          <label for="address" class="active">Address</label>
+        <div class="row">
+          <div class="input-field">
+            <input id="est" type="text" name="est" [(ngModel)]="newCmp.est" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
+            <label for="est" class="active">Established</label>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="input-field">
-          <input id="est" type="text" name="est" [(ngModel)]="newCmp.est" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
-          <label for="est" class="active">Established</label>
+        <div class="row">
+          <div class="input-field">
+            <label for="phNum" class="active">Phone Number</label>
+            <input type="text" [(ngModel)]="newCmp.phNum" name="phNum" id="phNum">
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="input-field">
-          <label for="phNum" class="active">Phone Number</label>
-          <input type="text" [(ngModel)]="newCmp.phNum" name="phNum" id="phNum">
-        </div>
-      </div>
-      <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
-    </form>
+        <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+      </form>
+    </div>
   </div>
   <div class="modal-footer">
     <a class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MaterializeModule } from 'angular2-materialize';
 import { AppComponent } from './app.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 //3rd party module
@@ -46,16 +46,16 @@ import { EqualValidatorDirective } from './directives/equal-validator.directive'
 
 const appRoutes: Routes =[
   {path: '', component: HomeComponent, pathMatch: 'full'},
-  {path: 'initAccount', component: InitAccountComponent},
-  {path: 'resetPassword', component: ResetPasswordComponent},
-  {path: 'verifyEmail', component: VerifyEmailComponent},
+  {path: 'initAccount/:token', component: InitAccountComponent},
+  {path: 'resetPassword/:token', component: ResetPasswordComponent},
+  {path: 'verifyEmail/:token', component: VerifyEmailComponent},
   {path: 'internships', component: InternshipsComponent, pathMatch: 'full', canActivate: [AuthGuard]},
   {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   {path: 'company', component: CompanyComponent, canActivate: [AuthGuard]},
   {path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
   {
-    path: 'internship',
+    path: 'internship/:id',
     component: InternshipComponent,
     pathMatch: 'full',
     canActivate: [AuthGuard],
@@ -99,6 +99,7 @@ const appRoutes: Routes =[
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     MaterializeModule,
     RouterModule.forRoot(appRoutes),

@@ -3,6 +3,11 @@
   <li class="divider"></li>
   <li><a href="#" (click)="logout()">Logout</a></li>
 </ul>
+<ul id="dropdown2" class="dropdown-content">
+  <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile']">Profile</a></li>
+  <li class="divider"></li>
+  <li><a href="#" (click)="logout()">Logout</a></li>
+</ul>
 <nav>
   <div class="container">
     <div class="nav-wrapper">
@@ -27,8 +32,8 @@
           <li *ngIf="authService.isLoggedIn()" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" >Companies</a></li>
           <li *ngIf="!authService.isLoggedIn()" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/login']" >Login</a></li>
           <li *ngIf="!authService.isLoggedIn()" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/register']" >Register</a></li>
-          <li *ngIf="authService.isLoggedIn()"><a class="dropdown-button" data-activates="dropdown1" 
-            materialize="dropdown" [materializeParams]="dropdownParams" [materializeActions]="dropdownActions2">
+          <li *ngIf="authService.isLoggedIn()"><a class="dropdown-button" data-activates="dropdown2" 
+            materialize="dropdown" [materializeParams]="dropdownParams" [materializeActions]="dropdownActions">
             <img [src]="user.DPUrl" alt="Profile Pic" id="headerDP" class="left circle responsive-img"><span>{{user.name}}</span><i class="material-icons right">arrow_drop_down</i>
           </a></li>
       </ul>

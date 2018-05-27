@@ -61,6 +61,11 @@ export class ProfileComponent implements OnInit {
     this.imgData = {};
    }
 
+   cropped(bounds:Bounds) {
+    this.croppedHeight =bounds.bottom-bounds.top;
+    this.croppedWidth = bounds.right-bounds.left;
+  }
+
   ngOnInit() {
     this.authService.getUserInfo().subscribe(resp => {
       if(!resp.success) return false;
@@ -70,12 +75,7 @@ export class ProfileComponent implements OnInit {
       return false;
     });
   }
-  
-  cropped(bounds:Bounds) {
-    this.croppedHeight =bounds.bottom-bounds.top;
-    this.croppedWidth = bounds.right-bounds.left;
-  }
-  
+   
   fileChangeListener($event) {
     let image:any = new Image();
     let file:File = $event.target.files[0];
@@ -104,6 +104,11 @@ export class ProfileComponent implements OnInit {
     Materialize.updateTextFields();
   }
 
+  cancelInfoEditClick(){
+    this.editing = false;
+    Materialize.updateTextFields();
+  }
+
   userInfoSubmit(validForm: boolean){
     if(!validForm) return false;
     this.editing = false;
@@ -118,13 +123,13 @@ export class ProfileComponent implements OnInit {
     let blob = this.convertToBlob( this.imgData.image);
     formData.append('displayPicture', blob);
     this.authService.updateDisplayPic(formData).subscribe(resp =>{
-      console.log(resp);
       if (resp.success){
         this.userDetails.DP.url =  resp.newLink;
-        this.displayPicMsg = "Display Picture updated successfully."
+        //load Header info as well
+        this.displayPicMsg = "Display Picture updated successfully"
       }
       else {
-        this.displayPicMsg = "Some error occurred, please try agin later."
+        this.displayPicMsg = "Some error occurred, please try agin later"
       }
       toast(this.displayPicMsg, 3000);
     });
@@ -134,13 +139,13 @@ export class ProfileComponent implements OnInit {
     if(!validForm) return false;
     if(this.passwords.newPass!=this.passwords.cnfPass) return false;
     let userData={userId:this.userDetails._id, newPass:this.passwords.newPass}
-    this.authService.resetPassword(userData).subscribe( resp =>{
+    this.authService.updatePassword(userData).subscribe( resp =>{
       if(!resp.success) {
-        toast('Some Error occurred. Please try again later.',3000);
+        toast("Some Error occurred. Please try again later",3000);
         return null;
       }
       this.authService.loginSuccess(resp);
-      toast('Password updated successfully.',3000);;
+      toast("Password updated successfully",3000);;
     });
   }
 }
