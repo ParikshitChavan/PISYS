@@ -7,16 +7,17 @@ const Schema = mongoose.Schema;
 
 const internshipSchema = Schema({
     active: Boolean,
-    project: String,
-    designation: String,
+    projectName: { type: String, default: '' },
+    projectNickName: { type: String, default: '' },
+    designation: { type: String, default: '' },
     supervisors: [{ type: Schema.Types.ObjectId, ref: 'User'}],
     location: String,   //Copy Company branch location here...!
-    description: String,
-    cmpGivenEmail: String,
+    description: { type: String, default: '' },
+    cmpGivenEmail: { type: String, default: '' },
     candidate: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     company: {type: Schema.Types.ObjectId, ref: 'Company', required: true},
-    startDate: Date,
-    endDate: Date,
+    startDate: {type: Date, default: Date.now},
+    endDate: {type: Date, default: Date.now},
     accommodation: {
         cost: Number,
         address: String,
@@ -54,7 +55,16 @@ const internshipSchema = Schema({
         acptd: Boolean
     },
     wRepts: [{                                     //student weekely reports
-        rept: {body:String, updated: Date},      //student report
+        rept: {
+            difficulty: Number,             // 1 to 10
+            learnt: String,                 //what you learnt through week
+            tech: String,                   //Technologies Used 
+            supQuery: String,                //query for Supervisors
+            interesting: String,            //what you found interesting in the week
+            other: String,                  //any other question
+            img: {key: String, url: String},    // Snapshot of the week 
+            updated: {type: Date, default: Date.now}
+        },
         cmnts: [{
             body:String,
             by:{type:Schema.Types.ObjectId, ref: 'User'},           //Only WL members allowed to comment for now 
@@ -147,6 +157,21 @@ module.exports.getInternshipDetails = function(id, userId, access, callback){
     }
 }
 
+module.exports.getInternshipBasicInfo = function(internshipId, decoded, callback){              //callback(err, internship)
+    Internship.findById(internshipId, "projectName description designation startDate endDate cmpGivenEmail")
+    .populate({path: 'candidate', select: '_id name DP'})
+    .populate({path: 'company', select: '_id name admins'}).lean().exec((err, internship)=>{
+        if(err) callback(err, null);
+        if(decoded.access == 0){
+            if(decoded._id != internship.candidate._id) return callback('not valid candidate', null);
+        }
+        if(decoded.access == 1){
+            if(!internship.company.admins.some(admin=>{return admin.equals(decoded._id)})) return callback('not valid company admin', null);
+        }
+        callback(null, internship);
+    });
+}
+
 module.exports.getInternshipsOfYear = function(year, callback){
     query = {startDate: {$gte: new Date(year, 00, 00), $lt: new Date(year, 11, 32)}};
     Internship.find(query)
@@ -155,22 +180,30 @@ module.exports.getInternshipsOfYear = function(year, callback){
     .exec(callback);
 }
 
-module.exports.upsertSReport = function(data, callback){
-    isValidCandidate(internshipId, userId, (err, isValid)=>{
-        if(err) return callback(err);
-        Internship.findById(data.intnshpId, 'wReports', (err, internship)=>{
-            if(err) return callback(err);
-            if(data.index==-1){
-                internship.wReports.push({
-                    rept: {body: data.rept, updated: new Date()},
-                    week: data.week
-                });
-            }
-            else{
-                internship.wReports[data.index].rept = {body: data.rept, updated: new Date()};
-                internship.wReports[data.index].week = data.week;
-            }
-            internship.save(callback);
+module.exports.getCandidateAndWRepts = function(internshipId, callback){            //cb(err, candidateId, Wrepts)
+    Internship.findById(internshipId, 'candidate', { lean: true }, (err, internship)=>{
+        if(err) return callback(err, null, null);
+        else callback(null, internship.candidate, internship.wRepts);
+    });
+}
+
+module.exports.upsertSReport = function(internshipId, data, callback){            //cb(err, wRepts)
+    Internship.findById(internshipId, 'wRepts', (err, internship)=>{
+        if(err) return callback(err, null);
+        if(data.index == -1){
+            internship.wRepts.push({
+                rept: data.rept,
+                week: data.week,
+                cmnts:[]
+            });
+        }
+        else{
+            internship.wRepts[data.index].rept = data.rept;
+            internship.wRepts[data.index].week = data.week;
+        }
+        internship.save((err, newInternship)=>{
+            if(err) callback(err, null);
+            callback(null, newInternship.wRepts);
         });
     });
 }
@@ -221,7 +254,7 @@ module.exports.upsertCReport = function(internshipId, userId, week, body, callba
 module.exports.upsertValuation = function(internshipId, userId, valuation, callback){
     isValidAdmin(internshipId, userId, (err, isValid)=>{
         if(err) return callback(err);
-        Internship.findByIdAndUpdate(internshipId, {valuation: valuation}, {upsert: true}, callback);
+        Internship.findByIdAndUpdate(internshipId, { $set: {valuation: valuation }}, {upsert: true}, callback);
     });
 }
 
@@ -257,35 +290,47 @@ module.exports.upsertCFeedback = function(internshipId, userId, body, callback){
     });
 }
 
-module.exports.upsertBasicInfo = function(internshipId, userId, basicInfo, callback){
-    isValidAdmin(internshipId, userId, (err, isValid)=>{
-        if(err) return callback(err);
+module.exports.upsertBasicInfo = function(internshipId, decodedToken, basicInfo, callback){
+    if(decodedToken.access==2){
         Internship.findById(internshipId, (err, internship)=>{
             if(err) throw err;
-            internship.project = basicInfo.projectName,
+            internship.projectName = basicInfo.projectName,
             internship.designation = basicInfo.designation,
             internship.supervisors = basicInfo.supervisors,
             internship.location = basicInfo.location,
             internship.description = basicInfo.description;
-            internship.save((err) => {
-                if(err) return callback(err);
-                /*let intershipLink =
-                mailer.studentNotification()*/
+            internship.save(callback);
+        });
+    }
+    else {
+        isValidAdmin(internshipId, decodedToken._id, (err, isValid)=>{
+            if(err) return callback(err);
+            Internship.findById(internshipId, (err, internship)=>{
+                if(err) throw err;
+                internship.projectName = basicInfo.projectName,
+                internship.designation = basicInfo.designation,
+                internship.supervisors = basicInfo.supervisors,
+                internship.location = basicInfo.location,
+                internship.description = basicInfo.description;
+                internship.save(callback);
             });
         });
-    });
+    }
 }
 
-module.exports.upsertWReportComment = function(data, userId, callback){
-    Internship.findById(data.id, 'wReports', (err, internship)=>{
-        if(err) throw err;
-        if(data.cmtIndex==-1){                  //new not update
-            internship.wReports[data.reptIndex].cmnts.push({body: data.body, by:userId, updated: new Date()});
+module.exports.upsertWReportComment = function(data, userId, callback){         //callback(err, updated array of comments)
+    Internship.findById(data.id, 'wRepts', (err, internship)=>{
+        if(err) return callback (err, null);
+        if(data.cmtIndex == -1){                  //new not update
+            internship.wRepts[data.reptIndex].cmnts.push({body: data.body, by: userId, updated: new Date()});
         }
         else{
-            internship.wReports[data.reptIndex].cmnts[data.cmtIndex] = {body: data.body, by:userId, updated: new Date()};
+            internship.wRepts[data.reptIndex].cmnts[data.cmtIndex] = {body: data.body, by: userId, updated: new Date()};
         }
-        internship.save(callback);
+        internship.save((err, newInternship)=>{
+            if(err) return callback (err, null);
+            callback(null, newInternship.wRepts[data.reptIndex].cmnts);
+        });
     });
 }
 
@@ -303,7 +348,8 @@ module.exports.upsertFeedbacksComment = function(internshipId, commentNo, body, 
 }
 
 module.exports.getAccommodation = function(intnshpId, decodedToken, callback){
-    Internship.findById(intnshpId, 'supervisors candidate accommodation', { lean: true }, (err, internship)=>{
+    Internship.findById(intnshpId, 'supervisors candidate accommodation', { lean: true })
+    .populate({path:'company', select: 'admins'}).exec((err, internship)=>{
         if(err) return callback(err, null);
         requesterId = decodedToken._id;
         requesterAccess = decodedToken.access;
@@ -317,7 +363,7 @@ module.exports.getAccommodation = function(intnshpId, decodedToken, callback){
             else return callback('Unauthorized', null);
         }
         if(requesterAccess == 1){
-            if(internship.supervisors.includes(requesterId)){
+            if(internship.company.admins.some(admin=>{return admin.equals(requesterId)})){
                 delete internship.accommodation.cost;
                 delete internship.accommodation.cmnts;
                 return callback(null, internship.accommodation);
@@ -328,7 +374,7 @@ module.exports.getAccommodation = function(intnshpId, decodedToken, callback){
 }
 
 module.exports.upsertAccommodation = function(internshipId, accommodation, callback){
-    Internship.findByIdAndUpdate(internshipId, {accommodation: accommodation}, { lean: true, new:true }, (err, newInternship)=>{
+    Internship.findByIdAndUpdate(internshipId, { $set: {accommodation: accommodation}}, { lean: true, new:true }, (err, newInternship)=>{
         if(err) return callback(err, null);
         callback(null, newInternship.accommodation);
     });
@@ -349,16 +395,17 @@ module.exports.getSuica = function(intnshpId, decodedToken, callback){
 }
 
 module.exports.upsertSuica = function(internshipId, suica, callback){
-    Internship.findByIdAndUpdate(internshipId, {suica: suica}, { lean: true, new:true }, (err, newInternship)=>{
+    Internship.findByIdAndUpdate(internshipId, { $set: { suica: suica }}, { lean: true, new:true }, (err, newInternship)=>{
+        console.log(internshipId, suica);
         if(err) return callback(err, null);
         callback(null, newInternship.suica);
     });
 }
 
 module.exports.getWiFi = function(intnshpId, decodedToken, callback){
-    Internship.findById(intnshpId, 'candidate wifi', { lean: true }, (err, intnshp)=>{
+    Internship.findById(intnshpId, 'candidate wifi', { lean: true }, (err, internship)=>{
         if(err) return callback(err, null); 
-        if(requesterAccess == 2) return callback(null, intnshp.wifi);
+        if(requesterAccess == 2) return callback(null, internship.wifi);
         if(requesterId == internship.candidate){
             delete internship.wifi.cmnts;
             return callback(null, internship.wifi);
@@ -368,7 +415,7 @@ module.exports.getWiFi = function(intnshpId, decodedToken, callback){
 }
 
 module.exports.upsertWiFi = function(internshipId, wifi, callback){
-    Internship.findByIdAndUpdate(internshipId, {wifi: wifi}, { lean: true, new:true }, (err, newInternship)=>{
+    Internship.findByIdAndUpdate(internshipId, { $set: { wifi: wifi }}, { lean: true, new:true }, (err, newInternship)=>{
         if(err) return callback(err, null);
         callback(null, newInternship.wifi);
     });
@@ -381,14 +428,33 @@ module.exports.getPayments = function(intnshpId, decodedToken, callback){
     });
 }
 
+module.exports.getWRepts = function(intnshpId, decodedToken, callback){
+    let requesterId = decodedToken._id;
+    let requesterAccess = decodedToken.access;
+    Internship.findById(intnshpId, 'candidate wRepts', { lean: true })
+    .populate({path:"wRepts.cmnts.by", select:'name DP'})
+    .exec((err, internship)=>{
+        if(err) return callback(err, null); 
+        if(requesterAccess == 2) return callback(null, internship.wRepts);
+        if(requesterId == internship.candidate){
+            let count = internship.wRepts.length;
+            for(let i=0; i<count; i++){
+                delete internship.wRepts[i].cmnts;
+            }
+            return callback(null, internship.wRepts);
+        }
+        callback('Unauthorized', null);
+    });
+}
+
 module.exports.upsertPayment = function(internshipId, data, callback){
     Internship.findById(internshipId, 'payments', (err, internship)=>{
         if(err) return callback(err, null);
         if(data.index!=-1){
-            internship.feedbacks.payments[paymentNo] = { amount: amount, date: date};
+            internship.payments[data.index] = { amt: data.amt, date: data.date, acptd: data.acptd };
         }
         else{
-            internship.feedbacks.payments.push({ amount: amount, date: date});
+            internship.payments.push({ amt: data.amt, date: data.date, acptd: data.acptd });
         }
         internship.save((err, updatedInternship)=>{
             if(err) callback(err, null);
@@ -397,11 +463,14 @@ module.exports.upsertPayment = function(internshipId, data, callback){
     });
 }
 
-module.exports.deletePayment = function(internshipId, paymentNo, callback){
+module.exports.deletePayment = function(internshipId, paymentNo, callback){         //cb(err, payments)
     Internship.findById(internshipId, 'payments', (err, internship)=>{
         if(err) return callback(err);
         internship.payments.splice(paymentNo, 1);
-        internship.save(callback);
+        internship.save((err)=>{
+            if(err) throw err;
+            callback(null, internship.payments);
+        });
     });    
 }
 

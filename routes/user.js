@@ -240,6 +240,7 @@ router.post('/suggestions', (req, res, next)=>{
 });
 
 router.get('/isWLMember', (req ,res, next)=>{
+    let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access == 2) return res.json({ success: true, isWLMember: true });

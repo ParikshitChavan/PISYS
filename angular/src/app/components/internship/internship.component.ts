@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { InternshipApiService } from '../../services/internshipAPI/internship-api.service';
 import { toast } from 'angular2-materialize';
+import { JwtHelper } from 'angular2-jwt';
+import 'rxjs/add/operator/filter';
+declare let Materialize:any;
 
 @Component({
   selector: 'app-internship',
@@ -9,12 +12,38 @@ import { toast } from 'angular2-materialize';
   styleUrls: ['./internship.component.css']
 })
 export class InternshipComponent implements OnInit {
+  jwtHelper: JwtHelper = new JwtHelper();
+  decodedToken: any;
   intnshpId: string;
-  internship: any;
+  activatedChild:string = '';
+  userAccess: any = 1;
+  internship: {
+    _id: string,
+    projectName: string,
+    startDate: any,
+    endDate: any,
+    description: string,
+    designation: string,
+    company: {name: string, admins: [string]},
+    candidate: {name: string, DP : { key: string, url: string }},
+    cmpGivenEmail: string  
+  } = { _id:'', projectName: '', startDate: '', endDate: '', description: '', designation: '', company: { name: '', admins: [''] }, candidate: { name: '', DP: {key: '', url: '' }}, cmpGivenEmail: ''};  
   canAccess:boolean = false;
   editingBasicInfo = false;
 
-  constructor(private route:ActivatedRoute, private intnshpService:InternshipApiService) { }
+  constructor(private route: ActivatedRoute,
+    private router: Router,
+    private intnshpService: InternshipApiService) {
+      this.router.events.filter(evt => evt instanceof NavigationEnd).subscribe((event) => {
+        this.activatedChild = this.route.firstChild.routeConfig.path;
+      });
+      let token = localStorage.getItem('authToken');
+      if(token){
+        this.decodedToken = this.jwtHelper.decodeToken(token);
+        this.userAccess = this.decodedToken.access;
+      }
+      else router.navigate(['/']);
+    }
 
   ngOnInit() {
     this.intnshpId = this.route.snapshot.paramMap.get('id');
@@ -23,7 +52,10 @@ export class InternshipComponent implements OnInit {
         return toast(resp.error, 3000);
       }
       this.canAccess = true;
-      this.internship = resp.intnshpData;
+      this.internship = resp.internship;
+      setTimeout(()=>{
+        Materialize.updateTextFields();
+      });
     });
   }
 
@@ -35,6 +67,9 @@ export class InternshipComponent implements OnInit {
       }
       this.editingBasicInfo = false;
       toast(resp.msg , 3000);
+      setTimeout(()=>{
+        Materialize.updateTextFields();
+      });
     });
   }
 }

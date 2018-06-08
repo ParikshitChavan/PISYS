@@ -60,6 +60,11 @@ export class AuthService {
     localStorage.removeItem('authToken');
   }
 
+  destroyUserInfo(){
+    this.authToken = null;
+    localStorage.removeItem('user');
+  }
+
   //User Protected Routes request below 
   getUserInfo(){
     this.loadToken();

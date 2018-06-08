@@ -57,10 +57,10 @@ const appRoutes: Routes =[
   {
     path: 'internship/:id',
     component: InternshipComponent,
-    pathMatch: 'full',
     canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    //canActivateChild: [AuthGuard],
     children: [
+      { path: '', redirectTo: 'accommodation', pathMatch: 'full' },
       {path: 'wifi', component: WifiComponent},
       {path: 'accommodation', component: AccommodationComponent},
       {path: 'suica', component: SuicaComponent},

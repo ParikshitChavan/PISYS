@@ -7,3 +7,8 @@
     border-bottom: 1px solid #a94442;
     box-shadow: 0 1px 0 0 #a94442;
   }
+
+  .container10p{
+    width: 100%;
+    padding: 0 10%;
+  }

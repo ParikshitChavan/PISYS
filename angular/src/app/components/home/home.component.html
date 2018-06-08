@@ -1,55 +1,57 @@
 <div class="row">
-  <div class="loginFormArea col s12 l6">
-    <h3>Login</h3>
-    <div  [hidden]="!loginSubmitted">
-      <div class="preloader-wrapper big active">
-        <div class="spinner-layer spinner-blue-only">
-          <div class="circle-clipper left">
-            <div class="circle"></div>
-          </div>
-          <div class="gap-patch">
-            <div class="circle"></div>
-          </div>
-          <div class="circle-clipper right">
-            <div class="circle"></div>
+  <div class="loginFormArea col s12 l6 ">
+    <div class="container10p">
+      <h3>Login</h3>
+      <div  [hidden]="!loginSubmitted">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div [hidden]="loginSubmitted">
-      <div [hidden]="!loginError" class="red-text">
-      {{loginMessage}}
-      </div>
-      <form class="col s12" (submit)="onLoginUser(loginForm.valid)" #loginForm="ngForm">
-          <div class="row">
-            <div class="input-field col s12">
-              <label for="loginEmail">Email</label>
-              <input id="loginEmail" type="email" name="loginEmail" [(ngModel)]="loginUser.loginEmail" #loginEmail="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
-              <div [hidden]= "loginEmail.valid || (loginEmail.pristine && !loginForm.submitted)" class="red-text">
-                Please input a valid Email address.
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="input-field col s12">
-              <label for="loginPassword">Password</label>
-              <input id="loginPassword" name="loginPassword" [(ngModel)]="loginUser.loginPassword" type="password" #loginPassword="ngModel" required>
-              <div [hidden]= "loginPassword.valid || (loginPassword.pristine && !loginForm.submitted)" class="red-text">
-                Please input a Password.
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <button class="btn waves-effect waves-light" type="submit">Submit
-                <i class="material-icons right">send</i>
-              </button>
-            </div>
+      <div [hidden]="loginSubmitted">
+        <div [hidden]="!loginError" class="red-text">
+        {{loginMessage}}
         </div>
-      </form>
+        <form class="col s12" (submit)="onLoginUser(loginForm.valid)" #loginForm="ngForm">
+            <div class="row">
+              <div class="input-field col s12">
+                <label for="loginEmail">Email</label>
+                <input id="loginEmail" type="email" name="loginEmail" [(ngModel)]="loginUser.loginEmail" #loginEmail="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+                <div [hidden]= "loginEmail.valid || (loginEmail.pristine && !loginForm.submitted)" class="red-text">
+                  Please input a valid Email address.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" name="loginPassword" [(ngModel)]="loginUser.loginPassword" type="password" #loginPassword="ngModel" required>
+                <div [hidden]= "loginPassword.valid || (loginPassword.pristine && !loginForm.submitted)" class="red-text">
+                  Please input a Password.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <button class="btn waves-effect waves-light" type="submit">Submit
+                  <i class="material-icons right">send</i>
+                </button>
+              </div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-  <div class="regFormArea col 12 l6">
+  <div class="regFormArea col 12 l6 z-depth-2">
     <h3>Register</h3>
     <div [hidden]="!regSubmitted">
       {{regMessage}}

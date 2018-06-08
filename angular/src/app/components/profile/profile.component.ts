@@ -126,10 +126,10 @@ export class ProfileComponent implements OnInit {
       if (resp.success){
         this.userDetails.DP.url =  resp.newLink;
         //load Header info as well
-        this.displayPicMsg = "Display Picture updated successfully"
+        this.displayPicMsg = "Display Picture updated successfully";
       }
       else {
-        this.displayPicMsg = "Some error occurred, please try agin later"
+        this.displayPicMsg = "Some error occurred, please try agin later";
       }
       toast(this.displayPicMsg, 3000);
     });

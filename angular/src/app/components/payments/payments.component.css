@@ -1,3 +1,8 @@
+.fltBtnArea{
+    position: relative;
+    margin: 25px 0px 175px;
+}
+
 #addPaymentBtn {
     position: absolute;
     right: 2%;
@@ -7,4 +12,12 @@
 
 #tblContent{
     text-align: center;
+}
+
+table.highlight tbody tr{
+    cursor: pointer;
+}
+
+.chkBxDiv{
+    margin-top: 30px;
 }

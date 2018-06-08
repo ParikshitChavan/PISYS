@@ -167,7 +167,7 @@ module.exports.setPassword = function(userId, newPass, callback){
 
 module.exports.markEmailVerified = function(email, callback){
     let query = {email: email};
-    User.findOneAndUpdate(query, {emailVerified: true}, (err)=>{
+    User.findOneAndUpdate(query, {$set: {emailVerified: true}}, (err)=>{
         if(err) throw err;
         callback();
     });

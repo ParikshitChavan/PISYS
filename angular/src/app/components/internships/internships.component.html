@@ -1,18 +1,18 @@
-<ul>
+<ul class="tabs z-depth-1 yrTabs">
   <li *ngFor="let year of yearArr" class="tab"><a id="year" (click)="onYearTabClick(year)">{{year}}</a></li>
 </ul>
 <div *ngIf="internships.length" class="intershipsList">
-  <table>
+  <table class="highlight">
     <thead>
       <tr>
         <th>
           Sr. no.
         </th>
         <th>
-          Company
+          Candidate Name
         </th>
         <th>
-          Candidate
+          Company Name
         </th>
       </tr>
     </thead>
@@ -31,7 +31,10 @@
     </tbody>
   </table>
 </div>
-<a href="#initIntenshpModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+
+<div class="fltBtnArea">
+  <a id="initIntnshpBtn" href="#initIntenshpModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+</div>
 
 <div id="initIntenshpModal" class="modal modal-fixed-footer" materialize="modal">
   <div class="modal-content">

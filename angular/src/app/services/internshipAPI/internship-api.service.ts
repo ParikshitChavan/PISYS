@@ -13,7 +13,7 @@ export class InternshipApiService {
 
   getIntnshipDetails(id:string){
     this.loadToken();
-    let data = {id : id}
+    let data = {internshipId : id}
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
@@ -47,19 +47,19 @@ export class InternshipApiService {
 
   loadWeeklyReports(intnshpId:string){
     this.loadToken();
+    let data = { intnshpId: intnshpId };
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/internship/upsertBasicInfo', intnshpId, {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/internship/getWeeklyReports', data, {headers: headers}).map(res => res.json());
   }
 
-  upsertWeeklyReport(intnshpId, data){
-    data['intnshpId'] = intnshpId;
+  upsertWeeklyReport(internshipId, formData){
     this.loadToken();
     let headers = new Headers;
-    headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/internship/updateCandidateWeeklyReport', data, {headers: headers}).map(res => res.json());
+    headers.append('internship-id', internshipId);
+    return this.http.post('http://localhost:3000/internship/updateCandidateWeeklyReport', formData, {headers: headers}).map(res => res.json());
   }
 
   upsertComment(intnshpId, wReptIndex, data){
@@ -82,12 +82,12 @@ export class InternshipApiService {
   }
 
   loadSuicaDetails(intnshpId){
-    let data = {intnshpId: intnshpId}
+    let data = {intnshpId: intnshpId};
     this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/internship/loadSuicaDetails', data, {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/internship/getSuicaDetails', data, {headers: headers}).map(res => res.json());
   }
 
   upsertSuicaDetails(intnshpId, suica){
@@ -100,12 +100,12 @@ export class InternshipApiService {
   }
 
   loadWiFiDetails(intnshpId){
-    let data = {intnshpId: intnshpId}
+    let data = {intnshpId: intnshpId};
     this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/internship/loadWifiDetails', data, {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/internship/getWifiDetails', data, {headers: headers}).map(res => res.json());
   }
 
   upsertWiFiDetails(intnshpId, wifi){
@@ -118,7 +118,7 @@ export class InternshipApiService {
   }
 
   loadStipends(intnshpId){
-    let data = {intnshpId: intnshpId}
+    let data = {intnshpId: intnshpId};
     this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
@@ -126,8 +126,8 @@ export class InternshipApiService {
     return this.http.post('http://localhost:3000/internship/getPayments', data, {headers: headers}).map(res => res.json());
   }
 
-  upsertStipend(intnshpId, payments){
-    let data = {intnshpId: intnshpId, payments: payments};
+  upsertStipend(intnshpId, payment){
+    let data = {intnshpId: intnshpId, payment: payment};
     this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
@@ -142,6 +142,15 @@ export class InternshipApiService {
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
     return this.http.post('http://localhost:3000/internship/deletePayment', data, {headers: headers}).map(res => res.json());
+  }
+
+  markStipendAcptd(intnshpId, stipendIndex){
+    let data = {intnshpId: intnshpId, stipendIndex: stipendIndex};
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post('http://localhost:3000/internship/markPaymentAccepted', data, {headers: headers}).map(res => res.json());
   }
 
   loadAccommodationDetails(intnshpId){

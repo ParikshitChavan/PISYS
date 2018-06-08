@@ -9,7 +9,7 @@ import { toast, MaterializeAction } from 'angular2-materialize';
   styleUrls: ['./payments.component.css']
 })
 export class PaymentsComponent implements OnInit {
-  modalAction = new EventEmitter<string|MaterializeAction>();
+  modalActions = new EventEmitter<string|MaterializeAction>();
   intnshpId: string;
   isWLMember = false;
   payments: any[];
@@ -31,7 +31,7 @@ export class PaymentsComponent implements OnInit {
       }
       this.isWLMember = resp.isWLMember;
     });
-    this.intnshpId = this.route.snapshot.paramMap.get('id');
+    this.intnshpId = this.route.parent.snapshot.paramMap.get('id');
     this.intnshpService.loadStipends(this.intnshpId).subscribe(resp=>{
       if(!resp.success){
         toast("Some error occurred, please try again later.", 3000);
@@ -43,12 +43,16 @@ export class PaymentsComponent implements OnInit {
   }
 
   editCretePaymentClicked(index){
-    if(index!=-1){
+    if(!this.isWLMember) return false;
+    if(index==-1){
+      this.upsertPayment = { index:-1, amt: 0, date: '', acptd: false};
+    }
+    else{
       this.upsertPayment.amt = this.payments[index].amt;
       this.upsertPayment.date = this.payments[index].date;
       this.upsertPayment.index = index;
     }
-    this.modalAction.emit({action:'modal', params:['open']});
+    this.modalActions.emit({action:'modal', params:['open']});
   }
 
   upsertStipendInfo(isValidForm:boolean){

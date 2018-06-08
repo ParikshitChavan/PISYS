@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { InternshipApiService } from '../../services/internshipAPI/internship-api.service';
 import { toast, MaterializeAction } from 'angular2-materialize';
+declare let Materialize:any;
 
 @Component({
   selector: 'app-wifi',
@@ -29,7 +30,7 @@ export class WifiComponent implements OnInit {
   constructor(private route:ActivatedRoute , private intnshpService: InternshipApiService) { }
 
   ngOnInit() {
-    this.intnshpId = this.route.snapshot.paramMap.get('id');
+    this.intnshpId = this.route.parent.snapshot.paramMap.get('id');
     this.intnshpService.loadWiFiDetails(this.intnshpId).subscribe(resp=>{
       if(!resp.success){
         return toast("Some error occurred, please try again later.");
@@ -40,6 +41,9 @@ export class WifiComponent implements OnInit {
         this.isWLMember = false;
       }
       this.WiFiInfo = resp.wifi;
+      setTimeout(()=>{
+        Materialize.updateTextFields();
+      });
     });
   }
 
@@ -55,6 +59,9 @@ export class WifiComponent implements OnInit {
       this.WiFiInfo = resp.wifi;
       this.editingWiFiInfo = false;
       toast("Information updated successfully.", 3000);
+      setTimeout(()=>{
+        Materialize.updateTextFields();
+      });
     });
   }  
 }

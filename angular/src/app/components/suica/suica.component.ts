@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { InternshipApiService } from '../../services/internshipAPI/internship-api.service';
 import { toast, MaterializeAction } from 'angular2-materialize';
+declare let Materialize: any;
 
 @Component({
   selector: 'app-suica',
@@ -27,7 +28,7 @@ export class SuicaComponent implements OnInit {
   constructor(private route:ActivatedRoute , private intnshpService: InternshipApiService) { }
 
   ngOnInit() {
-    this.intnshpId = this.route.snapshot.paramMap.get('id');
+    this.intnshpId = this.route.parent.snapshot.paramMap.get('id');
     this.intnshpService.loadSuicaDetails(this.intnshpId).subscribe(resp=>{
       if(!resp.success){
         toast('Some error occurred, please try again later.');
@@ -38,6 +39,9 @@ export class SuicaComponent implements OnInit {
         this.isWLMember = false;
       }
       this.suicaInfo = resp.suica;
+      setTimeout(()=>{
+        Materialize.updateTextFields();
+      });
     });
   }
 
@@ -52,7 +56,10 @@ export class SuicaComponent implements OnInit {
       }
       this.suicaInfo = resp.suica;
       this.editingSuicaInfo = false;
-      toast("Information updated successfully.",3000)
+      toast("Information updated successfully.",3000);
+      setTimeout(()=>{
+        Materialize.updateTextFields();
+      });
     });
   }
 }

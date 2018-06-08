@@ -1,0 +1,16 @@
+.cprtArea{
+    display: table;
+}
+
+#cprtTxt{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.cprtArea img{
+    min-width: 80px;
+}
+
+.footer-copyright{
+    background: #209551;
+}
