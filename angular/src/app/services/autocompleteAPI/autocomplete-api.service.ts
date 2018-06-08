@@ -18,7 +18,7 @@ export class AutocompleteApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/suggestions', data, {headers: headers}).map(res => res.json());
+    return this.http.post('company/suggestions', data, {headers: headers}).map(res => res.json());
   }
   
   getCandidateSuggestions(searchTerm:string){
@@ -27,6 +27,7 @@ export class AutocompleteApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/user/suggestions', data, {headers: headers}).map(res => res.json());
+    return this.http.post('user/suggestions', data, {headers: headers}).map(res => res.json());
   }
 }
+//http://localhost:3000/ for local testing
