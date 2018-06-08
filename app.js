@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const config = require('./config/cfg');
 
 //connect to database and checking connection
-mongoose.connect(config.database);
+mongoose.connect(config.database.uri, config.database.options);
 mongoose.connection.on('connected', ()=>{
     console.log("Connection to database successful");
 });
