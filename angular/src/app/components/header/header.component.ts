@@ -2,7 +2,6 @@ import { Component, OnInit, EventEmitter} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from "../../services/auth/auth.service";
 import {MaterializeAction} from 'angular2-materialize';
-import { JwtHelper } from 'angular2-jwt';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +9,6 @@ import { JwtHelper } from 'angular2-jwt';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  jwtHelper: JwtHelper = new JwtHelper();
   decodedToken: any;
   userAccess: any;
   user ={
@@ -21,21 +19,16 @@ export class HeaderComponent implements OnInit {
   dropdownParams = [{ inDuration: 300, outDuration: 225, belowOrigin: true}];
 
   constructor(public authService: AuthService, private router:Router) {
-    let token = localStorage.getItem('authToken');
-    if(token){
-      this.decodedToken = this.jwtHelper.decodeToken(token);
-      this.userAccess = this.decodedToken.access;
-    }
-   }
-
-  ngOnInit() {
     this.authService.loggedIn$.subscribe((headerData) =>{
-      this.user = headerData;
+      this.user = {name: headerData.name, DPUrl: headerData.DPUrl};
+      this.userAccess = headerData.userAccess;
       setTimeout(()=>{
         this.dropdownActions.emit("dropdown");
       });
     });
+   }
 
+  ngOnInit() {
     if(this.authService.isLoggedIn()){
       this.authService.loadHeaderUserInfo();
     }

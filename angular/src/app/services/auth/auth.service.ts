@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { tokenNotExpired } from "angular2-jwt";
 import { Subject }    from 'rxjs/Subject';
+import { JwtHelper } from 'angular2-jwt';
 import "rxjs/add/operator/map";
 
 @Injectable()
@@ -10,6 +11,8 @@ export class AuthService {
   loggedIn$ = this.loggedInSrc.asObservable();
   authToken: any;
   user: any;
+  jwtHelper: JwtHelper = new JwtHelper();
+  decodedToken: any;
  
   constructor(private http: Http) { }
 
@@ -38,7 +41,11 @@ export class AuthService {
 
   loadHeaderUserInfo(){
     this.user =  JSON.parse(localStorage.getItem('user'));
-    let headerData = {name: this.user.name, DPUrl: this.user.DPUrl};
+    let token = localStorage.getItem('authToken');
+    if(token){
+      this.decodedToken = this.jwtHelper.decodeToken(token);
+    }
+    let headerData = {name: this.user.name, DPUrl: this.user.DPUrl, userAccess: this.decodedToken.access};
     this.loggedInSrc.next(headerData);
   }
 

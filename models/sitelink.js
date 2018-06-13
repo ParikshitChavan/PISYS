@@ -26,7 +26,7 @@ module.exports.createActivationLink = function(email, callback){
     })
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "http:/localhost:3000/users/activateaccount/:" + newSitelink._id;
+        let link = "http:/localhost:3000/#/users/activateaccount/" + newSitelink._id;
         callback(null, link);
     });
 }
@@ -43,7 +43,7 @@ module.exports.createPasswordResetLink = function(email, callback){
     })
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "http:/localhost:3000/users/resetpassword/:" + newSitelink._id;
+        let link = "http:/localhost:3000/#/users/resetpassword/" + newSitelink._id;
         callback(null, link);
         //delete token after on successful change
     });
@@ -60,7 +60,7 @@ module.exports.createEmailVerificationLink = function(email, callback){
     /*future scope check if already activated if not check if already token is preset*/
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "http:/localhost:3000/users/verifyemail/:" + newSitelink._id;
+        let link = "http:/localhost:3000/#/users/verifyemail/" + newSitelink._id;
         callback(null, link);
     });
 }
