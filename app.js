@@ -44,5 +44,5 @@ app.use('/company', company);
 app.use('/internship', internship);
 
 app.get('*', function(req, res){
-    res.redirect('https://pisys.willings.co.jp');       //http://localhost:4200/
+    res.sendFile('./public/index.html', {root: __dirname});
 });
