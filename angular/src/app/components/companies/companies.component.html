@@ -35,7 +35,7 @@
           </div>
           <div class="input-field col s6">
             <label for="adminEmail" class="active">Admin Email</label>
-            <input type="email" [(ngModel)]="newCmp.admin.adminEmail" name="adminEmail" id="adminEmail" #adminEmail="ngModel" required>
+            <input type="email" [(ngModel)]="newCmp.admin.adminEmail" name="adminEmail" id="adminEmail" #adminEmail="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
             <div [hidden]= "adminEmail.valid || (adminEmail.pristine && !form.submitted)" class="red-text">
               Please input a valid email address.
             </div>
