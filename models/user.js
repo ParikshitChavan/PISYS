@@ -38,9 +38,9 @@ const userSchema = Schema({
     DOB: Date,
     phNum: String,
     DP: { key: String, url: String },                 //display picture
-    internships: [{ type: Schema.Types.ObjectId, ref: 'Intership' }],       //What intership she/he has done!
+    internships: [{ type: Schema.Types.ObjectId, ref: 'Internship' }],       //What internship she/he has done!
     company: {type: Schema.Types.ObjectId, ref: 'Company'},                 //Company that she/he is an admin for
-    inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Intership'}]           //Interships for which she/he is a supervisor
+    inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}]           //Internships for which she/he is a supervisor
     //gender: Number,              //1.Male, 2.Female, 3.Other, 4.Do not wish to disclose
 });
 
@@ -91,9 +91,48 @@ module.exports.getUserByEmail = function(email, callback){
 module.exports.getUserIdByEmail = function(userId, callback){ //callback(err, id)
     const query = {email: email};
     User.findOne(query, 'name', { lean: true }, (err, user)=>{
-        if(err) callback(err, null);
+        if(err) return callback(err, null);
         callback(null, user._id);
     });
+}
+
+module.exports.getDashBoardInternships = function(decoded, callback){         //callback(err, internships)
+    if(decoded.access == 0){
+        User.findById(decoded._id, '_id', { lean: true })
+        .populate({
+            path:'internships',
+            select: 'projectName description',
+            populate: [{path: 'candidate', select:'name'}, {path: 'company', select:'name logo'}]
+        }).exec((err, user)=>{
+            if(err) return callback(err, null);
+            let internships = user.internships;
+            let count = internships.length;
+            for(let i = 0; i < count; i++){
+                internships[i]['img'] = internships[i].company.logo.url;
+            }
+            callback(null, internships);
+        });
+    }
+    else{
+        User.findById(decoded._id, '_id', {lean: true})
+        .populate({
+            path:'company',
+            populate:{
+                path: 'internships',
+                select:'projectName description',
+                populate:[{path: 'candidate', select:'name DP'}, {path: 'company', select:'name'}]
+            }
+        }).exec((err, user)=>{
+            if(err) return callback(err, null);
+            let internships = user.company.internships;
+            let count = internships.length;
+            for(let i = 0; i < count; i++){
+                let imgUrl = internships[i].candidate.DP.url;
+                internships[i]['img'] = imgUrl;
+            }
+            callback(null, internships);
+        });
+    }
 }
 
 module.exports.updateInfoById = function(userId, userInfo, callback){
@@ -113,10 +152,10 @@ module.exports.addCompany = function(userId, companyId, callback){
 }
 
 module.exports.getInternships = function(userId, callback){
-    User.findById(id, 'interships', (err, user)=>{
+    User.findById(id, 'internships', (err, user)=>{
         if (err) return callback(err, null);
-        if (!user.interships || user.interships.length) return callback(null, null);
-        callback(null, user.interships);
+        if (!user.internships || user.internships.length) return callback(null, null);
+        callback(null, user.internships);
     });
 }
 

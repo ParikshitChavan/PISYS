@@ -290,31 +290,31 @@ module.exports.upsertCFeedback = function(internshipId, userId, body, callback){
     });
 }
 
-module.exports.upsertBasicInfo = function(internshipId, decodedToken, basicInfo, callback){
-    if(decodedToken.access==2){
+module.exports.upsertBasicInfo = function(internshipId, decodedToken, basicInfo, callback){         //callback(err);
+    if(decodedToken.access == 2){
         Internship.findById(internshipId, (err, internship)=>{
-            if(err) throw err;
+            if(err) return callback(err);
             internship.projectName = basicInfo.projectName,
             internship.designation = basicInfo.designation,
             internship.supervisors = basicInfo.supervisors,
             internship.location = basicInfo.location,
             internship.description = basicInfo.description;
+            internship.cmpGivenEmail = basicInfo.cmpGivenEmail;
             internship.save(callback);
         });
     }
     else {
-        isValidAdmin(internshipId, decodedToken._id, (err, isValid)=>{
+        Internship.findById(internshipId).populate({path: 'company', select: 'admins'}).exec((err, internship)=>{
             if(err) return callback(err);
-            Internship.findById(internshipId, (err, internship)=>{
-                if(err) throw err;
-                internship.projectName = basicInfo.projectName,
-                internship.designation = basicInfo.designation,
-                internship.supervisors = basicInfo.supervisors,
-                internship.location = basicInfo.location,
-                internship.description = basicInfo.description;
-                internship.save(callback);
-            });
-        });
+            if(!internship.company.admins.includes(decodedToken._id)) return callback('Unauthorised');
+            internship.projectName = basicInfo.projectName,
+            internship.designation = basicInfo.designation,
+            internship.supervisors = basicInfo.supervisors,
+            internship.location = basicInfo.location,
+            internship.description = basicInfo.description;
+            internship.cmpGivenEmail = basicInfo.cmpGivenEmail;
+            internship.save(callback);
+        })
     }
 }
 

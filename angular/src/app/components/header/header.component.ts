@@ -18,7 +18,9 @@ export class HeaderComponent implements OnInit {
   dropdownActions = new EventEmitter<string|MaterializeAction>();
   dropdownParams = [{ inDuration: 300, outDuration: 225, belowOrigin: true}];
 
-  constructor(public authService: AuthService, private router:Router) {
+  constructor(public authService: AuthService, private router:Router) { }
+
+  ngOnInit() {
     this.authService.loggedIn$.subscribe((headerData) =>{
       this.user = {name: headerData.name, DPUrl: headerData.DPUrl};
       this.userAccess = headerData.userAccess;
@@ -26,9 +28,6 @@ export class HeaderComponent implements OnInit {
         this.dropdownActions.emit("dropdown");
       });
     });
-   }
-
-  ngOnInit() {
     if(this.authService.isLoggedIn()){
       this.authService.loadHeaderUserInfo();
     }

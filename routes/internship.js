@@ -102,7 +102,7 @@ router.post('/initInternship', (req, res, next)=>{
                     payments: []
                 });
                 newInternship.save((err, internship) => {
-                    if(err) return res.json({success: false, error:err});
+                    if(err) return res.json({success: false, error: err});
                     let link = 'https://www.willings.com/piits/internship/' + internship._id;
                     Company.addInternshipAndGetAdmins(companyId, internship._id, (err, admins)=>{
                         if(err) return res.json({success: false, error: err });
@@ -117,6 +117,17 @@ router.post('/initInternship', (req, res, next)=>{
                 });
             });
         });
+    });
+});
+
+router.get('/dashboardInternships', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        User.getDashBoardInternships(decoded, (err, internships) => {
+            if(err) return res.json({success: false, error: err });
+            res.json({success: true, internships: internships });
+        })
     });
 });
 
@@ -140,13 +151,14 @@ router.post('/upsertBasicInfo', (req, res, next)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access==0) return res.status(401).json({ success: false, message: 'Unauthorised' });
         let basicInfo = {
-            project: req.body.projectName,
+            projectName: req.body.projectName,
             designation: req.body.designation,
             supervisors: req.body.supervisors,
             location: req.body.location,
-            description: req.body.description
+            description: req.body.description,
+            cmpGivenEmail: req.body.cmpGivenEmail
         }
-        Internship.upsertBasicInfo(req.body.id, decoded, basicInfo, (err)=>{
+        Internship.upsertBasicInfo(req.body._id, decoded, basicInfo, (err)=>{
             if(err) throw err;
             res.json({success:true, message: 'Internship basic information updated successfully'});
         });

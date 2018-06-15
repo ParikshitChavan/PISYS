@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="input-field col s6">
-                    <label for="endDate">Start Date</label>
+                    <label for="endDate">End Date</label>
                     <input id="endDate" name='endDate' type="text" [(ngModel)]="internship.endDate" required [disabled]="!editingBasicInfo" #endDate="ngModel" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
                     <div [hidden]= "endDate.valid || (endDate.pristine && !basicInfoForm.submitted) || !editingBasicInfo" class="red-text">
                         Please input a valid end date for the project.
@@ -61,13 +61,13 @@
 </div>
 <div id="tabsArea" class="col s12 z-depth-1">
     <ul class="tabs">
-        <li class="tab" [ngClass]="{'active': activatedChild == 'accommodation'}" ><a [routerLink]="['accommodation']">Accommodation</a></li>
-        <li class="tab" *ngIf="userAccess != 1" [ngClass]="{'active': activatedChild == 'weeklyReports'}" ><a [routerLink]="['weeklyReports']">Weekly Reports</a></li>
-        <li class="tab" *ngIf="userAccess != 1" [ngClass]="{'active': activatedChild == 'suica'}" ><a [routerLink]="['suica']">Suica</a></li>
-        <li class="tab" *ngIf="userAccess != 1" [ngClass]="{'active': activatedChild == 'stipend'}" ><a [routerLink]="['stipend']">Stipend</a></li>
-        <li class="tab" *ngIf="userAccess != 1" [ngClass]="{'active': activatedChild == 'wifi'}" ><a [routerLink]="['wifi']">Wi-Fi</a></li>
-        <li class="tab" [ngClass]="{'active': activatedChild == 'feedback'}" ><a [routerLink]="['feedback']">Feedback</a></li>
-        <li class="tab" [ngClass]="{'active': activatedChild == 'joboffer'}" ><a [routerLink]="['joboffer']">Job Offer</a></li>
+        <li class="tab" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['accommodation']">Accommodation</a></li>
+        <li class="tab" *ngIf="userAccess != 1" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['weeklyReports']">Weekly Reports</a></li>
+        <li class="tab" *ngIf="userAccess != 1" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['suica']">Suica</a></li>
+        <li class="tab" *ngIf="userAccess != 1" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['stipend']">Stipend</a></li>
+        <li class="tab" *ngIf="userAccess != 1" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['wifi']">Wi-Fi</a></li>
+        <li class="tab" *ngIf="false" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['feedback']">Feedback</a></li>
+        <li class="tab" *ngIf="false" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['joboffer']">Job Offer</a></li>
     </ul>
 </div>
 <router-outlet></router-outlet>

@@ -63,10 +63,10 @@ export class InternshipComponent implements OnInit {
     if(!isValid) return false;
     this.intnshpService.updateBasicInfo(this.internship).subscribe(resp=>{
       if(!resp.success){
-        return toast(resp.error, 3000);
+        return toast('Some Error occurred', 3000);
       }
       this.editingBasicInfo = false;
-      toast(resp.msg , 3000);
+      toast('basic info updated successfully' , 3000);
       setTimeout(()=>{
         Materialize.updateTextFields();
       });

@@ -14,8 +14,8 @@
       <a href="" class="brand-logo"><img src="../../assets/images/piits_logo_white.png" alt="Logo"></a>
       <a data-activates="mobile-demo" class="button-collapse" materialize="sideNav"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
-        <li *ngIf="authService.isLoggedIn() && userAccess != 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/dashboard']" i18n>Dashboard</a></li>
-        <li *ngIf="authService.isLoggedIn()" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" i18n>Internships</a></li>
+        <li *ngIf="authService.isLoggedIn()" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/dashboard']" i18n>Dashboard</a></li>
+        <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" i18n>Internships</a></li>
         <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company']" i18n>Company</a></li>
         <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" i18n>Companies</a></li>
         <li *ngIf="authService.isLoggedIn()"><a class="dropdown-button" data-activates="dropdown1"
@@ -24,8 +24,8 @@
         </a></li>
       </ul>
       <ul class="side-nav" id="mobile-demo">
-          <li *ngIf="authService.isLoggedIn()  && userAccess != 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/dashboard']" >Dashboard</a></li>
-          <li *ngIf="authService.isLoggedIn()" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" >Internships</a></li>
+          <li *ngIf="authService.isLoggedIn()" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/dashboard']" >Dashboard</a></li>
+          <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" >Internships</a></li>
           <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company']" >Company</a></li>
           <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" >Companies</a></li>
           <li *ngIf="authService.isLoggedIn()"><a class="dropdown-button" data-activates="dropdown2" 
