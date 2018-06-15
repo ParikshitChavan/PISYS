@@ -107,8 +107,10 @@ module.exports.getDashBoardInternships = function(decoded, callback){         //
             if(err) return callback(err, null);
             let internships = user.internships;
             let count = internships.length;
-            for(let i = 0; i < count; i++){
-                internships[i]['img'] = internships[i].company.logo.url;
+            if(count){
+                for(let i = 0; i < count; i++){
+                    internships[i]['img'] = internships[i].company.logo.url;
+                }
             }
             callback(null, internships);
         });
@@ -126,9 +128,11 @@ module.exports.getDashBoardInternships = function(decoded, callback){         //
             if(err) return callback(err, null);
             let internships = user.company.internships;
             let count = internships.length;
-            for(let i = 0; i < count; i++){
-                let imgUrl = internships[i].candidate.DP.url;
-                internships[i]['img'] = imgUrl;
+            if(count){
+                for(let i = 0; i < count; i++){
+                    let imgUrl = internships[i].candidate.DP.url;
+                    internships[i]['img'] = imgUrl;
+                }
             }
             callback(null, internships);
         });

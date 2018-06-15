@@ -34,7 +34,7 @@ export class InternshipApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/internship/dashboardInternships', {headers: headers}).map(res => res.json());
+    return this.http.get('internship/dashboardInternships', {headers: headers}).map(res => res.json());
   }
 
   createInternship(newIntnshp){
