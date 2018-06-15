@@ -29,6 +29,14 @@ export class InternshipApiService {
     return this.http.post('internship/yearInternships', data, {headers: headers}).map(res => res.json());
   }
 
+  getDashboardInternships(){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.get('http://localhost:3000/internship/dashboardInternships', {headers: headers}).map(res => res.json());
+  }
+
   createInternship(newIntnshp){
     this.loadToken();
     let headers = new Headers;
