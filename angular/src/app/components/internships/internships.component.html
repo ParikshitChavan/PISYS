@@ -17,7 +17,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor ="let internship of internships; let i = index" (click)="onIntnshpClick(i)">
+      <tr *ngFor ="let internship of internships; let i = index" (click)="onIntnshpClick(internship._id)">
         <td>
           {{i + 1}}
         </td>

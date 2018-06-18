@@ -69,8 +69,8 @@ export class InternshipsComponent implements OnInit {
     });
   }
 
-  onIntnshpClick(index){
-    this.router.navigate(['/internship/'+this.internships[index]._id]);
+  onIntnshpClick(id){
+    this.router.navigate(['/internship/'+id]);
   }
 
   onIntnshpCreateClick(isValidForm){

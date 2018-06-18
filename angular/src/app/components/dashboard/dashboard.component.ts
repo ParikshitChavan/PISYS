@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { InternshipApiService } from '../../services/internshipAPI/internship-api.service';
 import { toast } from 'angular2-materialize';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,7 +11,7 @@ import { toast } from 'angular2-materialize';
 export class DashboardComponent implements OnInit {
   internships = [];
 
-  constructor(private internshipService: InternshipApiService) { }
+  constructor(private internshipService: InternshipApiService, private router: Router) { }
 
   ngOnInit() {
     this.internshipService.getDashboardInternships().subscribe(resp=>{
@@ -21,5 +22,9 @@ export class DashboardComponent implements OnInit {
       this.internships = resp.internships;
     });
    }
+
+   onInternshipClick(id){
+    this.router.navigate(['/internship/'+id]);
+  }
 
 }

@@ -54,7 +54,7 @@
             <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
             <button type="button" (click)="editingBasicInfo = false" class="btn red">Cancel</button>
         </div>
-        <div class="fltBtnArea" [hidden]='editingBasicInfo'>
+        <div class="fltBtnArea" [hidden]='editingBasicInfo || userAccess == 0'>
             <a id="BasicInfoEditBtn" (click)="editingBasicInfo = true" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
         </div>
     </form>
