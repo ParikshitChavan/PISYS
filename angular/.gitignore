@@ -44,4 +44,4 @@ testem.log
 Thumbs.db
 
 #liveServices
-/angular/src/app/services_live
+/angular/src/app/services_live/
