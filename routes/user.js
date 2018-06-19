@@ -115,7 +115,7 @@ router.delete('/delete', (req, res, next)=>{
 
 router.post('/requestPasswordReset', (req, res, next)=>{
     User.setupPasswordReset(req.body.email, (err)=>{
-        if(err) return res.json({success: false, message: err});
+        if(err) return res.json({success: false, error: err});
         return res.json({success: true, message: 'Password reset emil sent'});
     });
 });

@@ -13,25 +13,26 @@ export class AuthService {
   user: any;
   jwtHelper: JwtHelper = new JwtHelper();
   decodedToken: any;
+ 
   constructor(private http: Http) { }
 
   registerUser(user){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/register', user, {headers: headers}).map(res => res.json());
+    return this.http.post('user/register', user, {headers: headers}).map(res => res.json());
   }
 
   forgotPasswordInit(email){
     let data = { email: email };
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/requestPasswordReset', data, {headers: headers}).map(res => res.json());
+    return this.http.post('user/requestPasswordReset', data, {headers: headers}).map(res => res.json());
   }
 
   login(user){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/authenticate', user, {headers: headers}).map(res => res.json());
+    return this.http.post('user/authenticate', user, {headers: headers}).map(res => res.json());
   }
 
   loginSuccess(data){
@@ -84,7 +85,7 @@ export class AuthService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/user/userInfo', {headers: headers}).map(res => res.json());
+    return this.http.get('user/userInfo', {headers: headers}).map(res => res.json());
   }
 
   updateUserInfo(userInfo){
@@ -92,32 +93,32 @@ export class AuthService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/user/updateUserInfo', userInfo, {headers: headers}).map(res => res.json());
+    return this.http.post('user/updateUserInfo', userInfo, {headers: headers}).map(res => res.json());
   }
 
   updateDisplayPic(uploadData){
     this.loadToken();
     let headers = new Headers;
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/user/updateDisplayPic', uploadData, {headers: headers}).map(res => res.json());
+    return this.http.post('user/updateDisplayPic', uploadData, {headers: headers}).map(res => res.json());
   }
 
   initPassword(data){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/initPassword', data, {headers: headers}).map(res => res.json());
+    return this.http.post('user/initPassword', data, {headers: headers}).map(res => res.json());
   }
 
   resetPassword(data){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/resetPassword', data, {headers: headers}).map(res => res.json());
+    return this.http.post('user/resetPassword', data, {headers: headers}).map(res => res.json());
   }
 
   updatePassword(data){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/updatePassword', data, {headers: headers}).map(res => res.json());
+    return this.http.post('user/updatePassword', data, {headers: headers}).map(res => res.json());
   }
 
 }

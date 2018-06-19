@@ -29,6 +29,7 @@ import { VerifyEmailComponent } from './components/verify-email/verify-email.com
 import { SuicaComponent } from './components/suica/suica.component';
 import { WeeklyReportsComponent } from './components/weekly-reports/weekly-reports.component';
 import { InitAccountComponent } from './components/init-account/init-account.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
@@ -43,10 +44,10 @@ import {AuthGuard} from "./guards/auth.guard"
 //directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
 
-
 const appRoutes: Routes =[
   {path: '', component: HomeComponent, pathMatch: 'full'},
   {path: 'initAccount/:token', component: InitAccountComponent},
+  {path: 'forgotPassword', component: ForgotPasswordComponent},
   {path: 'resetPassword/:token', component: ResetPasswordComponent},
   {path: 'verifyEmail/:token', component: VerifyEmailComponent},
   {path: 'internships', component: InternshipsComponent, pathMatch: 'full', canActivate: [AuthGuard]},
@@ -94,7 +95,8 @@ const appRoutes: Routes =[
     SuicaComponent,
     WeeklyReportsComponent,
     EqualValidatorDirective,
-    InitAccountComponent
+    InitAccountComponent,
+    ForgotPasswordComponent
   ],
   imports: [
     BrowserModule,
