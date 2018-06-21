@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const bcrypt = require('bcryptjs');
-const config = require('../config/cfg');
 
 const sitelinkSchema = Schema({
     sentTo: {type: String, required: true},
@@ -26,7 +24,7 @@ module.exports.createActivationLink = function(email, callback){
     })
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "http:/localhost:3000/#/users/activateaccount/" + newSitelink._id;
+        let link = "https:/pisys.willings.co.jp/initAccount/" + newSitelink._id;
         callback(null, link);
     });
 }
@@ -38,12 +36,12 @@ module.exports.createPasswordResetLink = function(email, callback){
     let newSitelink = new Sitelink({
         _id: new mongoose.Types.ObjectId(),
         sentTo: email,
-        expiry: expires,
+        expiry: expiry,
         type: 'passwordReset'
     })
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "http:/localhost:3000/#/users/resetpassword/" + newSitelink._id;
+        let link = "https:/pisys.willings.co.jp/resetPassword/" + newSitelink._id;
         callback(null, link);
         //delete token after on successful change
     });
@@ -60,7 +58,7 @@ module.exports.createEmailVerificationLink = function(email, callback){
     /*future scope check if already activated if not check if already token is preset*/
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "http:/localhost:3000/#/users/verifyemail/" + newSitelink._id;
+        let link = "https:/pisys.willings.co.jp/verifyEmail/" + newSitelink._id;
         callback(null, link);
     });
 }

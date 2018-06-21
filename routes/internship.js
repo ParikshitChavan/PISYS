@@ -103,7 +103,7 @@ router.post('/initInternship', (req, res, next)=>{
                 });
                 newInternship.save((err, internship) => {
                     if(err) return res.json({success: false, error: err});
-                    let link = 'https://www.willings.com/piits/internship/' + internship._id;
+                    let link = 'https://pisys.willings.com/internship/' + internship._id;
                     Company.addInternshipAndGetAdmins(companyId, internship._id, (err, admins)=>{
                         if(err) return res.json({success: false, error: err });
                         User.addInternship(candidateId, internship._id, (err)=>{
@@ -150,17 +150,24 @@ router.post('/upsertBasicInfo', (req, res, next)=>{
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         if(decoded.access==0) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        let internshipId = req.body._id;
         let basicInfo = {
             projectName: req.body.projectName,
             designation: req.body.designation,
             supervisors: req.body.supervisors,
+            startDate: req.body.startDate,
+            endDate: req.body.endDate,
             location: req.body.location,
             description: req.body.description,
             cmpGivenEmail: req.body.cmpGivenEmail
         }
-        Internship.upsertBasicInfo(req.body._id, decoded, basicInfo, (err)=>{
-            if(err) throw err;
-            res.json({success:true, message: 'Internship basic information updated successfully'});
+        Internship.upsertBasicInfo(internshipId, decoded, basicInfo, (err, candidate)=>{
+            if(err) return res.json({success: false, message: err});
+            let link = 'https://pisys.willings.com/internship/' + internshipId;
+            mailer.notifyCandidateBasicInfo(candidate, link, (err)=>{
+                if(err) return res.json({success: false, message: err});
+                res.json({success:true, message: 'Internship basic information updated successfully and candidate notified.'});
+            });
         });
     });
 });

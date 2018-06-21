@@ -25,6 +25,7 @@ export class InternshipsComponent implements OnInit {
   candidateSearchControl : FormControl;
   companySearchBoxAction =  new EventEmitter<string|MaterializeAction>();
   candidateSearchBoxAction =  new EventEmitter<string|MaterializeAction>();
+  modalActions = new EventEmitter<string|MaterializeAction>();
 
   constructor(private internshipService : InternshipApiService,
     private router:Router,
@@ -73,9 +74,10 @@ export class InternshipsComponent implements OnInit {
     this.router.navigate(['/internship/'+id]);
   }
 
-  onIntnshpCreateClick(isValidForm){
+  onIntnshpCreateClick(){
     if(this.newIntnshp.companyName =="" || this.newIntnshp.candidateEmail == "") return toast("Please fill in both the candidate and company name", 3000);
     this.internshipService.createInternship(this.newIntnshp).subscribe(resp=>{
+      this.modalActions.emit({action:"modal",params:['close']});
       if(!resp.success) {
         console.log(resp.error);
         return toast('Some error occurred, please try again later.', 3000);

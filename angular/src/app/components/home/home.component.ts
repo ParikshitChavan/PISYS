@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from "../../services/auth/auth.service";
+import { toast } from 'angular2-materialize';
 
 @Component({
   selector: 'app-home',
@@ -42,9 +43,22 @@ export class HomeComponent implements OnInit {
     if(!validForm) return false;
     this.regSubmitted = true;
     const user = this.registerUser;
-    this.authService.registerUser(user).subscribe(data => {
-      if(data.success) this.regMessage = "User Registered successfully and can now login";
-      else this.regMessage = "User registration failed. Please try agin later. If the error persists Please contact our support."
+    this.authService.registerUser(user).subscribe(resp => {
+      if(resp.success) {
+        this.registerUser = {
+          name: "",
+          email: "",
+          DOB: "",
+          password: "",
+          cnfPass: "",
+          phNum: ""
+        }
+        toast("User Registered successfully and can now login", 3000);
+      } 
+      else{
+        this.regMessage = "User registration failed. check console for more details.";
+        console.log(resp.error);
+      } 
     });
   }
 
@@ -52,14 +66,14 @@ export class HomeComponent implements OnInit {
     if(!validForm) return false;
     this.loginSubmitted = true;
     const user = {email:this.loginUser.loginEmail, password: this.loginUser.loginPassword};
-    this.authService.login(user).subscribe(data => {
-      if(data.success) {
-        this.authService.loginSuccess(data);
+    this.authService.login(user).subscribe(resp => {
+      if(resp.success) {
+        this.authService.loginSuccess(resp);
         this.router.navigate(['dashboard']);
       }
       else {
         this.loginError = true;
-        this.loginMessage = data.message;
+        this.loginMessage = resp.message;
         this.loginSubmitted = false;
       }
     });

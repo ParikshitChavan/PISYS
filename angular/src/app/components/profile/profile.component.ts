@@ -89,7 +89,6 @@ export class ProfileComponent implements OnInit {
   }
 
   convertToBlob(base64Str:string){
-
     let binary = atob(base64Str.split(',')[1]);
     let array = [];
     let mimestring= base64Str.split(',')[0].split(':')[1].split(';')[0];
@@ -138,14 +137,16 @@ export class ProfileComponent implements OnInit {
   passwordChangeSubmit(validForm: boolean){
     if(!validForm) return false;
     if(this.passwords.newPass!=this.passwords.cnfPass) return false;
-    let userData={userId:this.userDetails._id, newPass:this.passwords.newPass}
+    let userData = { currentPassword: this.passwords.currPass, newPassword: this.passwords.newPass };
     this.authService.updatePassword(userData).subscribe( resp =>{
       if(!resp.success) {
-        toast("Some Error occurred. Please try again later",3000);
-        return null;
+        console.log(resp.error);
+        return toast("Some Error occurred. check Console fro more details",3000);
       }
-      this.authService.loginSuccess(resp);
-      toast("Password updated successfully",3000);;
+      toast("Password updated successfully, please login with your new password.",3000);
+      this.authService.destroyToken();
+      this.authService.destroyUserInfo();
+      this.router.navigate(['/']);
     });
   }
 }

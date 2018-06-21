@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { SitelinkApiService } from '../../services/sitelinkAPI/sitelink-api.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { toast } from 'angular2-materialize';
@@ -44,7 +44,7 @@ export class ResetPasswordComponent implements OnInit {
         return null;
       }
       this.authService.loginSuccess(resp);
-      this.router.navigate(['dashboard']);
+      this.router.navigate(['/dashboard']);
     });
   }
 

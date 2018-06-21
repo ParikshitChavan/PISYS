@@ -45,5 +45,5 @@
   </div>
 </form>
 <div class="fltBtnArea" *ngIf='isWLMember' [hidden]="editingWiFiInfo">
-  <a id="WiFiInfoEditBtn" (click)="editingWiFiInfo = true" class="btn-floating btn-large waves-effect waves-light red" ><i class="material-icons">edit</i></a>
+  <a *ngIf='isWLMember' id="WiFiInfoEditBtn" (click)="editingWiFiInfo = true" class="btn-floating btn-large waves-effect waves-light red" ><i class="material-icons">edit</i></a>
 </div>

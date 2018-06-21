@@ -49,8 +49,11 @@ router.post('/register', (req, res, next)=>{
         DP: {key:"", url:"https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png"}
     });
     User.addUser(newUser, (err, user)=>{
-        if(err) return res.json({success: false, message: "Failed to register the User   "+ err});
-        else res.json({success: true, message: "User registered successfully"});
+        if(err) return res.json({success: false, error: err});
+        User.setupEmailVerification(user.email, (err)=>{
+            if(err) return res.json({success: false, message: err});
+            return res.json({success: true, message: 'User registered successfully, email verification sent.'});
+        });
     });
 });
 
@@ -120,17 +123,6 @@ router.post('/requestPasswordReset', (req, res, next)=>{
     });
 });
 
-router.post('/requestEmailVerification', (req, res, next)=>{
-    let token = req.headers['x-access-token'];
-    User.validateToken(token, (err, serverStatus, decoded)=>{
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.setupEmailVerification(req.body.email, (err)=>{
-            if(err) return res.json({success: false, message: err});
-            return res.json({success: true, message: 'Password reset email sent'});
-        });
-    });
-});
-
 //on page load validate the site link and its expiry 
 router.post('/validateSitelink', (req, res, next)=>{
     User.validateSitelink(req.body.id, (err, userId)=>{
@@ -158,17 +150,17 @@ router.post('/resetPassword', (req, res, next)=>{
     });
 });
 
-router.post('/changePassword', (req, res, next)=>{
+router.post('/updatePassword', (req, res, next)=>{
     const currPass = req.body.currentPassword;
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
         User.getUserPassById(decoded._id, (err, user)=>{
             if(err) throw err;
-            User.comparePassword(currPass, user.password, (err, isMatch)=>{
+            User.comparePasswords(currPass, user.password, (err, isMatch)=>{
                 if(err) throw err;
-                if(!isMatch) return res.json({success:false, message:'Wrong current password'});
-                User.setPassword(decoded._id, req.body.newPass, (err, user)=>{
+                if(!isMatch) return res.json({success:false, error:'Wrong current password'});
+                User.setPassword(decoded._id, req.body.newPassword, (err, user)=>{
                     if(err) throw err;
                     res.json({success: true, message: "Password changed successfully"});
                 });

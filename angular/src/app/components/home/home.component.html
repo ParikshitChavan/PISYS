@@ -54,10 +54,10 @@
   </div>
   <div class="regFormArea col 12 l6 z-depth-2">
     <h3>Register</h3>
-    <div [hidden]="!regSubmitted">
+    <div [hidden]="!regSubmitted" class="red-text">
       {{regMessage}}
     </div>
-    <div [hidden]="regSubmitted">
+    <div>
       <form class="col s12" (submit)="onRegisterUser(regForm.valid)" #regForm="ngForm">
         <div class="form-group">
           <div class="row">

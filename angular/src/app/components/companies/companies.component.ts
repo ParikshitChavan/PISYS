@@ -47,8 +47,8 @@ export class CompaniesComponent implements OnInit {
     if(!formValid) return false;
     this.companyAPIService.createCompany(this.newCmp).subscribe(resp =>{
       resp.success ? this.newCmpMsg = "New company created successfully" : this.newCmpMsg = "Some error occurred, please try agin later.";
-      toast(this.newCmpMsg, 3000);
       this.modalActions.emit({action:"modal",params:['close']});
+      toast(this.newCmpMsg, 3000);
     });
   }
 

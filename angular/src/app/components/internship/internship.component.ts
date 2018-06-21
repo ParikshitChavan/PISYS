@@ -15,7 +15,7 @@ export class InternshipComponent implements OnInit {
   jwtHelper: JwtHelper = new JwtHelper();
   decodedToken: any;
   intnshpId: string;
-  activatedChild:string = '';
+  activatedChild: string = '';
   userAccess: any = 1;
   internship: {
     _id: string,

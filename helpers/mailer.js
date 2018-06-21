@@ -59,9 +59,8 @@ module.exports.sendEmailVerificationMail = function(recipient, link, callback){
     let htmlBody = `
         <p>Hi ${recipient.name},<br>
         <br>
-        We received a email verification request from this email id.<br>
+        We received a email verification request for this email id.<br>
         Kindly Inform us immediately if you think this wasn't you. otherwise please go through the link to verify your email address.<br>
-        kindly node that this link will only be active for 12 hours.<br>
         <br>
         <a href='${link}'>${link}</a><br>
         <br>
@@ -70,7 +69,7 @@ module.exports.sendEmailVerificationMail = function(recipient, link, callback){
     let mailOptions = {
         from: '"PIITs Team" <piits@willings.co.jp>',
         to: recipient.email,
-        subject: 'Link to verifying your email address',
+        subject: 'Link to verifying your email address on Pisys',
         text: '',
         html: htmlBody
     };
@@ -109,4 +108,29 @@ module.exports.initiateInternshipMails = function(admins, link, callback){      
     if(errArr.length == admins.length) return callback(false, 'email sending failed to all the admins');
     else if(errArr.length) return callback(true, 'Email sending failed to some of the admins')
     callback(true , null);
+}
+
+module.exports.notifyCandidateBasicInfo = function(candidate, link, callback){         //callback(err)
+    if(!candidate.email) return callback('Missing candidate Email');
+    let htmlBody = `
+        <p>Hi ${candidate.name},<br>
+        <br>
+        The basic info of your intership has just been updated.<br>
+        Check it out here:<br>
+        <br>
+        <a href='${link}'>${link}</a><br>
+        <br>
+        Thank you.<br>    
+    `;  //es6 template String with back ticks
+    let mailOptions = {
+        from: '"PIITs Team" <piits@willings.co.jp>',
+        to: candidate.email,
+        subject: 'Basic details of you intership have been updated',
+        text: '',
+        html: htmlBody
+    };
+    config.nodemailerTransporter.sendMail(mailOptions, (err, info) => {
+        if (err) return callback(err);
+        callback(null);
+    });
 }

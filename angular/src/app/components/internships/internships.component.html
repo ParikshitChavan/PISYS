@@ -36,9 +36,9 @@
   <a id="initIntnshpBtn" href="#initIntenshpModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
 </div>
 
-<div id="initIntenshpModal" class="modal modal-fixed-footer" materialize="modal">
+<div id="initIntenshpModal" class="modal modal-fixed-footer" materialize="modal" [materializeActions]="modalActions">
   <div class="modal-content">
-    <form (ngSubmit)="onIntnshpCreateClick(form.valid)" #form=ngForm>
+    <form (ngSubmit)="onIntnshpCreateClick()" #form=ngForm>
       <div class="input-field col s12">
         <label for="company"> Company Name</label>
         <input id="company" type="text" name="companyName" [formControl]="companySearchControl" [(ngModel)]="newIntnshp.companyName" required  materialize="autocomplete" [materializeParams]="companyAutocompleteParams" [materializeActions]="companySearchBoxAction">

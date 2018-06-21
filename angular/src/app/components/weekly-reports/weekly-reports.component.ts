@@ -4,6 +4,8 @@ import { InternshipApiService } from '../../services/internshipAPI/internship-ap
 import { toast, MaterializeAction } from 'angular2-materialize';
 import  { JwtHelper } from 'angular2-jwt'
 
+declare let Materialize:any;
+
 @Component({
   selector: 'app-weekly-reports',
   templateUrl: './weekly-reports.component.html',
@@ -75,7 +77,20 @@ export class WeeklyReportsComponent implements OnInit {
       this.upsertWrept.week=  this.wReports[this.viewingRept].week;
       this.upsertWrept.index = this.viewingRept;
     }
+    else{
+      this.upsertWrept = {rept: {
+        difficulty: 0,
+        learnt: '',
+        tech: '',
+        supQuery: '',
+        interesting: '',
+        other: ''
+      }, week: {sDate:'', eDate:''}, index: -1};
+    }
     this.modalReptActions.emit({action:'modal', params:['open']});
+    setTimeout(()=>{
+      Materialize.updateTextFields();
+    });
   }
 
   invokeReptFrmSubmit(){
@@ -110,9 +125,8 @@ export class WeeklyReportsComponent implements OnInit {
       if(this.upsertWrept.index == -1) this.viewingRept++;
       this.wReports = resp.weeklyReports;
       this.modalReptActions.emit({action:'modal', params:['close']});
-      formData.form.controls['upsertFileName'].reset();
-      fileInp.files = [];
       this.upsertWrept = {rept: { difficulty: 0, learnt: '', tech: '', supQuery: '', interesting: '', other: ''}, week: {sDate:'', eDate:''}, index: -1};
+      formData.form.resetForm();      
       toast('Report updated successfully.', 3000);
     });
   }

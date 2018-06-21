@@ -116,8 +116,10 @@ export class AuthService {
   }
 
   updatePassword(data){
+    this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
     return this.http.post('user/updatePassword', data, {headers: headers}).map(res => res.json());
   }
 

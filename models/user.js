@@ -196,11 +196,11 @@ module.exports.comparePasswords = function(candidatePassword, hash, callback){
 
 module.exports.setPassword = function(userId, newPass, callback){
     User.findById(userId, 'name email password DP', (err, user)=>{
-        if(err) throw err;
+        if(err) return callback(err, null);
         bcrypt.genSalt(10, (err, salt)=>{
-            if(err) throw err;
+            if(err) return callback(err, null);
             bcrypt.hash(newPass, salt, (err, hash)=>{
-                if(err) throw err;
+                if(err) return callback(err, null);
                 user.password = hash
                 user.save(callback);
             });
@@ -220,12 +220,12 @@ module.exports.setupEmailVerification = function(email, callback){
     if(!email) return callback('no email provided');
     const query = {email: email};
     User.findOne(query, (err, user)=>{
-        if(err) throw err;
+        if(err) return callback(err);
         Sitelink.createEmailVerificationLink(email,(err,siteLink)=>{
-            if(err) throw err;
+            if(err) return callback(err);
             let recipient = {name: user.name, email: user.email};
             mailer.sendEmailVerificationMail(recipient, siteLink, (err)=>{
-                if(err) throw err;
+                if(err) return callback(err);
                 callback(null);
             });
         });
@@ -236,12 +236,12 @@ module.exports.setupPasswordReset = function(email, callback){
     if(!email) return callback('no email provided');
     const query = {email: email};
     User.findOne(query, (err, user)=>{
-        if(err) throw err;
+        if(err) return callback(err);
         Sitelink.createPasswordResetLink(email,(err,siteLink)=>{
-            if(err) throw err;
+            if(err) return callback(err);
             let recipient = {name: user.name, email: user.email};
             mailer.sendPasswordResetMail(recipient, siteLink, (err)=>{
-                if(err) throw err;
+                if(err) return callback(err);
                 callback(null);
             });
         });
@@ -280,14 +280,14 @@ module.exports.getUserIdByEmail = function(email, callback){
 
 module.exports.validateSitelink = function(token, callback){        //callback(err, userId)
     Sitelink.findById(token, (err, sitelink)=>{
-        if(err) throw err;
+        if(err) return callback(err, null);
         if(!sitelink) return callback('sitelink not valid', null);
         if(sitelink.expiry){
             var currDate = new Date();
             if(expiry - currDate < 0) return callback('sitelink expired', null);
             else {
                 User.getUserIdByEmail(sitelink.sentTo, (err, userId)=>{
-                    if(err) throw err;
+                    if(err) return callback(err, null);
                     return callback(null, userId);
                 });
             }
@@ -295,14 +295,14 @@ module.exports.validateSitelink = function(token, callback){        //callback(e
         else{
             if(sitelink.type == 'activation'){
                 User.getUserIdByEmail(sitelink.sentTo, (err, userId)=>{
-                    if(err) throw err;
+                    if(err) return callback(err, null);
                     return callback(null, userId);
                 });
             }
             if(sitelink.type == 'emailVerification') {
                 User.markEmailVerified(sitelink.sentTo);
                 sitelink.remove((err)=>{
-                    if(err) throw err;
+                    if(err) return callback(err, null);
                     return callback(null, null);
                 });
             }

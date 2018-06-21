@@ -290,30 +290,47 @@ module.exports.upsertCFeedback = function(internshipId, userId, body, callback){
     });
 }
 
-module.exports.upsertBasicInfo = function(internshipId, decodedToken, basicInfo, callback){         //callback(err);
+module.exports.upsertBasicInfo = function(internshipId, decodedToken, basicInfo, callback){         //callback(err, candidate);
     if(decodedToken.access == 2){
-        Internship.findById(internshipId, (err, internship)=>{
-            if(err) return callback(err);
-            internship.projectName = basicInfo.projectName,
-            internship.designation = basicInfo.designation,
-            internship.supervisors = basicInfo.supervisors,
-            internship.location = basicInfo.location,
+        Internship.findById(internshipId)
+        .populate({path: 'candidate', select: 'name email', options:{ lean: true}})
+        .exec((err, internship)=>{
+            if(err) return callback(err, null);
+            let candidate = internship.candidate;
+            internship.projectName = basicInfo.projectName;
+            internship.designation = basicInfo.designation;
+            internship.startDate = basicInfo.startDate;
+            internship.endDate = basicInfo.endDate;
+            internship.supervisors = basicInfo.supervisors;
+            internship.location = basicInfo.location;
             internship.description = basicInfo.description;
             internship.cmpGivenEmail = basicInfo.cmpGivenEmail;
-            internship.save(callback);
+            internship.save(err=>{
+                if(err) return callback(err, null);
+                callback(null, candidate);
+            });
         });
     }
     else {
-        Internship.findById(internshipId).populate({path: 'company', select: 'admins'}).exec((err, internship)=>{
-            if(err) return callback(err);
-            if(!internship.company.admins.includes(decodedToken._id)) return callback('Unauthorised');
-            internship.projectName = basicInfo.projectName,
-            internship.designation = basicInfo.designation,
-            internship.supervisors = basicInfo.supervisors,
-            internship.location = basicInfo.location,
+        Internship.findById(internshipId)
+        .populate({path: 'company', select: 'admins'})
+        .populate({path: 'candidate', select: 'name email', options:{ lean: true}})
+        .exec((err, internship)=>{
+            if(err) return callback(err, null);
+            if(!internship.company.admins.includes(decodedToken._id)) return callback('Unauthorised', null);
+            let candidate = internship.candidate;
+            internship.projectName = basicInfo.projectName;
+            internship.designation = basicInfo.designation;
+            internship.startDate = basicInfo.startDate;
+            internship.endDate = basicInfo.endDate;
+            internship.supervisors = basicInfo.supervisors;
+            internship.location = basicInfo.location;
             internship.description = basicInfo.description;
             internship.cmpGivenEmail = basicInfo.cmpGivenEmail;
-            internship.save(callback);
+            internship.save(err=>{
+                if(err) return callback(err, null);
+                callback(null, candidate);
+            });
         })
     }
 }
