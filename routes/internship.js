@@ -103,7 +103,7 @@ router.post('/initInternship', (req, res, next)=>{
                 });
                 newInternship.save((err, internship) => {
                     if(err) return res.json({success: false, error: err});
-                    let link = 'https://pisys.willings.com/internship/' + internship._id;
+                    let link = 'https://pisys.willings.co.jp/internship/' + internship._id;
                     Company.addInternshipAndGetAdmins(companyId, internship._id, (err, admins)=>{
                         if(err) return res.json({success: false, error: err });
                         User.addInternship(candidateId, internship._id, (err)=>{
@@ -163,7 +163,7 @@ router.post('/upsertBasicInfo', (req, res, next)=>{
         }
         Internship.upsertBasicInfo(internshipId, decoded, basicInfo, (err, candidate)=>{
             if(err) return res.json({success: false, message: err});
-            let link = 'https://pisys.willings.com/internship/' + internshipId;
+            let link = 'https://pisys.willings.co.jp/internship/' + internshipId;
             mailer.notifyCandidateBasicInfo(candidate, link, (err)=>{
                 if(err) return res.json({success: false, message: err});
                 res.json({success:true, message: 'Internship basic information updated successfully and candidate notified.'});

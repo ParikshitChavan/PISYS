@@ -39,8 +39,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onRegisterUser(validForm: boolean){
-    if(!validForm) return false;
+  onRegisterUser(form){
+    if(!form.valid) return false;
     this.regSubmitted = true;
     const user = this.registerUser;
     this.authService.registerUser(user).subscribe(resp => {
@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit {
           cnfPass: "",
           phNum: ""
         }
+        form.resetForm();
         toast("User Registered successfully and can now login", 3000);
       } 
       else{

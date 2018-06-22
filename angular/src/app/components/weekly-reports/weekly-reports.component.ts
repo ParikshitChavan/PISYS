@@ -103,6 +103,18 @@ export class WeeklyReportsComponent implements OnInit {
     if(!fileInp.files || !fileInp.files[0]) formData.form.controls['upsertFileName'].setErrors({'incorrect': true});
     else if(!(/\.(jpg|jpeg|png)$/i).test(fileInp.files[0].name)) formData.form.controls['upsertFileName'].setErrors({'incorrect': true});
         else formData.form.controls['upsertFileName'].setErrors(null);
+    let sDate = new Date(this.upsertWrept.week.sDate);
+    let eDate = new Date(this.upsertWrept.week.eDate);
+    if(eDate <= sDate) formData.form.controls['eDate'].setErrors({'incorrect': true});
+    else formData.form.controls['eDate'].setErrors(null);
+    let reptsNum = this.wReports.length;
+    let editingReptIndex = this.upsertWrept.index
+    if(reptsNum && editingReptIndex){           //they should not be editing the first weekly Report -1(new) and above 0 is fine..! 
+      let lastWeekEDate: any;
+      if(editingReptIndex == -1) lastWeekEDate = new Date(this.wReports[reptsNum-1].week.eDate);
+      else lastWeekEDate = new Date(this.wReports[editingReptIndex-1].week.eDate);
+      if(sDate <= lastWeekEDate) formData.form.controls['sDate'].setErrors({'incorrect': true});
+    }
     if(!formData.valid) return false;
     let completeFormData = new FormData();
     completeFormData.append('reptIndex', this.upsertWrept.index);
@@ -116,7 +128,7 @@ export class WeeklyReportsComponent implements OnInit {
     completeFormData.append('other', this.upsertWrept.rept.other);
     completeFormData.append('weekSnapshot', fileInp.files[0], fileInp.files[0].name);
 
-    this.intnshpService.upsertWeeklyReport(this.intnshpId ,completeFormData).subscribe(resp=>{
+    this.intnshpService.upsertWeeklyReport(this.intnshpId, completeFormData).subscribe(resp=>{
       if(!resp.success){
         toast('Some error occurred');
         console.log(resp.error);
@@ -126,7 +138,7 @@ export class WeeklyReportsComponent implements OnInit {
       this.wReports = resp.weeklyReports;
       this.modalReptActions.emit({action:'modal', params:['close']});
       this.upsertWrept = {rept: { difficulty: 0, learnt: '', tech: '', supQuery: '', interesting: '', other: ''}, week: {sDate:'', eDate:''}, index: -1};
-      formData.form.resetForm();      
+      formData.resetForm();      
       toast('Report updated successfully.', 3000);
     });
   }

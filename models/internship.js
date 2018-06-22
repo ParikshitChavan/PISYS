@@ -181,7 +181,7 @@ module.exports.getInternshipsOfYear = function(year, callback){
 }
 
 module.exports.getCandidateAndWRepts = function(internshipId, callback){            //cb(err, candidateId, Wrepts)
-    Internship.findById(internshipId, 'candidate', { lean: true }, (err, internship)=>{
+    Internship.findById(internshipId, 'candidate wRepts', { lean: true }, (err, internship)=>{
         if(err) return callback(err, null, null);
         else callback(null, internship.candidate, internship.wRepts);
     });

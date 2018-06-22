@@ -211,8 +211,8 @@ module.exports.setPassword = function(userId, newPass, callback){
 module.exports.markEmailVerified = function(email, callback){
     let query = {email: email};
     User.findOneAndUpdate(query, {$set: {emailVerified: true}}, (err)=>{
-        if(err) throw err;
-        callback();
+        if(err) return callback(err);
+        callback(null);
     });
 }
 
@@ -237,6 +237,8 @@ module.exports.setupPasswordReset = function(email, callback){
     const query = {email: email};
     User.findOne(query, (err, user)=>{
         if(err) return callback(err);
+        if(user == null) return callback('No user found');
+        if(!user.email || !user.name) return callback('No user found');
         Sitelink.createPasswordResetLink(email,(err,siteLink)=>{
             if(err) return callback(err);
             let recipient = {name: user.name, email: user.email};
@@ -300,10 +302,12 @@ module.exports.validateSitelink = function(token, callback){        //callback(e
                 });
             }
             if(sitelink.type == 'emailVerification') {
-                User.markEmailVerified(sitelink.sentTo);
-                sitelink.remove((err)=>{
+                User.markEmailVerified(sitelink.sentTo, (err)=>{
                     if(err) return callback(err, null);
-                    return callback(null, null);
+                    sitelink.remove((err)=>{
+                        if(err) return callback(err, null);
+                        return callback(null, null);
+                    });
                 });
             }
         }
