@@ -53,10 +53,27 @@ export class InternshipComponent implements OnInit {
       }
       this.canAccess = true;
       this.internship = resp.internship;
+      this.internship.startDate = this.formatDate(new Date(resp.internship.startDate));
+      this.internship.endDate = this.formatDate(new Date(resp.internship.endDate));
       setTimeout(()=>{
         Materialize.updateTextFields();
       });
     });
+  }
+
+  formatDate(date) {
+      let monthNames = [
+        "Jan", "Feb", "Mar",
+        "Apr", "May", "Jun", "Jul",
+        "Aug", "September", "Oct",
+        "Nov", "Dec"
+      ];
+  
+      let day = date.getDate();
+      let monthIndex = date.getMonth();
+      let year = date.getFullYear();
+  
+      return day + ' ' + monthNames[monthIndex] + ' ' + year;
   }
 
   onBasicInfoSubmit(isValid:boolean){
