@@ -70,6 +70,9 @@ export class CompanyComponent implements OnInit {
   ngOnInit() {
     this.companyAPIService.getCmpInfo().subscribe(resp => {
       if(!resp.success) return false;
+      let dateObj = new Date(resp.companyData.est);
+      let options = { year: 'numeric', month: 'long', day:'numeric' };
+      resp.companyData.est = dateObj.toLocaleDateString('EN-US', options);
       this.companyDetails = resp.companyData;
     }, err => {
       console.log(err);

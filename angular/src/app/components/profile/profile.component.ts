@@ -69,6 +69,9 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.authService.getUserInfo().subscribe(resp => {
       if(!resp.success) return false;
+      let dateObj = new Date(resp.profileData.DOB);
+      let options = { year: 'numeric', month: 'long', day:'numeric' };
+      resp.profileData.DOB = dateObj.toLocaleDateString('EN-US', options);
       this.userDetails = resp.profileData;
     }, err => {
       console.log(err);

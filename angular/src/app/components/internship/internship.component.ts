@@ -49,32 +49,21 @@ export class InternshipComponent implements OnInit {
     this.intnshpId = this.route.snapshot.paramMap.get('id');
     this.intnshpService.getIntnshipDetails(this.intnshpId).subscribe(resp=>{
       if(!resp.success){
-        return toast(resp.error, 3000);
+        toast('Some error occurred, check the console for more details.', 3000);
+        return console.log(resp.error);
       }
       this.canAccess = true;
+      let dateObj1 = new Date(resp.internship.startDate);
+      let dateObj2 = new Date(resp.internship.endDate);
       this.internship = resp.internship;
-      /*this.internship.startDate = this.formatDate(new Date(resp.internship.startDate));
-      this.internship.endDate = this.formatDate(new Date(resp.internship.endDate));*/
+      let options = { year: 'numeric', month: 'long', day:'numeric' };
+      this.internship.startDate = dateObj1.toLocaleDateString('EN-US', options);
+      this.internship.endDate = dateObj2.toLocaleDateString('EN-US', options);
       setTimeout(()=>{
         Materialize.updateTextFields();
       });
     });
   }
-
-  /*formatDate(date) {
-      let monthNames = [
-        "Jan", "Feb", "Mar",
-        "Apr", "May", "Jun", "Jul",
-        "Aug", "September", "Oct",
-        "Nov", "Dec"
-      ];
-  
-      let day = date.getDate();
-      let monthIndex = date.getMonth();
-      let year = date.getFullYear();
-  
-      return day + ' ' + monthNames[monthIndex] + ' ' + year;
-  }*/
 
   onBasicInfoSubmit(isValid:boolean){
     if(!isValid) return false;

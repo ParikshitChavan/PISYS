@@ -19,15 +19,15 @@
                 </div>
                 <div class="input-field col s6">
                     <label for="startDate">Start Date</label>
-                    <input id="startDate" name='startDate' type="text" [(ngModel)]="internship.startDate" required [disabled]="!editingBasicInfo" #startDate="ngModel" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
-                    <div [hidden]= "startDate.valid || (startDate.pristine && !basicInfoForm.submitted) || !editingBasicInfo" class="red-text">
+                    <input id="startDate" name='startDate' type="text" [(ngModel)]="internship.startDate" required [disabled]="!editingBasicInfo" #sDate="ngModel" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]">
+                    <div [hidden]= "sDate.valid || (sDate.pristine && !basicInfoForm.submitted) || !editingBasicInfo" class="red-text">
                         Please input a valid start date for the project.
                     </div>
                 </div>
                 <div class="input-field col s6">
                     <label for="endDate">End Date</label>
-                    <input id="endDate" name='endDate' type="text" [(ngModel)]="internship.endDate" required [disabled]="!editingBasicInfo" #endDate="ngModel" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
-                    <div [hidden]= "endDate.valid || (endDate.pristine && !basicInfoForm.submitted) || !editingBasicInfo" class="red-text">
+                    <input id="endDate" name='endDate' type="text" [(ngModel)]="internship.endDate" required [disabled]="!editingBasicInfo" #eDate="ngModel" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 20, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]">
+                    <div [hidden]= "eDate.valid || (eDate.pristine && !basicInfoForm.submitted) || !editingBasicInfo" class="red-text">
                         Please input a valid end date for the project.
                     </div>
                 </div>
