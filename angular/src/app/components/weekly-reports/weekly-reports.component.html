@@ -4,7 +4,7 @@
       <h5>Week</h5>
       <ul class="tabs">
         <li class="tab" *ngFor='let report of wReports; let i= index' [ngClass]="{ 'active': viewingRept == i }" (click)='onWeekClick(i)'>
-          <a href="#" (click)='onWeekClick(i)'>{{report?.week?.sDate | date:'shortDate'}} ~ {{report?.week?.eDate | date:'shortDate'}}</a>
+          <a (click)='onWeekClick(i)'>{{report?.week?.sDate | date:'shortDate'}} ~ {{report?.week?.eDate | date:'shortDate'}}</a>
         </li>
       </ul>
       <div class="reptCreateBtnArea">
@@ -66,9 +66,9 @@
         <form (submit)='createCommentSubmit(cmtForm.valid)' #cmtForm=ngForm>
           <div class="input-field">
             <label for="editingComment">Comment</label>
-            <textarea id="editingComment" class="materialize-textarea" name="body" [(ngModel)]="newCmt" #editingComment="ngModel" required></textarea>
+            <textarea id="editingComment" class="materialize-textarea autocomplete" name="body" [(ngModel)]="newCmt" #editingComment="ngModel" required [mention]='wlMembers'></textarea>
             <div [hidden]= "editingComment.valid || (editingComment.pristine && !cmtForm.submitted)" class="red-text">
-              Please input the daily report body.
+              Please input a valid comment body.
             </div>
             <button type="submit" class="btn btn-submit">Comment<i class="material-icons right">send</i></button>
           </div>
@@ -86,7 +86,7 @@
         <div class="col s6">
           <div class="input-field">
             <label for="sDate" class="active">Start Date</label>
-            <input id="sDate" type="text" name="sDate" [(ngModel)]="upsertWrept.week.sDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]" #reptSDate="ngModel" required>
+            <input id="sDate" type="text" name="sDate" [(ngModel)]="upsertWrept.week.sDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]" #reptSDate="ngModel" required>
             <div [hidden]= "reptSDate.valid || (reptSDate.pristine && !formRpt.submitted)" class="red-text">
                 Please input a week start date that comes after previous week's end date.
               </div>
@@ -95,7 +95,7 @@
         <div class="col s6">
           <div class="input-field">
             <label for="eDate" class="active">End Date</label>
-            <input id="eDate" type="text" name="eDate" [(ngModel)]="upsertWrept.week.eDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]" #reptEDate="ngModel" required>
+            <input id="eDate" type="text" name="eDate" [(ngModel)]="upsertWrept.week.eDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]" #reptEDate="ngModel" required>
             <div [hidden]= "reptEDate.valid || (reptEDate.pristine && !formRpt.submitted)" class="red-text">
                 Please input a week end date that comes after week start date.
               </div>

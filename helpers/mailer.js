@@ -134,3 +134,30 @@ module.exports.notifyCandidateBasicInfo = function(candidate, link, callback){  
         callback(null);
     });
 }
+
+module.exports.sendcmtTagmails = function(cmtData, taggedBy, recipients, callback){         //callback(err)
+    let link = 'https://pisys.willings.co.jp/internship' + camtdata.id + '/weeklyReports';
+    let errStack = []
+    let htmlBody = `
+        You were tagged in comment by ${taggedBy} :<br>
+        ${cmtData.htmlBody}<br><br>
+        Check it out here:<br>
+        <br>
+        <a href='${link}'>${link}</a><br>  
+    `;  //es6 template String with back ticks
+    recipients.forEach(mailId => {
+        let mailOptions = {
+            from: '"PIITs Team" <piits@willings.co.jp>',
+            to: mailId,
+            subject: 'tagged in comment by ' + taggedBy,
+            text: '',
+            html: htmlBody
+        };
+        config.nodemailerTransporter.sendMail(mailOptions, (err, info) => {
+            if (err) errStack.push(err);
+        }); 
+    });
+    if(errStack.length == recipients.length) return callback('Email sending failed for all the tags');
+    if(errStack.length) return callback('Email sending failed for some of the tags');
+    callback(null);
+}

@@ -18,6 +18,14 @@
         <div class="col s5">Phone:</div>
         <div class="col s7">{{companyDetails.phNum}}</div>
       </div>
+      <div class="row">
+        <div class="col s5">website:</div>
+        <div class="col s7">{{companyDetails.website}}</div>
+      </div>
+      <div class="row">
+        <div class="col s12">About us:</div>
+        <div class="col s7"><pre id="cmpAbtUs">{{companyDetails.abtUs}}</pre></div>
+      </div>
       <a id="infoEditBtn" (click)="editInfoClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
     </div>
     <div class="formArea" [hidden]="!editing">
@@ -39,14 +47,20 @@
         </div>
         <div class="row">
           <div class="input-field">
-            <input id="est" type="text" name="est" [(ngModel)]="companyDetails.est" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
+            <input id="est" type="text" name="est" [(ngModel)]="companyDetails.est" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]">
             <label for="est" class="active">Established</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field">
             <label for="phNum" class="active">Phone Number</label>
-            <input type="text" [(ngModel)]="companyDetails.phNum" name="phNum" id="phNum">
+            <input id="phNum" type="text" name="phNum" [(ngModel)]="companyDetails.phNum" >
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field">
+            <label for="website" class="active">Website</label>
+            <input id="website" type="text" name="website" [(ngModel)]="companyDetails.website">
           </div>
         </div>
         <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>

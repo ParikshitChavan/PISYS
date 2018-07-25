@@ -119,7 +119,9 @@ router.post('/updateInfo', (req, res, next)=>{
                 name:req.body.name,
                 est:req.body.est,
                 phNum:req.body.phNum,
-                address:req.body.address
+                address:req.body.address,
+                website: req.body.website,
+                abtUs: req.body.abtUs
             }
             Company.updateCmpInfoById(companyId, companyData,  (err)=>{
                 if(err) throw err;
@@ -201,6 +203,49 @@ router.post('/suggestions', (req, res, next)=>{
         Company.getSuggestions(searchTerm, (err, suggestions) => {
             if(err) return res.json({success: false, message:err});
             res.json({success:true, data: suggestions});
+        });
+    });
+});
+
+//model function are not complete yet
+router.post('/getCompanyProfile', (req, res)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        let companyId = req.body.companyId;
+        Company.getCompanyProfile(companyId, decoded, (err, cmpProfile) => {
+            if(err) return res.json({success: false, error: err});
+            res.json({success:true, cmpProfile: cmpProfile});
+        });
+    });
+});
+
+router.post('/updateOpening', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        let companyId = req.body.companyId;
+        let openingId = req.body.openingId;
+        let opening = req.body.opening;
+        Company.upsertOpening(companyId, openingId, opening, (err) => {
+            if(err) return res.json({success: false, error:err});
+            res.json({success:true});
+        });
+    });
+});
+
+router.post('/getOpeningDetails', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        let companyId = req.body.companyId;
+        let openingId = req.body.openingId;
+        Company.getOpeningDetails(companyId, openingId, (err, opening) => {
+            if(err) return res.json({success: false, error:err});
+            res.json({success:true,  opening: opening});
         });
     });
 });

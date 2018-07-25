@@ -1,0 +1,60 @@
+<div class="container">
+  _id: '',           // auto assigned Opening id
+  sklRq: [],        // Skill required max 5
+  sklOp: [],        // optional skills max 5
+  descrip: '',      //  Opening and dept description
+  rspably: [],      // list of responsibilities
+  pblshed: false,   // is a published opening
+  achivd: false
+
+  <div id="openingOptions" class="fixed-action-btn">
+    <a class="btn-floating btn-large red"><i class="material-icons large">more_horiz</i></a>
+    <ul>
+      <li><a (click)='editOpening(i)' class="btn-floating yellow darken-1"><i class="material-icons">edit</i></a></li>
+      <li><a (click)='moveToDraft(i)' class="btn-floating  red"><i class="material-icons">arrow_back</i></a></li>
+      <li><a (click)='publishOpening(i)' class="btn-floating  red"><i class="material-icons">publish</i></a></li>
+      <li><a (click)='publishOpening(i)' class="btn-floating  red"><i class="material-icons">archive</i></a></li>
+    </ul>
+  </div>
+</div>
+
+<div id="createOpeningModal" class="modal modal-fixed-footer" materialize="modal">
+  <div class="modal-content">
+    <h5>Create internship opening</h5>
+    <form (ngSubmit)='saveOpening(form.valid)' #form='ngForm'>
+      <div class="input-field">
+        <label for="title">Opening Title</label>
+        <input id="title" name='title' type="text" [(ngModel)]="newOpening.title" required #title="ngModel">
+        <div [hidden]= "title.valid || (title.pristine && !form.submitted)" class="red-text">
+          Please input a valid title for the opening.
+        </div>
+      </div>
+      <div class="input-field">
+        <label for="descrip">Opening Title</label>
+        <input id="descrip" name='descrip' type="text" [(ngModel)]="newOpening.descrip" required #descrip="ngModel">
+        <div [hidden]= "descrip.valid || (descrip.pristine && !form.submitted)" class="red-text">
+          Please input a valid title for the opening.
+        </div>
+      </div>
+      <div class="input-field">
+        <label for="respbly">Opening Title</label>
+        <input id="respbly" name='respbly' type="text" [(ngModel)]="newOpening.respbly" required #respbly="ngModel">
+        <div [hidden]= "respbly.valid || (respbly.pristine && !form.submitted)" class="red-text">
+          Please input a valid title for the opening.
+        </div>
+      </div>
+      <div id='rqSkl' class="chips" materialize="material_chip" [materializeParams]="[chipsInit]" [materializeActions]="rqChipsActions" (chip.add)="addRqSkl($event.detail)" (chip.delete)="deleteRqSkl($event.detail)"></div>
+      <div [hidden]= "rqSkl.length || !form.submitted" class="red-text">
+        Please input at least one required skill for the opening.
+      </div>
+      <div id='opnSkl' class="chips" materialize="material_chip" [materializeParams]="[chipsInit]" [materializeActions]="opnChipsActions" (chip.add)="addOpnSkl($event.detail)" (chip.delete)="deleteOpnSkl($event.detail)"></div>
+      <div [hidden]= "rqSkl.length || !form.submitted" class="red-text">
+        Please input at least one optional skill for the opening.
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a (click)="form.ngSubmit.emit()" class="modal-action modal-close waves-effect waves-green btn-flat">Create</a>
+    <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+  </div>
+</div>

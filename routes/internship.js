@@ -267,6 +267,24 @@ router.post('/updateWeeklyReportComment',(req, res, next)=>{
             body: req.body.body,
             cmtIndex: req.body.index
         }
+        let currWLMembers = { '@Toyoaki': 't_machida@willings.co.jp',
+                    '@Parikshit': 'parikshitchavan@willings.co.jp',
+                    '@Yuka': 'yuka.nagasawa@willings.co.jp',
+                    '@Jun': 'jun.nagase@willings.co.jp',
+                   '@Tejaswini': 't_barve@webstaff.jp'
+                };
+        let regEx = /@\w*/gi;
+        let matchArr = data.body.match(regEx);
+        let availTags = Object.keys(currWLMembers);
+        let flrtdTagsMails = [];
+        if(matchArr.count){
+            matchArr.filter(tag =>{
+                if(availTags.indexOf(tag)) flrtdTagsMails.push(currWLMembers.tag);
+            })
+        }
+        mailer.sendcmtTagmails(data, decoded.name, flrtdTagsMails, err=>{
+            if(err) throw err;
+        });
         Internship.upsertWReportComment(data, decoded._id, (err, comments)=>{
             if(err) return res.json({ success: false, error: err });
             res.json({success: true, comments: comments});
@@ -274,7 +292,7 @@ router.post('/updateWeeklyReportComment',(req, res, next)=>{
     });
 });
 
-router.delete('/deleteWeeklyReportComment',(req, res, next)=>{
+router.post('/deleteWeeklyReportComment',(req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
@@ -282,7 +300,7 @@ router.delete('/deleteWeeklyReportComment',(req, res, next)=>{
         let data = {
             id: req.body.intnshpId,
             reptIndex: req.body.wReptIndex,
-            cmtIndex: req.body.index
+            cmtIndex: req.body.cmtIndex
         };
         Internship.deleteWReportComment(data, decoded._id, (err)=>{
             if(err) throw err;

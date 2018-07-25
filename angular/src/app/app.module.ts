@@ -8,6 +8,7 @@ import { HttpModule } from '@angular/http';
 
 //3rd party module
 import { ImageCropperModule } from "ngx-img-cropper";
+import { MentionModule } from 'angular-mentions/mention';
 
 //components
 import { HeaderComponent } from './components/header/header.component';
@@ -30,6 +31,8 @@ import { SuicaComponent } from './components/suica/suica.component';
 import { WeeklyReportsComponent } from './components/weekly-reports/weekly-reports.component';
 import { InitAccountComponent } from './components/init-account/init-account.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { CompanyProfileComponent } from './components/company-profile/company-profile.component';
+import { InternshipOpeningComponent } from './components/company-profile/internship-opening/internship-opening.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
@@ -39,22 +42,25 @@ import { CompanyApiService } from './services/companyAPI/company-api.service';
 import { InternshipApiService } from './services/internshipAPI/internship-api.service';
 import { AutocompleteApiService } from './services/autocompleteAPI/autocomplete-api.service';
 //guards
-import {AuthGuard} from "./guards/auth.guard"
+import { AuthGuard } from "./guards/auth.guard"
 
 //directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
 
 const appRoutes: Routes =[
-  {path: '', component: HomeComponent, pathMatch: 'full'},
-  {path: 'initAccount/:token', component: InitAccountComponent},
-  {path: 'forgotPassword', component: ForgotPasswordComponent},
-  {path: 'resetPassword/:token', component: ResetPasswordComponent},
-  {path: 'verifyEmail/:token', component: VerifyEmailComponent},
-  {path: 'internships', component: InternshipsComponent, pathMatch: 'full', canActivate: [AuthGuard]},
-  {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
-  {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
-  {path: 'company', component: CompanyComponent, canActivate: [AuthGuard]},
-  {path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
+  { path: '', component: HomeComponent, pathMatch: 'full'},
+  { path: 'initAccount/:token', component: InitAccountComponent},
+  { path: 'forgotPassword', component: ForgotPasswordComponent},
+  { path: 'resetPassword/:token', component: ResetPasswordComponent},
+  { path: 'verifyEmail/:token', component: VerifyEmailComponent},
+  { path: 'internships', component: InternshipsComponent, pathMatch: 'full', canActivate: [AuthGuard]},
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: 'company', component: CompanyComponent, canActivate: [AuthGuard]},
+  { path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
+  { path: 'companyProfile/:cmpId', component: CompanyProfileComponent, canActivate: [AuthGuard],
+    children: [{path:'opening/:openId', component: InternshipOpeningComponent }]
+  },
   {
     path: 'internship/:id',
     component: InternshipComponent,
@@ -62,13 +68,13 @@ const appRoutes: Routes =[
     //canActivateChild: [AuthGuard],
     children: [
       { path: '', redirectTo: 'accommodation', pathMatch: 'full' },
-      {path: 'wifi', component: WifiComponent},
-      {path: 'accommodation', component: AccommodationComponent},
-      {path: 'suica', component: SuicaComponent},
-      {path: 'stipend', component: PaymentsComponent},
-      {path: 'feedback', component: FeedbackComponent},
-      {path: 'jobOffer', component: JobOfferComponent},
-      {path: 'weeklyReports', component: WeeklyReportsComponent}
+      { path: 'wifi', component: WifiComponent},
+      { path: 'accommodation', component: AccommodationComponent},
+      { path: 'suica', component: SuicaComponent},
+      { path: 'stipend', component: PaymentsComponent},
+      { path: 'feedback', component: FeedbackComponent},
+      { path: 'jobOffer', component: JobOfferComponent},
+      { path: 'weeklyReports', component: WeeklyReportsComponent}
     ]
   }
 ];
@@ -96,7 +102,9 @@ const appRoutes: Routes =[
     WeeklyReportsComponent,
     EqualValidatorDirective,
     InitAccountComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    CompanyProfileComponent,
+    InternshipOpeningComponent
   ],
   imports: [
     BrowserModule,
@@ -105,7 +113,8 @@ const appRoutes: Routes =[
     HttpModule,
     MaterializeModule,
     RouterModule.forRoot(appRoutes),
-    ImageCropperModule
+    ImageCropperModule,
+    MentionModule
   ],
   providers: [
     ValidationService,

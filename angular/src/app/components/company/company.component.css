@@ -48,3 +48,8 @@ H3{
 #addAdminArea{
     margin: 30px 0;
 }
+
+#cmpAbtUs{
+    padding-left: 3%;
+    white-space: pre-line;
+}

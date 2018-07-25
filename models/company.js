@@ -13,7 +13,17 @@ const companySchema = Schema({
     admins: [{type: Schema.Types.ObjectId, ref: 'User'}],
     internships: [{type: Schema.Types.ObjectId, ref: 'Internship'}],
     logo: { key: String, url: String },
-    phNum: { type: String, required: true }
+    phNum: { type: String, required: true },
+    website: String,
+    abtUs: String,
+    openings: [{
+        title: String,
+        sklRq: [String],        // Skill required max 5
+        sklOp: [String],        // optional skills max 5
+        descrip: String,        //  Project and dept description
+        rspably: String,      // list of responsibilities
+        pblshed: {type: Boolean, default: false}   // is a published opening       
+    }]
 });
 
 const Company = module.exports = mongoose.model('Company', companySchema);
@@ -35,7 +45,7 @@ module.exports.getCompanyNames = function (callback){
 }
 
 module.exports.updateCmpInfoById = function(id, cmpInfo, callback){
-    Company.findByIdAndUpdate(id,{ $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address }}, callback);
+    Company.findByIdAndUpdate(id, { $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address, website: cmpInfo.website, abtUs: cmpInfo.abtUs }}, callback);
 }
 
 module.exports.addAdmin = function(companyId, newAdmin, callback){
@@ -93,3 +103,34 @@ module.exports.getCompanyIdByName = function(name, callback){
         callback(null, company._id);
     });
 }
+
+/*module.exports.getCompanyProfile = function(companyId, userAccess, callback){
+    Company.findById(companyId, '', {lean: true}, (err, company)=>{
+        if(err) throw err;
+        
+    });
+}
+
+module.exports.upsertOpening = function(companyId, openingId, newOpening, callback){
+    Company.findById(companyId, 'openings', (err, company) =>{
+        if(err) callback(err);
+        if(openingId === 'insert'){             //InsertButUpdate
+            company.openings.push(newOpening);
+            company.save();
+            callback(null);
+        }
+        else{
+            let opening = company.openings.id(openingId);
+            opening = newOpening;
+            company.save();
+            callback(null);
+        }
+    });
+}
+
+module.exports.getOpeningDetails = function(companyId, openingId, callback){
+    Company.findById(companyId, 'openings', (err, company) =>{
+        if(err) callback(err, null);
+        callback(null, company.openings.id(openingId));
+    });
+}*/

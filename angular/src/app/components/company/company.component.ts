@@ -18,14 +18,13 @@ export class CompanyComponent implements OnInit {
     name: String,
     est : any,
     phNum: String,
-    admins:any[],
-    address:string,
-    logo: {key:String, url:String}
-  }= {name: "", est: "", phNum: "", admins:[], address:'', logo: {key:"", url:""}};
-  newAdmin = {
-    name:'',
-    email:''
-  }
+    website: String,
+    abtUs: String,
+    admins: any[],
+    address: string,
+    logo: { key: String, url: String }
+  } = { name: "", est: "", phNum: "", admins:[], address:'', website:'', abtUs:'', logo: {key:"", url:""} };
+  newAdmin = { name:'', email:'' };
   companyInfoMsg: String;
   logoMsg: String;
   adminManageMsg: String;

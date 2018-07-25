@@ -59,5 +59,53 @@ export class CompanyApiService {
     headers.append('x-access-token', this.authToken);
     return this.http.post('http://localhost:3000/company/register', newCmp, {headers: headers}).map(res => res.json());
   }
+
+  getCmpProfile(companyId){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.get('http://localhost:3000/company/register', {headers: headers}).map(res => res.json());
+  }
+
+  updateOpening(data, companyId){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post('http://localhost:3000/company/updateOpening', data, {headers: headers}).map(res => res.json());
+  }
+
+  publishOpening(companyId, openingId){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post('http://localhost:3000/company/publishOpening', {headers: headers}).map(res => res.json());
+  }
+
+  unPublishOpening(companyId, openingId){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post('http://localhost:3000/company/unPublishOpening', {headers: headers}).map(res => res.json());
+  }
+
+  archiveOpening(companyId, openingId){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post('http://localhost:3000/company/archiveOpening', {headers: headers}).map(res => res.json());
+  }
+
+  getOpeningDetails(companyId, openingId){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.get('http://localhost:3000/company/getOpeningDetails', {headers: headers}).map(res => res.json());
+  }
 }
 //http://localhost:3000/ for local testing

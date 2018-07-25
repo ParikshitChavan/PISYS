@@ -1,14 +1,18 @@
 .cprtArea{
-    display: table;
+    text-align: center;
 }
 
 #cprtTxt{
-    display: table-cell;
-    vertical-align: middle;
+    margin-bottom: 10px;
 }
 
 .cprtArea img{
-    min-width: 80px;
+    width: 100px;
+    margin: 10px 0;
+}
+
+.cprtArea a{
+    margin: auto;
 }
 
 .footer-copyright{

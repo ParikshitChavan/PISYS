@@ -14,7 +14,7 @@
         </div>
         <div class="row">
           <div class="input-field">
-            <input id="DOB" type="text" name="DOB" [(ngModel)]="userDetails.DOB" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]">
+            <input id="DOB" type="text" name="DOB" [(ngModel)]="userDetails.DOB" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]">
             <label for="DOB" class="active">Birth Date</label>
           </div>
         </div>

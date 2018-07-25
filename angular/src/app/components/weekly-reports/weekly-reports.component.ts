@@ -37,10 +37,12 @@ export class WeeklyReportsComponent implements OnInit {
     body: string,
     index: number
   } = {body:'', index:-1};            // -1 for new/create
-  newCmt:string ='';
+  newCmt: string = '';
   isWLMember: boolean = false;
   upsertFileName: string;
   
+  wlMembers: string[] = ['Toyoaki', 'Parikshit', 'Yuka', 'Jun', 'Tejaswini'];
+
   constructor(private route: ActivatedRoute, private intnshpService: InternshipApiService) {
     let token = localStorage.getItem('authToken');
     this.decodedToken = this.jwtHelper.decodeToken(token);
@@ -58,7 +60,7 @@ export class WeeklyReportsComponent implements OnInit {
     this.intnshpId = this.route.parent.snapshot.paramMap.get('id');
     this.intnshpService.loadWeeklyReports(this.intnshpId).subscribe(resp=>{
       if(!resp.success){
-        toast('Some error occurred');
+        toast('Some error occurred check console for more details', 3000);
         console.log(resp.error);
         return false;
       }
@@ -66,15 +68,19 @@ export class WeeklyReportsComponent implements OnInit {
     });
   }
 
-  onWeekClick(index:number){
+  onWeekClick(index: number){
     this.viewingRept = index;
     return false;
   }
 
-  editCreateReptClick(index:number){
+  editCreateReptClick(index:number){ 
     if(index!=-1){    //not new but edit
+      let dateObj1 = new Date(this.wReports[this.viewingRept].week.sDate);        // create readable date string out of ISO string Data to copy into inputs
+      let dateObj2 = new Date(this.wReports[this.viewingRept].week.eDate);
+      let options = { year: 'numeric', month: 'long', day: 'numeric' };
+      this.upsertWrept.week.sDate = dateObj1.toLocaleDateString('EN-US', options);
+      this.upsertWrept.week.eDate = dateObj2.toLocaleDateString('EN-US', options);
       this.upsertWrept.rept= this.wReports[this.viewingRept].rept;
-      this.upsertWrept.week=  this.wReports[this.viewingRept].week;
       this.upsertWrept.index = this.viewingRept;
     }
     else{
@@ -159,7 +165,7 @@ export class WeeklyReportsComponent implements OnInit {
     })
   }
 
-  editComment(index){
+  editComment(index: number){
     this.upsertCmt.body= this.wReports[this.viewingRept].cmnts[index].body;
     this.upsertCmt.index = index;
     this.modalCmtActions.emit({action:'modal', params:['open']});
@@ -179,7 +185,7 @@ export class WeeklyReportsComponent implements OnInit {
     });
   }
   
-  deleteComment(index:number){
+  deleteComment(index: number){
     if(confirm("are you sure to want to delete this comment?")){
       this.intnshpService.deleteComment(this.intnshpId, this.viewingRept, index).subscribe(resp=>{
         if(!resp.success){

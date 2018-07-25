@@ -344,9 +344,12 @@ module.exports.upsertWReportComment = function(data, userId, callback){         
         else{
             internship.wRepts[data.reptIndex].cmnts[data.cmtIndex] = {body: data.body, by: userId, updated: new Date()};
         }
-        internship.save((err, newInternship)=>{
+        internship.save((err)=>{
             if(err) return callback (err, null);
-            callback(null, newInternship.wRepts[data.reptIndex].cmnts);
+            Internship.findById(data.id, 'wRepts', {lean:true, populate:{path:"wRepts.cmnts.by", select:'name DP'}}, (err, internship)=>{
+                if(err) return callback (err, null);
+                callback(null, internship.wRepts[data.reptIndex].cmnts);
+            });
         });
     });
 }
@@ -500,10 +503,10 @@ module.exports.markPaymentAccepted = function(internshipId, paymentNo, callback)
 }
 
 module.exports.deleteWReportComment = function(data, userId, callback){
-    Internship.findById(data.id, 'wReports', (err, internship)=>{
+    Internship.findById(data.id, 'wRepts', (err, internship)=>{
         if(err) return callback(err);
-        if(internship.wReports[data.reptIndex].cmnts[data.cmtIndex].by != userId) return callback('not authorised to delete the comment')
-        internship.wReports[data.reptIndex].cmnts.splice(data.cmtIndex, 1);
+        if(internship.wRepts[data.reptIndex].cmnts[data.cmtIndex].by != userId) return callback('not authorised to delete the comment');
+        internship.wRepts[data.reptIndex].cmnts.splice(data.cmtIndex, 1);
         internship.save(callback);
     });    
 }

@@ -120,3 +120,8 @@
   max-width: 100%;
   margin: 5% auto;
 }
+
+mention-list {
+  background: #ffffff;
+  width: 100%;
+}
