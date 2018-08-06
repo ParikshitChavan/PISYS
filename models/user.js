@@ -168,7 +168,7 @@ module.exports.addInternship = function(userId, internshipId, callback){
 }
 
 module.exports.getInchargeOf = function(userId, callback){
-    User.findById(id, 'inchargeOf', (err, user)=>{
+    User.findById(userId, 'inchargeOf', (err, user)=>{
         if (err) return callback(err, null);
         if (!user.inchargeOf || user.inchargeOf.length) return callback(null, null);
         callback(null, user.inchargeOf);

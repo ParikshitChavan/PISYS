@@ -23,7 +23,7 @@ export class CompanyComponent implements OnInit {
     admins: any[],
     address: string,
     logo: { key: String, url: String }
-  } = { name: "", est: "", phNum: "", admins:[], address:'', website:'', abtUs:'', logo: {key:"", url:""} };
+  } = { name: "", est: "", phNum: "", admins: [], address: '', website: '', abtUs: '', logo: {key:"", url:""} };
   newAdmin = { name:'', email:'' };
   companyInfoMsg: String;
   logoMsg: String;

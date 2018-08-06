@@ -33,6 +33,7 @@ import { InitAccountComponent } from './components/init-account/init-account.com
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { CompanyProfileComponent } from './components/company-profile/company-profile.component';
 import { InternshipOpeningComponent } from './components/company-profile/internship-opening/internship-opening.component';
+import { OpeningsListComponent } from './components/company-profile/openings-list/openings-list.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
@@ -41,10 +42,11 @@ import { SitelinkApiService } from './services/sitelinkAPI/sitelink-api.service'
 import { CompanyApiService } from './services/companyAPI/company-api.service';
 import { InternshipApiService } from './services/internshipAPI/internship-api.service';
 import { AutocompleteApiService } from './services/autocompleteAPI/autocomplete-api.service';
+
 //guards
 import { AuthGuard } from "./guards/auth.guard"
 
-//directives
+//custom directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
 
 const appRoutes: Routes =[
@@ -58,8 +60,15 @@ const appRoutes: Routes =[
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   { path: 'company', component: CompanyComponent, canActivate: [AuthGuard]},
   { path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
-  { path: 'companyProfile/:cmpId', component: CompanyProfileComponent, canActivate: [AuthGuard],
-    children: [{path:'opening/:openId', component: InternshipOpeningComponent }]
+  { 
+    path: 'companyProfile/:cmpId',
+    component: CompanyProfileComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'openingsList', pathMatch: 'full' },
+      { path:'openingsList', component: OpeningsListComponent },
+      { path:'opening/:openId', component: InternshipOpeningComponent }
+    ]
   },
   {
     path: 'internship/:id',
@@ -104,7 +113,8 @@ const appRoutes: Routes =[
     InitAccountComponent,
     ForgotPasswordComponent,
     CompanyProfileComponent,
-    InternshipOpeningComponent
+    InternshipOpeningComponent,
+    OpeningsListComponent
   ],
   imports: [
     BrowserModule,

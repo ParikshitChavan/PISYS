@@ -22,7 +22,8 @@ const companySchema = Schema({
         sklOp: [String],        // optional skills max 5
         descrip: String,        //  Project and dept description
         rspably: String,      // list of responsibilities
-        pblshed: {type: Boolean, default: false}   // is a published opening       
+        pblshed: { type: Boolean, default: false },   // is a published opening
+        achivd: { type: Boolean, default: false }   //is  an archived opening  
     }]
 });
 
@@ -104,33 +105,59 @@ module.exports.getCompanyIdByName = function(name, callback){
     });
 }
 
-/*module.exports.getCompanyProfile = function(companyId, userAccess, callback){
-    Company.findById(companyId, '', {lean: true}, (err, company)=>{
-        if(err) throw err;
-        
-    });
+module.exports.getRecruitmentPage = function(companyId, callback){           //callback(err, cmpProfile)
+    Company.findById(companyId, 'name est address logo website abtUs', {lean: true}, callback);
 }
 
-module.exports.upsertOpening = function(companyId, openingId, newOpening, callback){
-    Company.findById(companyId, 'openings', (err, company) =>{
-        if(err) callback(err);
-        if(openingId === 'insert'){             //InsertButUpdate
-            company.openings.push(newOpening);
-            company.save();
-            callback(null);
+module.exports.getInternshipOpenings = function(companyId, decodedToken, callback){           //callback(err, cmpProfile)
+    Company.findById(companyId, 'admins openings', {lean: true}, (err, company)=>{
+        if(err) return callback(err, null);
+        let editWrites = false;
+        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+            editWrites = true;
         }
         else{
-            let opening = company.openings.id(openingId);
-            opening = newOpening;
-            company.save();
-            callback(null);
+            //only select currently active openings 
+            company.openings = company.openings.filter(opening=> (!opening.achivd && opening.pblshed));
         }
+        callback(null, company.openings, editWrites);
     });
 }
 
-module.exports.getOpeningDetails = function(companyId, openingId, callback){
+module.exports.getOpeningDetails = function(companyId, decodedToken, openingId, callback){
     Company.findById(companyId, 'openings', (err, company) =>{
         if(err) callback(err, null);
-        callback(null, company.openings.id(openingId));
+        let editWrites = false;
+        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+            editWrites = true;
+        }
+        callback(null, company.openings.id(openingId), editWrites);
     });
-}*/
+}
+
+module.exports.upsertOpening = function(companyId, decodedToken, action, newOpening, callback){
+    Company.findById(companyId, 'admins', {lean: true}, (err, company) => {
+        if(err) return callback(err);
+        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+            if(action == 'insert'){
+                Company.findByIdAndUpdate(companyId, { $push:{ openings: newOpening} }, callback);
+            }
+            else {            //action == 'update'
+                Company.findOneAndUpdate(
+                    { '_id': companyId, 'openings._id': newOpening._id},
+                    { $set:{ 
+                        'openings.$.title': newOpening.title,
+                        'openings.$.sklRq': newOpening.sklRq,
+                        'openings.$.sklOp': newOpening.sklOp,
+                        'openings.$.descrip': newOpening.descrip,
+                        'openings.$.rspably': newOpening.rspably,
+                        'openings.$.pblshed': newOpening.pblshed,
+                        'openings.$.achivd': newOpening.achivd
+                    } },
+                    callback
+                );
+            }
+        }
+        else callback('not authorised.');
+    });
+}

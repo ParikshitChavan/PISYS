@@ -207,31 +207,26 @@ router.post('/suggestions', (req, res, next)=>{
     });
 });
 
-//model function are not complete yet
-router.post('/getCompanyProfile', (req, res)=>{
+router.post('/getRecruitmentPage', (req, res)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
         let companyId = req.body.companyId;
-        Company.getCompanyProfile(companyId, decoded, (err, cmpProfile) => {
-            if(err) return res.json({success: false, error: err});
-            res.json({success:true, cmpProfile: cmpProfile});
+        Company.getRecruitmentPage(companyId, (err, company) => {
+            if(err) return res.json({ success: false, error: err });
+            res.json({success:true, recruitmentDetails: company});
         });
     });
 });
 
-router.post('/updateOpening', (req, res, next)=>{
+router.post('/getInternshipOpenings', (req, res)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
         let companyId = req.body.companyId;
-        let openingId = req.body.openingId;
-        let opening = req.body.opening;
-        Company.upsertOpening(companyId, openingId, opening, (err) => {
-            if(err) return res.json({success: false, error:err});
-            res.json({success:true});
+        Company.getInternshipOpenings(companyId, decoded, (err, openings, editWrites) => {
+            if(err) return res.json({success: false, error: err});
+            res.json({success:true, editWrites: editWrites, openings: openings});
         });
     });
 });
@@ -240,12 +235,25 @@ router.post('/getOpeningDetails', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        if(decoded.access!=2) return res.status(401).json({ success: false, message: 'Unauthorised' });
         let companyId = req.body.companyId;
         let openingId = req.body.openingId;
-        Company.getOpeningDetails(companyId, openingId, (err, opening) => {
+        Company.getOpeningDetails(companyId, decoded, openingId, (err, opening, editWrites) => {
             if(err) return res.json({success: false, error:err});
-            res.json({success:true,  opening: opening});
+            res.json({success:true, editWrites: editWrites,  openingDetails: opening});
+        });
+    });
+});
+
+router.post('/upsertOpening', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        let companyId = req.body.companyId;
+        let action = req.body.action;
+        let opening = req.body.opening;
+        Company.upsertOpening(companyId, decoded, action, opening, (err) => {
+            if(err) return res.json({success: false, error:err});
+            res.json({success:true});
         });
     });
 });

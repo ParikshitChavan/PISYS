@@ -1,5 +1,4 @@
 import { Component, OnInit, EventEmitter} from '@angular/core';
-//import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { CompanyApiService } from "../../services/companyAPI/company-api.service";
 import { toast, MaterializeAction } from 'angular2-materialize';

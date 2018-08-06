@@ -60,52 +60,47 @@ export class CompanyApiService {
     return this.http.post('http://localhost:3000/company/register', newCmp, {headers: headers}).map(res => res.json());
   }
 
-  getCmpProfile(companyId){
+  getRecruitmentPage(companyId){
     this.loadToken();
     let headers = new Headers;
+    let data = {companyId: companyId}
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/company/register', {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/company/getRecruitmentPage', data, {headers: headers}).map(res => res.json());
   }
 
-  updateOpening(data, companyId){
+  getInternshipOpenings(companyId){
     this.loadToken();
     let headers = new Headers;
+    let data = {companyId: companyId}
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/updateOpening', data, {headers: headers}).map(res => res.json());
-  }
-
-  publishOpening(companyId, openingId){
-    this.loadToken();
-    let headers = new Headers;
-    headers.append('Content-Type', "application/json");
-    headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/publishOpening', {headers: headers}).map(res => res.json());
-  }
-
-  unPublishOpening(companyId, openingId){
-    this.loadToken();
-    let headers = new Headers;
-    headers.append('Content-Type', "application/json");
-    headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/unPublishOpening', {headers: headers}).map(res => res.json());
-  }
-
-  archiveOpening(companyId, openingId){
-    this.loadToken();
-    let headers = new Headers;
-    headers.append('Content-Type', "application/json");
-    headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/archiveOpening', {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/company/getInternshipOpenings', data, {headers: headers}).map(res => res.json());
   }
 
   getOpeningDetails(companyId, openingId){
     this.loadToken();
+    let data = {
+      companyId: companyId,
+      openingId: openingId
+    }
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/company/getOpeningDetails', {headers: headers}).map(res => res.json());
+    return this.http.post('http://localhost:3000/company/getOpeningDetails', data, {headers: headers}).map(res => res.json());
+  }
+
+  upsertOpening(companyId, action, newOpening){
+    this.loadToken();
+    let data = {
+      companyId: companyId,
+      action: action,
+      opening: newOpening
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post('http://localhost:3000/company/upsertOpening', data, {headers: headers}).map(res => res.json());
   }
 }
 //http://localhost:3000/ for local testing

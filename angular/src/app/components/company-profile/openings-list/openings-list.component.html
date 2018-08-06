@@ -1,0 +1,85 @@
+<div class="container">
+  <div class="row lists">
+    <div [hidden]="!editWrites" class="col s12">
+      <ul class="tabs">
+        <li class="tab col s4"><a href="#draftsList">Drafts</a></li>
+        <li class="tab col s4"><a class="active" href="#liveList">Published</a></li>
+        <li class="tab col s4"><a href="#archivedList">Archived</a></li>
+      </ul>
+    </div>
+    <div id="draftsList" class="col s12">
+      <div class="card opening hoverable" *ngFor='let opening of draftsList' (click)='openingClicked(opening._id)'>
+        <div class="card-content">
+          <span class="card-title">{{opening.title}}</span>
+          <p class="max3Lines">{{opening.descrip}}</p>
+        </div>
+      </div>
+    </div>
+    <div id="liveList" class="col s12">
+      <div class="card opening hoverable" *ngFor='let opening of liveList' (click)='openingClicked(opening._id)'>
+        <div class="card-content">
+          <span class="card-title">{{opening.title}}</span>
+          <p class="max3Lines">{{opening.descrip}}</p>
+        </div>
+      </div>
+    </div>
+    <div id="archivedList" class="col s12">
+      <div class="card opening hoverable" *ngFor='let opening of archivedList' (click)='openingClicked(opening._id)'>
+        <div class="card-content">
+          <span class="card-title">{{opening.title}}</span>
+          <p class="max3Lines">{{opening.descrip}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div [hidden]="!editWrites" class="openingCreateBtnArea">
+    <a id="openingCreateBtn" href="#createOpeningModal" class="btn-floating btn-large waves-effect waves-light red modal-trigger"><i class="material-icons">add</i></a>
+  </div>
+</div>
+
+<div id="createOpeningModal" class="modal modal-fixed-footer" materialize="modal">
+  <div class="modal-content">
+    <h5>Create internship opening</h5>
+    <form (ngSubmit)='saveOpening(form.valid)' #form='ngForm'>
+      <div class="input-field">
+        <label for="title">Opening Title</label>
+        <input id="title" name='title' type="text" [(ngModel)]="newOpening.title" required #title="ngModel">
+        <div [hidden]= "title.valid || (title.pristine && !form.submitted)" class="red-text">
+          Please input a valid title for the opening.
+        </div>
+      </div>
+      <div class="input-field">
+        <label for="descrip">Description</label>
+        <textarea class="materialize-textarea" id="descrip" name='descrip' type="text" [(ngModel)]="newOpening.descrip" required #descrip="ngModel"></textarea>
+        <div [hidden]= "descrip.valid || (descrip.pristine && !form.submitted)" class="red-text">
+          Please input a description for the opening.
+        </div>
+      </div>
+      <div class="input-field">
+        <label for="rspably">Responsibilities</label>
+        <textarea class="materialize-textarea" id="rspably" name='rspably' type="text" [(ngModel)]="newOpening.rspably" required #rspably="ngModel"></textarea>
+        <div [hidden]= "rspably.valid || (rspably.pristine && !form.submitted)" class="red-text">
+          Please input a valid responsibilities for the opening.
+        </div>
+      </div>
+      <div class="input-field chipInp">
+        <label for="rqSkl">Required skills(maximum of 5):</label>
+        <div id='rqSkl' class="chips" materialize="material_chip" [materializeParams]="[chipsInit]" [materializeActions]="rqChipsActions" (chip.add)="addRqSkl($event.detail)" (chip.delete)="deleteRqSkl($event.detail)"></div>
+        <div [hidden]= "rqSklChpArr.length || !form.submitted" class="red-text">
+          Please input at least one required skill for the opening.
+        </div>
+      </div>
+      <div class="input-field chipInp">
+        <label for="openSkl">Optional skills(maximum of 5):</label>
+        <div id='opnSkl' class="chips" materialize="material_chip" [materializeParams]="[chipsInit]" [materializeActions]="opnChipsActions" (chip.add)="addOpnSkl($event.detail)" (chip.delete)="deleteOpnSkl($event.detail)"></div>
+        <div [hidden]= "opnSklChpArr.length || !form.submitted" class="red-text">
+          Please input at least one optional skill for the opening.
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a (click)="form.ngSubmit.emit()" class="modal-action modal-close waves-effect waves-green btn-flat">Create</a>
+    <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+  </div>
+</div>
