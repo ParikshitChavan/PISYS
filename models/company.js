@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const bcrypt = require('bcryptjs');
-const config = require('../config/cfg');
 
 const companySchema = Schema({
     isActive: Boolean,
@@ -23,7 +21,8 @@ const companySchema = Schema({
         descrip: String,        //  Project and dept description
         rspably: String,      // list of responsibilities
         pblshed: { type: Boolean, default: false },   // is a published opening
-        achivd: { type: Boolean, default: false }   //is  an archived opening  
+        achivd: { type: Boolean, default: false },   //is  an archived opening  
+        likes: [{type: Schema.Types.ObjectId, ref: 'User'}]
     }]
 });
 
@@ -158,6 +157,25 @@ module.exports.upsertOpening = function(companyId, decodedToken, action, newOpen
                 );
             }
         }
-        else callback('not authorised.');
+        else callback('not authorised');
+    });
+}
+
+module.exports.addOpeningLiker = function(companyId, openingId, userId, callback){
+    Company.findById(companyId, 'openings', (err, company) =>{
+        if(err) return callback(err);
+        company.openings.id(openingId).likes.push(userId);
+        company.save(callback);
+    });
+}
+
+module.exports.removeOpeningLiker = function(companyId, openingId, userId, callback){
+    Company.findById(companyId, 'openings', (err, company) => {
+        if(err) return callback(err);
+        let index =  company.openings.id(openingId).indexOf(userId);
+        if(index1 != -1){
+            company.openings.id(openingId).splice(index, 1);
+        }
+        company.save(callback);
     });
 }

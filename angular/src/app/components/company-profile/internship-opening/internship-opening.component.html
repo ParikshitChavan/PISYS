@@ -1,5 +1,9 @@
 <div class="container openingDetails">
-  <h5>{{openingDetails.title}}</h5>
+  <h5>{{openingDetails.title}}&emsp;|&emsp;
+    <i *ngIf="!isLiked" (click)="likeClicked()" class="material-icons small clickableIcon">favorite_border</i>
+    <i *ngIf="isLiked" (click)="unlikeClicked()" class="material-icons small clickableIcon icon-red">favorite</i>
+     {{likesCount}}
+  </h5>
   <p class="infoTitle">Description:</p>
   <pre class="">{{openingDetails.descrip}}</pre>
   <p class="infoTitle">Responsibilities:</p>

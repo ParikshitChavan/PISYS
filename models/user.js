@@ -40,8 +40,15 @@ const userSchema = Schema({
     DP: { key: String, url: String },                 //display picture
     internships: [{ type: Schema.Types.ObjectId, ref: 'Internship' }],       //What internship she/he has done!
     company: {type: Schema.Types.ObjectId, ref: 'Company'},                 //Company that she/he is an admin for
-    inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}]           //Internships for which she/he is a supervisor
+    inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}],           //Internships for which she/he is a supervisor
+    likedPos : {
+        batch2019: [{
+            cmpId: {type: Schema.Types.ObjectId, ref: 'Company'},
+            opng: String
+        }]
+    }
     //gender: Number,              //1.Male, 2.Female, 3.Other, 4.Do not wish to disclose
+
 });
 
 const User = module.exports = mongoose.model('User', userSchema);
@@ -310,6 +317,31 @@ module.exports.validateSitelink = function(token, callback){        //callback(e
                     });
                 });
             }
+        }
+    });
+}
+
+module.exports.addOpeningLike = function(companyId, openingId, userId, callback){              //callback(err, maxLmt)
+    User.findById(userId, 'likedPos', (err, user) => {
+        if(err) return callback(err, false);
+        if(user.likedPos.batch2019.count == 3) return callback(null, true);
+        else{
+            user.likedPos.batch2019.push({cmpId: companyId, opng: openingId});
+            user.save(err => {
+                if(err) return callback(err, false);
+                callback(null, false);
+            });
+        }  
+    });
+}
+
+module.exports.removeOpeningLike = function(companyId, openingId, userId, callback){           //callback(err)
+    User.findById(userId, 'likedPos', (err, user) =>{
+        if(err) return callback(err);
+        let index =  user.likedPos.batch2019.indexOf({cmpId: companyId, opng: openingId});
+        if(index != -1){
+            user.likedPos.batch2019.splice(index, 1);
+            user.save(callback);
         }
     });
 }

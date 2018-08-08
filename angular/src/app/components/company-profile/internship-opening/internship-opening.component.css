@@ -22,3 +22,13 @@ pre{
 .infoTitle{
     font-weight: 500;
 }
+
+.icon-red{
+    color: red;
+}
+
+.clickableIcon{
+    /*display: inline-flex;*/
+    vertical-align: text-top;
+    cursor: pointer;
+}
