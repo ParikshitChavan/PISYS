@@ -43,11 +43,19 @@ import { CompanyApiService } from './services/companyAPI/company-api.service';
 import { InternshipApiService } from './services/internshipAPI/internship-api.service';
 import { AutocompleteApiService } from './services/autocompleteAPI/autocomplete-api.service';
 
+import { CvBuilderService } from './services/cvbuilder/cvbuilder.service';
+import { CoreHttpService } from './services/core-http.service';
+
 //guards
 import { AuthGuard } from "./guards/auth.guard"
 
 //custom directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
+import { CvBuilderComponent } from './components/cvbuilder/cvbuilder.component';
+import { EducationComponent } from './components/cvbuilder/education/education.component';
+import { ExperienceComponent } from './components/cvbuilder/experience/experience.component';
+import { ProjectsComponent } from './components/cvbuilder/projects/projects.component';
+import { TexttransformPipe } from './pipe/texttransform.pipe';
 
 const appRoutes: Routes =[
   { path: '', component: HomeComponent, pathMatch: 'full'},
@@ -69,6 +77,17 @@ const appRoutes: Routes =[
       { path:'openingsList', component: OpeningsListComponent },
       { path:'opening/:openId', component: InternshipOpeningComponent }
     ]
+  },
+  {
+   path: 'cvbuilder/:id', 
+   component: CvBuilderComponent,
+   canActivate: [AuthGuard],
+   children: [
+     { path: '', redirectTo: 'education', pathMatch: 'full' },
+     { path: 'education', component: EducationComponent },
+     { path: 'experience', component: ExperienceComponent },
+     { path: 'projects', component: ProjectsComponent }
+   ]
   },
   {
     path: 'internship/:id',
@@ -114,7 +133,12 @@ const appRoutes: Routes =[
     ForgotPasswordComponent,
     CompanyProfileComponent,
     InternshipOpeningComponent,
-    OpeningsListComponent
+    OpeningsListComponent,
+    CvBuilderComponent,
+    EducationComponent,
+    ExperienceComponent,
+    ProjectsComponent,
+    TexttransformPipe
   ],
   imports: [
     BrowserModule,
@@ -133,8 +157,11 @@ const appRoutes: Routes =[
     SitelinkApiService,
     CompanyApiService,
     InternshipApiService,
-    AutocompleteApiService
+    AutocompleteApiService,
+    CvBuilderService, // a service for cv builder to save and share data
+    CoreHttpService  // a service for http calls. all http calls should use this
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

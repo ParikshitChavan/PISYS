@@ -25,6 +25,7 @@ app.listen(port,()=>{
 const user = require('./routes/user');
 const company = require('./routes/company');
 const internship = require('./routes/internship');
+const cvbuilder = require('./routes/cvbuilder');
 
 //static folder
 app.use(express.static(path.join(__dirname,'public')));
@@ -32,6 +33,11 @@ app.use(express.static(path.join(__dirname,'public')));
 //Middlewares
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use(function(req, res, next) {
+    req.tempStore = {};
+    return next();
+});
 
 //Index request
 app.get("/", (req, res)=>{
@@ -42,6 +48,7 @@ app.get("/", (req, res)=>{
 app.use('/user', user);
 app.use('/company', company);
 app.use('/internship', internship);
+app.use('/cv', cvbuilder);
 
 app.get('*', function(req, res){
     res.sendFile('./public/index.html', {root: __dirname});

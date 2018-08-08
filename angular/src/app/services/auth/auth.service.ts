@@ -5,36 +5,45 @@ import { Subject }    from 'rxjs/Subject';
 import { JwtHelper } from 'angular2-jwt';
 import "rxjs/add/operator/map";
 
+import { environment } from "../../../environments/environment";
+import { debug } from 'util';
+
 @Injectable()
 export class AuthService {
   loggedInSrc = new Subject<any>();
   loggedIn$ = this.loggedInSrc.asObservable();
-  authToken: any;
+  public authToken: any;
   user: any;
   jwtHelper: JwtHelper = new JwtHelper();
   decodedToken: any;
-  constructor(private http: Http) { }
+  apiUrl : string = '';
+  constructor(private http: Http) {
+    this.apiUrl = environment.appUrl
+   }
 
   registerUser(user){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/register', user, {headers: headers}).map(res => res.json());
+    return this.http.post( this.apiUrl + 'user/register', user, {headers: headers}).map(res => res.json());
   }
 
   forgotPasswordInit(email){
     let data = { email: email };
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/requestPasswordReset', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.apiUrl + 'user/requestPasswordReset', data, {headers: headers}).map(res =>{
+      return res.json()});
   }
 
   login(user){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/authenticate', user, {headers: headers}).map(res => res.json());
+    const url = this.apiUrl + 'user/authenticate'
+    return this.http.post(url, user, {headers: headers}).map(res => res.json());
   }
 
   loginSuccess(data){
+    console.log('time when token saved', new Date())
     this.saveToken(data.token);
     this.saveHeaderUserInfo(data.userData);
     this.loadHeaderUserInfo();
@@ -51,7 +60,7 @@ export class AuthService {
     if(token){
       this.decodedToken = this.jwtHelper.decodeToken(token);
     }
-    let headerData = {name: this.user.name, DPUrl: this.user.DPUrl, userAccess: this.decodedToken.access};
+    let headerData = {name: this.user.name, DPUrl: this.user.DPUrl, userAccess: this.decodedToken.access, userId :this.decodedToken._id };
     this.loggedInSrc.next(headerData);
   }
 
@@ -84,7 +93,7 @@ export class AuthService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/user/userInfo', {headers: headers}).map(res => res.json());
+    return this.http.get(this.apiUrl + 'user/userInfo', {headers: headers}).map(res => res.json());
   }
 
   updateUserInfo(userInfo){
@@ -92,26 +101,26 @@ export class AuthService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/user/updateUserInfo', userInfo, {headers: headers}).map(res => res.json());
+    return this.http.post(this.apiUrl + 'user/updateUserInfo', userInfo, {headers: headers}).map(res => res.json());
   }
 
   updateDisplayPic(uploadData){
     this.loadToken();
     let headers = new Headers;
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/user/updateDisplayPic', uploadData, {headers: headers}).map(res => res.json());
+    return this.http.post(this.apiUrl + 'user/updateDisplayPic', uploadData, {headers: headers}).map(res => res.json());
   }
 
   initPassword(data){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/initPassword', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.apiUrl + 'user/initPassword', data, {headers: headers}).map(res => res.json());
   }
 
   resetPassword(data){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    return this.http.post('http://localhost:3000/user/resetPassword', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.apiUrl + 'user/resetPassword', data, {headers: headers}).map(res => res.json());
   }
 
   updatePassword(data){
@@ -119,7 +128,7 @@ export class AuthService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/user/updatePassword', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.apiUrl + 'user/updatePassword', data, {headers: headers}).map(res => res.json());
   }
 
 }
