@@ -267,7 +267,7 @@ router.post('/addOpeningLike', (req, res, next)=>{
         let userId = decoded._id;
         User.addOpeningLike(companyId, openingId, userId, (err, maxLimit) => {
             if(err) return res.json({ success: false, error:err });
-            if(atMaxLimit) return res.json({ success: true, atMaxLimit: maxLimit });        // maxLimit 'true' = cant like anymore
+            if(maxLimit) return res.json({ success: true, atMaxLimit: maxLimit });        // maxLimit 'true' = cant like anymore
             Company.addOpeningLiker(companyId, openingId, userId, err => {
                 if(err) return res.json({ success: false, error: err });
                 res.json({ success: true, atMaxLimit: false });

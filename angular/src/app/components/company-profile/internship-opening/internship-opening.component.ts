@@ -141,7 +141,7 @@ export class InternshipOpeningComponent implements OnInit {
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening published successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId]);
+        this.router.navigate(['/companyProfile/' + this.companyId+ '/openingsList']);
       });
     }
   }
@@ -156,13 +156,13 @@ export class InternshipOpeningComponent implements OnInit {
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening moved to drafts successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId]);
+        this.router.navigate(['/companyProfile/' + this.companyId+ '/openingsList']);
       });
     }
   }
 
   archiveOpening(){
-    if(confirm("are you sure to want to publish this opening?")){
+    if(confirm("are you sure to want to archive this opening?")){
       this.openingDetails.achivd = true;
       this.companyApiService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp =>{
         if(!resp.success) {
@@ -170,14 +170,14 @@ export class InternshipOpeningComponent implements OnInit {
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening archived successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId]);
+        this.router.navigate(['/companyProfile/' + this.companyId+ '/openingsList']);
       });
     }
   }
 
   likeClicked(){
     if(this.decodedToken.access != 0) return false;
-    this.companyApiService.addOpeningLike(this.companyId, this.openingDetails).subscribe(resp => {
+    this.companyApiService.addOpeningLike(this.companyId, this.openingId).subscribe(resp => {
       if(!resp.success) {
         console.log(resp.error);
         return toast('Some error occurred, Check the console for more details', 3000);
@@ -192,7 +192,7 @@ export class InternshipOpeningComponent implements OnInit {
 
   unlikeClicked(){
     if(this.decodedToken.access != 0) return false;
-    this.companyApiService.removeOpeningLike(this.companyId, this.openingDetails).subscribe(resp => {
+    this.companyApiService.removeOpeningLike(this.companyId, this.openingId).subscribe(resp => {
       if(!resp.success) {
         console.log(resp.error);
         return toast('Some error occurred, Check the console for more details', 3000);

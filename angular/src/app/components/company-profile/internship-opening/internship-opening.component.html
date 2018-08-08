@@ -1,7 +1,7 @@
 <div class="container openingDetails">
   <h5>{{openingDetails.title}}&emsp;|&emsp;
-    <i *ngIf="!isLiked" (click)="likeClicked()" class="material-icons small clickableIcon">favorite_border</i>
-    <i *ngIf="isLiked" (click)="unlikeClicked()" class="material-icons small clickableIcon icon-red">favorite</i>
+    <i *ngIf="!isLiked" (click)="likeClicked()" class="material-icons small clickableIcon tooltipped" materialize="tooltip" data-position="left" data-delay="100" data-tooltip="Like">favorite_border</i>
+    <i *ngIf="isLiked" (click)="unlikeClicked()" class="material-icons small clickableIcon icon-red" materialize="tooltip" data-position="left" data-delay="100" data-tooltip="Remove like">favorite</i>
      {{likesCount}}
   </h5>
   <p class="infoTitle">Description:</p>
@@ -23,10 +23,10 @@
   <div [hidden]="!editWrites" id="openingOptions" class="fixed-action-btn">
     <a class="btn-floating btn-large cyan accent-2"><i class="material-icons large">more_horiz</i></a>
     <ul>
-      <li class="tooltipped" data-position="left" data-delay="100" data-tooltip="Edit"><a href="#editOpeningModal" class="btn-floating red modal-trigger"><i class="material-icons">edit</i></a></li>
-      <li [hidden]="!openingDetails.pblshed && !openingDetails.achivd" (click)='moveToDrafts()' class="tooltipped" data-position="left" data-delay="100" data-tooltip="Move to drafts"><a class="btn-floating yellow darken-1"><i class="material-icons">arrow_back</i></a></li>
-      <li [hidden]="openingDetails.pblshed  || openingDetails.achivd" (click)='publishOpening()' class="tooltipped" data-position="left" data-delay="100" data-tooltip="Publish"><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-      <li [hidden]="openingDetails.achivd" (click)='archiveOpening()' class="tooltipped" data-position="left" data-delay="100" data-tooltip="Archive"><a class="btn-floating red"><i class="material-icons">archive</i></a></li>
+      <li materialize="tooltip" class="tooltipped" data-position="left" data-delay="100" data-tooltip="Edit"><a href="#editOpeningModal" class="btn-floating red modal-trigger"><i class="material-icons">edit</i></a></li>
+      <li [hidden]="!openingDetails.pblshed && !openingDetails.achivd" (click)='moveToDrafts()' materialize="tooltip" class="tooltipped" data-position="left" data-delay="100" data-tooltip="Move to drafts"><a class="btn-floating yellow darken-1"><i class="material-icons">arrow_back</i></a></li>
+      <li [hidden]="openingDetails.pblshed  || openingDetails.achivd" (click)='publishOpening()' materialize="tooltip" class="tooltipped" data-position="left" data-delay="100" data-tooltip="Publish"><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
+      <li [hidden]="openingDetails.achivd" (click)='archiveOpening()' materialize="tooltip" class="tooltipped" data-position="left" data-delay="100" data-tooltip="Archive"><a class="btn-floating red"><i class="material-icons">archive</i></a></li>
     </ul>
   </div>
 </div>
@@ -34,7 +34,7 @@
 <div id="editOpeningModal" class="modal modal-fixed-footer" materialize="modal">
   <div class="modal-content">
     <h5>Edit internship opening</h5>
-    <form (ngSubmit)='saveOpening(form.valid)' #form='ngForm'>
+    <form materialize (ngSubmit)='saveOpening(form.valid)' #form='ngForm'>
       <div class="input-field">
         <label for="title">Opening Title</label>
         <input id="title" name='title' type="text" [(ngModel)]="openingDetails.title" required #title="ngModel">

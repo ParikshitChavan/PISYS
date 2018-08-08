@@ -124,7 +124,7 @@ module.exports.getInternshipOpenings = function(companyId, decodedToken, callbac
 }
 
 module.exports.getOpeningDetails = function(companyId, decodedToken, openingId, callback){
-    Company.findById(companyId, 'openings', (err, company) =>{
+    Company.findById(companyId, 'openings admins', (err, company) =>{
         if(err) callback(err, null);
         let editWrites = false;
         if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
@@ -172,9 +172,9 @@ module.exports.addOpeningLiker = function(companyId, openingId, userId, callback
 module.exports.removeOpeningLiker = function(companyId, openingId, userId, callback){
     Company.findById(companyId, 'openings', (err, company) => {
         if(err) return callback(err);
-        let index =  company.openings.id(openingId).indexOf(userId);
-        if(index1 != -1){
-            company.openings.id(openingId).splice(index, 1);
+        let index =  company.openings.id(openingId).likes.indexOf(userId);
+        if(index != -1){
+            company.openings.id(openingId).likes.splice(index, 1);
         }
         company.save(callback);
     });

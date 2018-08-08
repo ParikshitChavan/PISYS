@@ -387,6 +387,7 @@ module.exports.upsertSuica = function(internshipId, suica, callback){
 module.exports.getWiFi = function(intnshpId, decodedToken, callback){
     Internship.findById(intnshpId, 'candidate wifi', { lean: true }, (err, internship)=>{
         if(err) return callback(err, null); 
+        let requesterId = decodedToken._id;
         let requesterAccess = decodedToken.access;
         if(requesterAccess == 2) return callback(null, internship.wifi);
         if(requesterId == internship.candidate){

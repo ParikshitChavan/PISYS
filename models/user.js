@@ -43,8 +43,9 @@ const userSchema = Schema({
     inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}],           //Internships for which she/he is a supervisor
     likedPos : {
         batch2019: [{
+            _id: false,
             cmpId: {type: Schema.Types.ObjectId, ref: 'Company'},
-            opng: String
+            opng: {type: Schema.Types.ObjectId}
         }]
     }
     //gender: Number,              //1.Male, 2.Female, 3.Other, 4.Do not wish to disclose
@@ -324,7 +325,7 @@ module.exports.validateSitelink = function(token, callback){        //callback(e
 module.exports.addOpeningLike = function(companyId, openingId, userId, callback){              //callback(err, maxLmt)
     User.findById(userId, 'likedPos', (err, user) => {
         if(err) return callback(err, false);
-        if(user.likedPos.batch2019.count == 3) return callback(null, true);
+        if(user.likedPos.batch2019.length == 3) return callback(null, true);
         else{
             user.likedPos.batch2019.push({cmpId: companyId, opng: openingId});
             user.save(err => {
@@ -338,10 +339,18 @@ module.exports.addOpeningLike = function(companyId, openingId, userId, callback)
 module.exports.removeOpeningLike = function(companyId, openingId, userId, callback){           //callback(err)
     User.findById(userId, 'likedPos', (err, user) =>{
         if(err) return callback(err);
-        let index =  user.likedPos.batch2019.indexOf({cmpId: companyId, opng: openingId});
+        let length =  user.likedPos.batch2019.length;
+        let index = -1;
+        for(let i=0; i<length; i++){
+            if(user.likedPos.batch2019[i].cmpId == companyId && user.likedPos.batch2019[i].opng == openingId){
+                index = i;
+                break;
+            }
+        }
         if(index != -1){
             user.likedPos.batch2019.splice(index, 1);
             user.save(callback);
         }
+        else callback('Liked opening not found.');
     });
 }
