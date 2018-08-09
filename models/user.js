@@ -40,7 +40,8 @@ const userSchema = Schema({
     DP: { key: String, url: String },                 //display picture
     internships: [{ type: Schema.Types.ObjectId, ref: 'Internship' }],       //What internship she/he has done!
     company: {type: Schema.Types.ObjectId, ref: 'Company'},                 //Company that she/he is an admin for
-    inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}]           //Internships for which she/he is a supervisor
+    inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}],           //Internships for which she/he is a supervisor
+    cv: [{type: Schema.Types.ObjectId, ref: 'CvBuilder'}]
     //gender: Number,              //1.Male, 2.Female, 3.Other, 4.Do not wish to disclose
 });
 
@@ -312,4 +313,17 @@ module.exports.validateSitelink = function(token, callback){        //callback(e
             }
         }
     });
+}
+
+module.exports.getCv = function(userId, callback){
+    User.findById(userId, 'cv', {lean: true}, (err, user)=>{
+        if (err) return callback(err, null);
+        if(!user) return callback(null, null);
+        if(!user.cv) return callback(null, null);
+        callback(null, user.cv);
+    });
+}
+
+module.exports.addCv = function(userId, cvId, callback){
+    User.findByIdAndUpdate(userId, { $set: { cv: cvId }}, callback);
 }

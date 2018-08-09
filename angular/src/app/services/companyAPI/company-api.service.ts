@@ -2,11 +2,15 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { tokenNotExpired } from "angular2-jwt";
 import "rxjs/add/operator/map";
+import { environment } from "../../../environments/environment";
 
 @Injectable()
 export class CompanyApiService {
   authToken: any;
-  constructor(private http: Http) { }
+  appUrl : string ='';
+  constructor(private http: Http) {
+    this.appUrl = environment.appUrl;
+   }
 
   loadToken(){
     this.authToken = localStorage.getItem('authToken');
@@ -18,7 +22,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/company/info', {headers: headers}).map(res => res.json());
+    return this.http.get(this.appUrl + 'company/info', {headers: headers}).map(res => res.json());
   }
 
   getCmpNames(){
@@ -26,7 +30,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get('http://localhost:3000/company/companyNames', {headers: headers}).map(res => res.json());
+    return this.http.get(this.appUrl + 'company/companyNames', {headers: headers}).map(res => res.json());
   }
 
   updateCmpInfo(cmpInfo){
@@ -34,14 +38,14 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/updateInfo', cmpInfo, {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/updateInfo', cmpInfo, {headers: headers}).map(res => res.json());
   }
 
   updateLogo(uploadData){
     this.loadToken();
     let headers = new Headers;
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/updateLogo', uploadData, {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/updateLogo', uploadData, {headers: headers}).map(res => res.json());
   }
 
   addAdmin(newAdmin){
@@ -49,7 +53,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/registerAdmin', newAdmin, {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/registerAdmin', newAdmin, {headers: headers}).map(res => res.json());
   }
 
   createCompany(newCmp){
@@ -57,7 +61,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/register', newCmp, {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/register', newCmp, {headers: headers}).map(res => res.json());
   }
 
   getRecruitmentPage(companyId){
@@ -66,16 +70,17 @@ export class CompanyApiService {
     let data = {companyId: companyId}
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/getRecruitmentPage', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/getRecruitmentPage', data, {headers: headers}).map(res => res.json());
   }
 
+  
   getInternshipOpenings(companyId){
     this.loadToken();
     let headers = new Headers;
     let data = {companyId: companyId}
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/getInternshipOpenings', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/getInternshipOpenings', data, {headers: headers}).map(res => res.json());
   }
 
   getOpeningDetails(companyId, openingId){
@@ -87,7 +92,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/getOpeningDetails', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/getOpeningDetails', data, {headers: headers}).map(res => res.json());
   }
 
   upsertOpening(companyId, action, newOpening){
@@ -100,7 +105,7 @@ export class CompanyApiService {
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post('http://localhost:3000/company/upsertOpening', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/upsertOpening', data, {headers: headers}).map(res => res.json());
   }
 }
 //http://localhost:3000/ for local testing

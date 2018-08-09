@@ -1,0 +1,137 @@
+<div class="row z-depth-1">
+    <div class="container10p">
+      <div *ngFor='let experience of experiences;' class="section">
+          <div class="educationDetail">
+              <div class="row">
+                  <div class="col s3">Title:</div>
+                  <div class="col s9">{{ experience.title }}</div>
+              </div>
+              <div class="row">
+                  <div class="col s3">Description:</div>
+                  <div class="col s9">{{ experience.description }}</div>
+              </div>
+              <div class="row">
+                  <div class="col s3">Duration:</div>
+                  <div class="col s9">  {{ experience.startDate | date:'shortDate' }} ~ {{ experience.endDate | date:'shortDate' }}  </div>
+              </div>
+              <div class="row" *ngIf="experience.usedSkills && experience.usedSkills.length">
+                  <div class="col s3">Used Skills</div>
+                  <div class="col s9"> 
+                      <ul class="list-style">
+                          <li *ngFor='let skill of experience.usedSkills'> {{ skill.tag }} </li>
+                        </ul>
+                     </div>
+              </div>
+          </div>
+          <div  *ngIf="canEdit"  class="fixed-action-btn fltBtnArea">
+              <a class="btn-floating btn-small red">
+                <i class="small material-icons">more_vert</i>
+              </a>
+              <ul>
+                  <li>
+                      <a (click)="openEditExperience(experience)" class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">edit</i></a>
+                  </li>
+                  <li>
+                      <a (click)="showDeleteConfirmDialigue(experience._id)" class="btn-floating btn-small waves-effect waves-light green"><i class="material-icons">delete</i></a>
+                  </li>
+              </ul>
+            </div>
+          <div class="divider"></div>
+      </div>
+
+     
+  </div>
+</div>
+
+<div class="fltBtnArea" *ngIf="canEdit" >
+    <div class="section addBtn">
+        <a (click)="createExperience()" class="btn-floating waves-effect waves-light red">
+            <i class="material-icons">add</i>
+          </a>
+    </div>
+</div>
+
+
+
+<div id="modal1" *ngIf="modalPurpose == 'delete'" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+  <div class="modal-content">
+      <p>Are you sure, you want to delete this Experience ?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="waves-effect waves-green btn-flat" (click)="closeModal()">Close</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="deleteExperience()">Agree</button>
+  </div>
+</div>
+
+
+
+<div id="modal" *ngIf="modalPurpose !== 'delete'" class="modal modal-fixed-footer" materialize="modal"  [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+
+  <div class="modal-content">
+    <h4>Create/Edit Experience</h4>
+    <br/>
+    <form>
+      <div class="input-field">
+        <label for="title">Title</label>
+        <input type="text" id="title" class="materialize-textarea" name="title" 
+        [value]="newExperience.title"
+        (keyup)="onInputChange($event,'title')"
+        required>
+        <div [hidden]="isValidCurrentExperience.title" class="red-text">
+          Please input Title.
+        </div>
+      </div>
+     
+      <div class="input-field">
+        <label for="description">Description</label>
+        <textarea id="description" class="materialize-textarea" name="description" 
+        [value]="newExperience.description"
+        (keyup)="onInputChange($event,'description')"
+        required></textarea>
+        <div [hidden]="isValidCurrentExperience.description" class="red-text">
+          Please input description.
+        </div>
+      </div>
+
+      
+      <div class="col s6">
+        <div class="input-field">
+          <label for="sDate" class="active">Start Date</label>
+          <input id="sDate" type="text" name="sDate" class="datepicker" 
+          materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]"
+          [(ngModel)]="newExperience.startDate"
+          required>
+          <div [hidden]="isValidCurrentExperience.startDate" class="red-text">
+              {{ invalidFromDateMsg}}
+            </div>
+        </div>
+      </div>
+      <div class="col s6">
+        <div class="input-field">
+          <label for="eDate" class="active">End Date</label>
+          <input id="eDate" type="text" name="eDate"  class="datepicker"
+           materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]"
+          [(ngModel)]="newExperience.endDate" 
+          required>
+          <div [hidden]="isValidCurrentExperience.endDate" class="red-text">
+            {{ inValidDateMsg }}
+          </div>
+        </div>
+      </div>
+
+      <div class="input-field chipInp">
+          <label for="rqSkl">Used skills(maximum of 5):</label>
+          <div id='rqSkl' class="chips" materialize="material_chip" [materializeParams]="[chipsInit]" [materializeActions]="rqChipsActions" (chip.add)="addSkill($event.detail)" (chip.delete)="deleteSkill($event.detail)"></div>
+          <div [hidden]= "isSkillValid" class="red-text">
+            Please input at least one required skill for the opening.
+          </div>
+        </div>
+
+      <br/>
+    </form>
+  </div>
+  <div class="modal-footer">
+      <button (click)="submitExperience()" class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Save' : 'Update Changes'}}<i class="material-icons right">send</i></button>
+      <button type="button" (click)='closeModal()' class="btn red">cancel</button>
+    </div>
+</div>

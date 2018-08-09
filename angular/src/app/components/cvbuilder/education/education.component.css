@@ -1,0 +1,65 @@
+
+    
+  .container10p{
+    width: 100%;
+    padding: 0 10%;
+  }
+  
+  
+  .input-field{
+  margin-bottom: 3rem !important;
+}
+  
+textarea.materialize-textarea{
+  padding: 1em 0 0 0;
+}
+
+
+input:not([type]), input[type=text]:not(.browser-default), input[type=password]:not(.browser-default), input[type=email]:not(.browser-default), input[type=url]:not(.browser-default), input[type=time]:not(.browser-default), input[type=date]:not(.browser-default), input[type=datetime]:not(.browser-default), input[type=datetime-local]:not(.browser-default), input[type=tel]:not(.browser-default), input[type=number]:not(.browser-default), input[type=search]:not(.browser-default), textarea.materialize-textarea {
+      margin: 0 0 0px 0;
+}
+
+.float-right{
+  float: right;
+}
+
+.actionBtns{
+  display: flex;
+  width: 135px;
+  justify-content: space-around;
+  position: relative;
+  bottom: 15px;
+}
+
+.educationDetail{
+  text-transform: capitalize;
+    word-break: break-word;
+}
+
+
+.indicator{
+font-size: 50px;
+margin-top: 10px;
+}
+
+.divider {
+   width: 100%;
+}
+
+.addBtn{
+  position: relative;
+  float: right;
+  right: 30px;
+}
+
+.fixed-action-btn{
+  position: relative;
+  float: right;
+}
+
+.fixed-action-btn ul {
+  bottom: 30px;
+}
+
+
+

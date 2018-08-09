@@ -1,0 +1,134 @@
+<div class="row z-depth-1" *ngIf="educations.length">
+  <div class="divider"></div>
+  <div class="container10p">
+    <div *ngFor='let education of educations;' class="section">
+
+      <div class="educationDetail">
+        <div class="row">
+          <div class="col s3">School Name:</div>
+          <div class="col s9">{{ education.schoolName }}</div>
+        </div>
+
+        <div class="row">
+          <div class="col s3">Field Of Study:</div>
+          <div class="col s9">{{ education.fieldOfStudy }}</div>
+        </div>
+
+        <div class="row">
+          <div class="col s3">Grade:</div>
+          <div class="col s9">{{ education.grade }}</div>
+        </div>
+
+        <div class="row">
+          <div class="col s3">Duration:</div>
+          <div class="col s9"> {{ education.startDate | date:'shortDate' }} ~ {{ education.endDate | date:'shortDate' }}</div>
+        </div>
+      </div>
+
+      <div *ngIf="canEdit" class="fixed-action-btn fltBtnArea">
+        <a class="btn-floating btn-small red">
+          <i class="small material-icons">more_vert</i>
+        </a>
+          <ul>
+            <li>
+              <a (click)="openEditEducation(education)" class="btn-floating btn-small waves-effect waves-light red">
+                <i class="material-icons">edit</i>
+              </a>
+            </li>
+            <li>
+              <a (click)="showDeleteConfirmDialigue(education._id)" class="btn-floating btn-small waves-effect waves-light green">
+                <i class="material-icons">delete</i>
+              </a>
+            </li>
+          </ul>
+      </div>
+      <div class="divider"></div>
+    </div>
+   
+  </div>
+</div>
+
+
+<div class="fltBtnArea" *ngIf="canEdit" >
+    <div class="section addBtn">
+        <a id="reptCreateBtn" (click)="createEducation()" class="btn-floating waves-effect waves-light red">
+            <i class="material-icons">add</i>
+          </a>
+    </div>
+</div>
+
+<div id="modal1" *ngIf="modalPurpose == 'delete'" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"
+  [materializeActions]="modalActions">
+  <div class="modal-content">
+    <p>Are you sure, you want to delete this Education ?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="waves-effect waves-green btn-flat" (click)="closeModal()">Close</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="deleteEducation()">Agree</button>
+  </div>
+</div>
+
+
+
+<div id="modal" *ngIf="modalPurpose !== 'delete'" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
+  [materializeActions]="modalActions">
+
+  <div class="modal-content">
+    <h4>Create/Edit Education</h4>
+    <br/>
+    <form>
+      <div class="input-field">
+        <label for="schoolName">School Name</label>
+        <input type="text" id="schoolName" class="materialize-textarea" name="schoolName" [value]="newEducation.schoolName" (keyup)="onInputChange($event,'schoolName')"
+          required>
+        <div [hidden]="isValidCurrentEducation.schoolName" class="red-text">
+          Please input School Name.
+        </div>
+      </div>
+      <div class="input-field">
+        <label for="schoolName"> Study </label>
+        <input type="text" id="schoolName" class="materialize-textarea" name="schoolName" [value]="newEducation.fieldOfStudy" (keyup)="onInputChange($event,'fieldOfStudy')"
+          required>
+        <div [hidden]="isValidCurrentEducation.fieldOfStudy" class="red-text">
+          Please input field of study.
+        </div>
+      </div>
+      <div class="input-field">
+        <label for="schoolName">Grade</label>
+        <input type="text" id="schoolName" class="materialize-textarea" name="schoolName" [value]="newEducation.grade" (keyup)="onInputChange($event,'grade')"
+          required>
+        <div [hidden]="isValidCurrentEducation.grade" class="red-text">
+          Please input grade.
+        </div>
+      </div>
+
+      <div class="col s6">
+        <div class="input-field">
+          <label for="sDate" class="active">Start Date</label>
+          <input id="sDate" type="text" name="sDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]"
+            [(ngModel)]="newEducation.startDate" required>
+          <div [hidden]="isValidCurrentEducation.startDate" class="red-text">
+            {{ invalidFromDateMsg}}
+          </div>
+        </div>
+      </div>
+      <div class="col s6">
+        <div class="input-field">
+          <label for="eDate" class="active">End Date</label>
+          <input id="eDate" type="text" name="eDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]"
+            [(ngModel)]="newEducation.endDate" required>
+          <div [hidden]="isValidCurrentEducation.endDate" class="red-text">
+            {{ inValidDateMsg }}
+          </div>
+        </div>
+      </div>
+      <br/>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button (click)="submitEducation()" class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Save' : 'Update Changes'}}
+      <i class="material-icons right">send</i>
+    </button>
+    <button type="button" (click)='closeModal()' class="btn red">cancel</button>
+  </div>
+</div>

@@ -6,9 +6,11 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 //models
 const User = require('../models/user');
+const CvBuilder = require('../models/cvbuilder');
 const Sitelink = require('../models/sitelink');
 //config
 const config = require('../config/cfg');
+
 
 //setting up AWS authentication and S3
 aws.config.update(config.awsAuthObj);
@@ -50,10 +52,27 @@ router.post('/register', (req, res, next)=>{
     });
     User.addUser(newUser, (err, user)=>{
         if(err) return res.json({success: false, error: err});
-        User.setupEmailVerification(user.email, (err)=>{
-            if(err) return res.json({success: false, message: err});
-            return res.json({success: true, message: 'User registered successfully, email verification sent.'});
-        });
+        if(user.access == 0) {
+            //  if user is a candidate create cv
+            CvBuilder.createCv(user._id,(error,cv) => {
+                if(err) return res.json({success: false, message: err});
+                // add cv details to user collection
+                User.addCv(cv.user, cv._id, (err) => {
+                    if(err) return res.json({success: false, message: err});
+                    // send mail
+                    User.setupEmailVerification(user.email, (err)=>{
+                        if(err) return res.json({success: false, message: err});
+                        return res.json({success: true, message: 'User registered successfully, email verification sent.'});
+                    });
+    
+                })
+            })
+        }else{
+            User.setupEmailVerification(user.email, (err)=>{
+                if(err) return res.json({success: false, message: err});
+                return res.json({success: true, message: 'User registered successfully, email verification sent.'});
+            });
+        }
     });
 });
 
@@ -239,5 +258,20 @@ router.get('/isWLMember', (req ,res, next)=>{
         res.json({ success: true, isWLMember: false });
     });
 });
+
+// router.use((req,res,next)=>{
+//     let token = req.headers['x-access-token'];
+//     User.validateToken(token, (err, serverStatus, decoded) => {
+//       if (err) {
+//         return res.status(serverStatus).json({ success: false, message: err });
+//       } else {
+//         next();
+//       }
+//     });
+// });
+
+// router.get('/getconfigfile',(req,res, next) => {
+//     res.json(data);
+// })
 
 module.exports = router;
