@@ -22,9 +22,8 @@ export class OpeningsListComponent implements OnInit {
     title: '',
     descrip: '',      //  Opening and dept description
     pblshed: false,   // is a published opening
-    achivd: false     // is an archived Opening      
+    achivd: false     // is an archived Opening        
   }]
-  
   archivedList = [];
   draftsList = [];
   liveList = [];

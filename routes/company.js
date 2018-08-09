@@ -258,39 +258,4 @@ router.post('/upsertOpening', (req, res, next)=>{
     });
 });
 
-router.post('/addOpeningLike', (req, res, next)=>{
-    let token = req.headers['x-access-token'];
-    User.validateToken(token, (err, serverStatus, decoded) => {
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
-        let companyId = req.body.companyId;
-        let openingId = req.body.openingId;
-        let userId = decoded._id;
-        User.addOpeningLike(companyId, openingId, userId, (err, maxLimit) => {
-            if(err) return res.json({ success: false, error:err });
-            if(maxLimit) return res.json({ success: true, atMaxLimit: maxLimit });        // maxLimit 'true' = cant like anymore
-            Company.addOpeningLiker(companyId, openingId, userId, err => {
-                if(err) return res.json({ success: false, error: err });
-                res.json({ success: true, atMaxLimit: false });
-            });
-        });
-    });
-});
-
-router.post('/removeOpeningLike', (req, res, next)=>{
-    let token = req.headers['x-access-token'];
-    User.validateToken(token, (err, serverStatus, decoded) => {
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
-        let companyId = req.body.companyId;
-        let openingId = req.body.openingId;
-        let userId = decoded._id;
-        User.removeOpeningLike(companyId, openingId, userId, (err) => {
-            if(err) return res.json({success: false, error:err});
-            Company.removeOpeningLiker(companyId, openingId, userId, err => {
-                if(err) return res.json({ success: false, error: err });
-                res.json({ success: true });
-            });
-        });
-    });
-});
-
 module.exports = router;

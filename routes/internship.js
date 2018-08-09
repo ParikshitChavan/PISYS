@@ -267,13 +267,12 @@ router.post('/updateWeeklyReportComment',(req, res, next)=>{
             body: req.body.body,
             cmtIndex: req.body.index
         }
-        let currWLMembers = { 
-            '@Toyoaki': 't_machida@willings.co.jp',
-            '@Parikshit': 'parikshitchavan@willings.co.jp',
-            '@Yuka': 'yuka.nagasawa@willings.co.jp',
-            '@Jun': 'jun.nagase@willings.co.jp',
-            '@Tejaswini': 't_barve@webstaff.jp'
-        };
+        let currWLMembers = { '@Toyoaki': 't_machida@willings.co.jp',
+                    '@Parikshit': 'parikshitchavan@willings.co.jp',
+                    '@Yuka': 'yuka.nagasawa@willings.co.jp',
+                    '@Jun': 'jun.nagase@willings.co.jp',
+                   '@Tejaswini': 't_barve@webstaff.jp'
+                };
         let regEx = /@\w*/gi;
         let matchArr = data.body.match(regEx);
         let availTags = Object.keys(currWLMembers);

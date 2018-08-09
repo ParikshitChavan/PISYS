@@ -3,7 +3,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CompanyApiService } from '../../../services/companyAPI/company-api.service';
 import { toast, MaterializeAction } from '../../../../../node_modules/angular2-materialize';
 import { ITSkills } from '../../../helpers/ITSkills.helper';
-import { JwtHelper } from '../../../../../node_modules/angular2-jwt';
 declare let Materialize:any;
 
 @Component({
@@ -12,13 +11,11 @@ declare let Materialize:any;
   styleUrls: ['./internship-opening.component.css']
 })
 export class InternshipOpeningComponent implements OnInit {
-  jwtHelper: JwtHelper = new JwtHelper();
-  decodedToken: any;
   companyId = '';
   openingId = '';
   rqChipsActions = new EventEmitter<string|MaterializeAction>();
   opnChipsActions = new EventEmitter<string|MaterializeAction>();
-  candidateLikesCount = 0;
+
   editWrites = false;
   openingDetails = {
     _id: '',           // not sending the field in API call would result in failure to update
@@ -28,11 +25,8 @@ export class InternshipOpeningComponent implements OnInit {
     descrip: '',      //  Opening and dept description
     rspably: '',      // list of responsibilities
     pblshed: false,   // is a published opening
-    achivd: false,     // is an archived Opening
-    likes: []       
+    achivd: false     // is an archived Opening        
   };
-  likesCount: number;
-  isLiked = false;
 
   allITLang = ITSkills.allITLang;
   allITLangArray = ITSkills.allITLangArray;
@@ -46,29 +40,20 @@ export class InternshipOpeningComponent implements OnInit {
   opnSklChpArr = [];
 
   constructor(
-    private companyApiService: CompanyApiService,
+    private companyService: CompanyApiService,
     private route: ActivatedRoute,
     private router: Router
-  ) { 
-    let token = localStorage.getItem('authToken');
-      if(token){
-        this.decodedToken = this.jwtHelper.decodeToken(token);
-      }
-  }
+  ) { }
 
   ngOnInit() {
     this.companyId = this.route.parent.snapshot.paramMap.get('cmpId');
     this.openingId = this.route.snapshot.paramMap.get('openId');
-    this.companyApiService.getOpeningDetails(this.companyId, this.openingId).subscribe(resp => {
+    this.companyService.getOpeningDetails(this.companyId, this.openingId).subscribe(resp => {
       if(!resp.success) {
         console.log(resp.error);
         return toast('Some error occurred, Check the console for more details', 3000);
       }
       this.openingDetails = resp.openingDetails;
-      this.likesCount = this.openingDetails.likes.length;
-      if(this.decodedToken.access == 0){
-        if(this.openingDetails.likes.includes(this.decodedToken._id)) this.isLiked = true;
-      }
       this.editWrites = resp.editWrites;
       this.openingDetails.sklRq.forEach((skill)=>{
         this.rqSklChpArr.push({tag: skill});
@@ -79,9 +64,7 @@ export class InternshipOpeningComponent implements OnInit {
       setTimeout(() => {
         this.rqChipsActions.emit({ action:"material_chip", params:[{data: this.rqSklChpArr, autocompleteOptions: this.autoCompleteOptions}] });
         this.opnChipsActions.emit({ action:"material_chip", params:[{data: this.opnSklChpArr, autocompleteOptions: this.autoCompleteOptions}] });
-        setTimeout(()=>{
-          Materialize.updateTextFields();
-        });
+        Materialize.updateTextFields();
       });
     });
   }
@@ -123,7 +106,7 @@ export class InternshipOpeningComponent implements OnInit {
     this.opnSklChpArr.forEach(item =>{
       this.openingDetails.sklOp.push(item.tag);
     });
-    this.companyApiService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp => {
+    this.companyService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp => {
       if(!resp.success) {
         console.log(resp.error);
         return toast('Some error occurred, Check the console for more details', 3000);
@@ -135,13 +118,13 @@ export class InternshipOpeningComponent implements OnInit {
   publishOpening(){
     if(confirm("are you sure to want to publish this opening?")){
       this.openingDetails.pblshed = true;
-      this.companyApiService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp =>{
+      this.companyService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp =>{
         if(!resp.success) {
           console.log(resp.error);
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening published successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId+ '/openingsList']);
+        this.router.navigate(['/companyProfile/' + this.companyId]);
       });
     }
   }
@@ -150,56 +133,28 @@ export class InternshipOpeningComponent implements OnInit {
     if(confirm("are you sure to want to move this opening to drafts?")){
       this.openingDetails.pblshed = false;
       this.openingDetails.achivd = false;     //to move out off archived section
-      this.companyApiService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp =>{
+      this.companyService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp =>{
         if(!resp.success) {
           console.log(resp.error);
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening moved to drafts successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId+ '/openingsList']);
+        this.router.navigate(['/companyProfile/' + this.companyId]);
       });
     }
   }
 
   archiveOpening(){
-    if(confirm("are you sure to want to archive this opening?")){
+    if(confirm("are you sure to want to publish this opening?")){
       this.openingDetails.achivd = true;
-      this.companyApiService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp =>{
+      this.companyService.upsertOpening(this.companyId, 'update', this.openingDetails).subscribe(resp =>{
         if(!resp.success) {
           console.log(resp.error);
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening archived successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId+ '/openingsList']);
+        this.router.navigate(['/companyProfile/' + this.companyId]);
       });
     }
   }
-
-  likeClicked(){
-    if(this.decodedToken.access != 0) return false;
-    this.companyApiService.addOpeningLike(this.companyId, this.openingId).subscribe(resp => {
-      if(!resp.success) {
-        console.log(resp.error);
-        return toast('Some error occurred, Check the console for more details', 3000);
-      }
-      if(resp.atMaxLimit) {
-        return toast('you have already liked 3 openings', 3000);
-      }
-      this.isLiked = true;
-      this.likesCount++;
-    });
-  }
-
-  unlikeClicked(){
-    if(this.decodedToken.access != 0) return false;
-    this.companyApiService.removeOpeningLike(this.companyId, this.openingId).subscribe(resp => {
-      if(!resp.success) {
-        console.log(resp.error);
-        return toast('Some error occurred, Check the console for more details', 3000);
-      }
-      this.isLiked = false;
-      this.likesCount--;
-    });
-  }
-
 }

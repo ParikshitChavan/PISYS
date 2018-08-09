@@ -42,7 +42,7 @@ export class InternshipComponent implements OnInit {
         this.decodedToken = this.jwtHelper.decodeToken(token);
         this.userAccess = this.decodedToken.access;
       }
-      else this.router.navigate(['/']);
+      else router.navigate(['/']);
     }
 
   ngOnInit() {
@@ -50,8 +50,7 @@ export class InternshipComponent implements OnInit {
     this.intnshpService.getIntnshipDetails(this.intnshpId).subscribe(resp=>{
       if(!resp.success){
         toast('Some error occurred, check the console for more details.', 3000);
-        console.log(resp.error);
-        return this.router.navigate(['/']);
+        return console.log(resp.error);
       }
       this.canAccess = true;
       let dateObj1 = new Date(resp.internship.startDate);

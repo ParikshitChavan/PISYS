@@ -119,6 +119,44 @@ function isValidAdmin(internshipId, supervisorId, callback){
 
                                 /*=====exported functions=====*/
 
+module.exports.getInternshipDetails = function(id, userId, access, callback){
+    switch(access){
+        case 2: {
+            isValidCandidate(id, userId, (err, isValid)=>{
+                if(err) return callback(err, null);
+                Internship.findById(id).lean()
+                .populate({path: 'supervisors', select: '_id name email DP'})
+                .populate({path: 'candidate', select: '_id name email DP'})
+                .populate({path: 'company', select: '_id name email '})
+                .populate({path:'wReports.comments.by', select: '_id name email DP'})
+                .exec(callback);
+            });
+            break;
+        }
+        case 1: {
+            isValidAdmin(id, userId, (err, isValid)=>{
+                if(err) return callback(err, null);
+                Internship.findById(id).select('-payments -suica -wifi -accommodation.cost -wRepts -herRepts').lean()
+                .populate({path: 'supervisors', select: '_id name email DP'})
+                .populate({path: 'candidate', select: '_id name email DP'})
+                .populate({path: 'company', select: '_id name email DP'})
+                .populate({path:'wReports.comments.by', select: '_id name email DP'})
+                .exec(callback);
+            });
+            break;
+        }
+        case 0: {
+            Internship.findById(id).select('-wReports.comments -valuation -accommodation.cost -wifi.cost -herRepts').lean()
+            .populate({path: 'supervisors', select: '_id name email DP'})
+            .populate({path: 'candidate', select: '_id name email DP'})
+            .populate({path: 'company', select: '_id name email DP'})
+            .populate({path:'wReports.comments.by', select: '_id name email DP'})
+            .exec(callback);
+            break;
+        }
+    }
+}
+
 module.exports.getInternshipBasicInfo = function(internshipId, decoded, callback){              //callback(err, internship)
     Internship.findById(internshipId, "projectName description designation startDate endDate cmpGivenEmail")
     .populate({path: 'candidate', select: '_id name DP'})
@@ -333,8 +371,8 @@ module.exports.getAccommodation = function(intnshpId, decodedToken, callback){
     Internship.findById(intnshpId, 'supervisors candidate accommodation', { lean: true })
     .populate({path:'company', select: 'admins'}).exec((err, internship)=>{
         if(err) return callback(err, null);
-        let requesterId = decodedToken._id;
-        let requesterAccess = decodedToken.access;
+        requesterId = decodedToken._id;
+        requesterAccess = decodedToken.access;
         if(requesterAccess == 2) return callback(null, internship.accommodation);
         if(requesterAccess == 0){
             if(requesterId == internship.candidate){
@@ -363,8 +401,8 @@ module.exports.upsertAccommodation = function(internshipId, accommodation, callb
 }
 
 module.exports.getSuica = function(intnshpId, decodedToken, callback){
-    let requesterId = decodedToken._id;
-    let requesterAccess = decodedToken.access;
+    requesterId = decodedToken._id;
+    requesterAccess = decodedToken.access;
     Internship.findById(intnshpId, 'candidate suica', { lean: true }, (err, internship)=>{
         if(err) return callback(err, null);
         if(requesterAccess == 2) return callback(null, internship.suica);
@@ -387,8 +425,6 @@ module.exports.upsertSuica = function(internshipId, suica, callback){
 module.exports.getWiFi = function(intnshpId, decodedToken, callback){
     Internship.findById(intnshpId, 'candidate wifi', { lean: true }, (err, internship)=>{
         if(err) return callback(err, null); 
-        let requesterId = decodedToken._id;
-        let requesterAccess = decodedToken.access;
         if(requesterAccess == 2) return callback(null, internship.wifi);
         if(requesterId == internship.candidate){
             delete internship.wifi.cmnts;

@@ -41,15 +41,8 @@ const userSchema = Schema({
     internships: [{ type: Schema.Types.ObjectId, ref: 'Internship' }],       //What internship she/he has done!
     company: {type: Schema.Types.ObjectId, ref: 'Company'},                 //Company that she/he is an admin for
     inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}],           //Internships for which she/he is a supervisor
-    likedPos : {
-        batch2019: [{
-            _id: false,
-            cmpId: {type: Schema.Types.ObjectId, ref: 'Company'},
-            opng: {type: Schema.Types.ObjectId}
-        }]
-    }
+    cv: [{type: Schema.Types.ObjectId, ref: 'CvBuilder'}]
     //gender: Number,              //1.Male, 2.Female, 3.Other, 4.Do not wish to disclose
-
 });
 
 const User = module.exports = mongoose.model('User', userSchema);
@@ -322,35 +315,15 @@ module.exports.validateSitelink = function(token, callback){        //callback(e
     });
 }
 
-module.exports.addOpeningLike = function(companyId, openingId, userId, callback){              //callback(err, maxLmt)
-    User.findById(userId, 'likedPos', (err, user) => {
-        if(err) return callback(err, false);
-        if(user.likedPos.batch2019.length == 3) return callback(null, true);
-        else{
-            user.likedPos.batch2019.push({cmpId: companyId, opng: openingId});
-            user.save(err => {
-                if(err) return callback(err, false);
-                callback(null, false);
-            });
-        }  
+module.exports.getCv = function(userId, callback){
+    User.findById(userId, 'cv', {lean: true}, (err, user)=>{
+        if (err) return callback(err, null);
+        if(!user) return callback(null, null);
+        if(!user.cv) return callback(null, null);
+        callback(null, user.cv);
     });
 }
 
-module.exports.removeOpeningLike = function(companyId, openingId, userId, callback){           //callback(err)
-    User.findById(userId, 'likedPos', (err, user) =>{
-        if(err) return callback(err);
-        let length =  user.likedPos.batch2019.length;
-        let index = -1;
-        for(let i=0; i<length; i++){
-            if(user.likedPos.batch2019[i].cmpId == companyId && user.likedPos.batch2019[i].opng == openingId){
-                index = i;
-                break;
-            }
-        }
-        if(index != -1){
-            user.likedPos.batch2019.splice(index, 1);
-            user.save(callback);
-        }
-        else callback('Liked opening not found.');
-    });
+module.exports.addCv = function(userId, cvId, callback){
+    User.findByIdAndUpdate(userId, { $set: { cv: cvId }}, callback);
 }
