@@ -34,6 +34,10 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { CompanyProfileComponent } from './components/company-profile/company-profile.component';
 import { InternshipOpeningComponent } from './components/company-profile/internship-opening/internship-opening.component';
 import { OpeningsListComponent } from './components/company-profile/openings-list/openings-list.component';
+import { CvBuilderComponent } from './components/cvbuilder/cvbuilder.component';
+import { EducationComponent } from './components/cvbuilder/education/education.component';
+import { ExperienceComponent } from './components/cvbuilder/experience/experience.component';
+import { ProjectsComponent } from './components/cvbuilder/projects/projects.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
@@ -51,10 +55,6 @@ import { AuthGuard } from "./guards/auth.guard"
 
 //custom directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
-import { CvBuilderComponent } from './components/cvbuilder/cvbuilder.component';
-import { EducationComponent } from './components/cvbuilder/education/education.component';
-import { ExperienceComponent } from './components/cvbuilder/experience/experience.component';
-import { ProjectsComponent } from './components/cvbuilder/projects/projects.component';
 import { TexttransformPipe } from './pipe/texttransform.pipe';
 
 const appRoutes: Routes =[
