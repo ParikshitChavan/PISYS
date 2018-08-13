@@ -56,6 +56,13 @@ import { AuthGuard } from "./guards/auth.guard"
 
 //custom directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
+<<<<<<< HEAD
+=======
+import { CvBuilderComponent } from './components/cvbuilder/cvbuilder.component';
+import { EducationComponent } from './components/cvbuilder/education/education.component';
+import { ExperienceComponent } from './components/cvbuilder/experience/experience.component';
+import { ProjectsComponent } from './components/cvbuilder/projects/projects.component';
+>>>>>>> 3e6fa6b1616f4740ac554903c1a7415bd7e120d9
 import { TexttransformPipe } from './pipe/texttransform.pipe';
 
 const appRoutes: Routes =[
@@ -140,8 +147,12 @@ const appRoutes: Routes =[
     EducationComponent,
     ExperienceComponent,
     ProjectsComponent,
+<<<<<<< HEAD
     TexttransformPipe,
     OpeningListingComponent
+=======
+    TexttransformPipe
+>>>>>>> 3e6fa6b1616f4740ac554903c1a7415bd7e120d9
   ],
   imports: [
     BrowserModule,
