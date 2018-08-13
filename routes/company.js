@@ -258,4 +258,15 @@ router.post('/upsertOpening', (req, res, next)=>{
     });
 });
 
+router.get('/getAllPublicOpenings', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        Company.getAllPublicOpenings((err, companies) => {
+            if(err) return res.json({success: false, error:err});
+            res.json({success:true, companies: companies});
+        });
+    });
+});
+
 module.exports = router;

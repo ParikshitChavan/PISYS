@@ -1,0 +1,16 @@
+.opening{
+    margin-bottom: 10px;
+    cursor: pointer; 
+}
+
+.container10p{
+    width: 100%;
+    padding: 0 10%;
+}
+
+.max3Lines{
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}

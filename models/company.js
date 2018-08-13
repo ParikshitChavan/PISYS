@@ -161,3 +161,7 @@ module.exports.upsertOpening = function(companyId, decodedToken, action, newOpen
         else callback('not authorised.');
     });
 }
+
+module.exports.getAllPublicOpenings = function(callback){           //callback(err, companies)
+    Company.find({'openings.pblshed': true, 'openings.achivd': false}, {openings: {$elemMatch: {pblshed: true, achivd: false}}}, { lean: true }, callback);
+}

@@ -20,13 +20,13 @@ export class CompanyProfileComponent implements OnInit {
   }
 
   constructor(
-    private companyService: CompanyApiService,
+    private companyAPIService: CompanyApiService,
     private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.companyId = this.route.snapshot.paramMap.get('cmpId');
-    this.companyService.getRecruitmentPage(this.companyId).subscribe(resp=>{
+    this.companyAPIService.getRecruitmentPage(this.companyId).subscribe(resp=>{
       if(!resp.success) {
         console.log(resp.error);
         return toast('Some error occurred, Check the console for more details', 3000);

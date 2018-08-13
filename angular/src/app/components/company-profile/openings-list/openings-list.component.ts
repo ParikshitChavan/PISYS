@@ -86,6 +86,7 @@ export class OpeningsListComponent implements OnInit {
         return toast('Some error occurred, Check the console for more details', 3000);
       }
       toast('Opening created successfully', 3000);
+      //route to new opening
       this.newOpening = { title: '', descrip:'', rspably:'', sklRq:[], sklOp:[] };
     });
   }

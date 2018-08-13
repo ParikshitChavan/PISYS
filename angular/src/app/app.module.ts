@@ -38,6 +38,7 @@ import { CvBuilderComponent } from './components/cvbuilder/cvbuilder.component';
 import { EducationComponent } from './components/cvbuilder/education/education.component';
 import { ExperienceComponent } from './components/cvbuilder/experience/experience.component';
 import { ProjectsComponent } from './components/cvbuilder/projects/projects.component';
+import { OpeningListingComponent } from './components/opening-listing/opening-listing.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
@@ -68,6 +69,7 @@ const appRoutes: Routes =[
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   { path: 'company', component: CompanyComponent, canActivate: [AuthGuard]},
   { path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
+  { path: 'findOpenings', component: OpeningListingComponent, canActivate: [AuthGuard]},
   { 
     path: 'companyProfile/:cmpId',
     component: CompanyProfileComponent,
@@ -138,7 +140,8 @@ const appRoutes: Routes =[
     EducationComponent,
     ExperienceComponent,
     ProjectsComponent,
-    TexttransformPipe
+    TexttransformPipe,
+    OpeningListingComponent
   ],
   imports: [
     BrowserModule,

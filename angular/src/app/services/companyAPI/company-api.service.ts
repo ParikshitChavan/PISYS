@@ -107,5 +107,14 @@ export class CompanyApiService {
     headers.append('x-access-token', this.authToken);
     return this.http.post(this.appUrl + 'company/upsertOpening', data, {headers: headers}).map(res => res.json());
   }
+
+  getAllPublicOpenings(){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.get(this.appUrl + 'company/getAllPublicOpenings', {headers: headers}).map(res => res.json());
+  }
+
 }
 //http://localhost:3000/ for local testing

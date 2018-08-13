@@ -124,7 +124,7 @@ export class InternshipOpeningComponent implements OnInit {
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening published successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId]);
+        this.router.navigate(['/companyProfile/' + this.companyId + '/openingsList']);
       });
     }
   }
@@ -139,7 +139,7 @@ export class InternshipOpeningComponent implements OnInit {
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening moved to drafts successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId]);
+        this.router.navigate(['/companyProfile/' + this.companyId + '/openingsList']);
       });
     }
   }
@@ -153,7 +153,7 @@ export class InternshipOpeningComponent implements OnInit {
           toast('Some error occurred, Check the console for more details', 3000);
         }
         else toast('Internship opening archived successfully', 3000);
-        this.router.navigate(['/companyProfile/' + this.companyId]);
+        this.router.navigate(['/companyProfile/' + this.companyId + '/openingsList']);
       });
     }
   }
