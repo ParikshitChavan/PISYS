@@ -1,5 +1,9 @@
 <div class="container openingDetails">
-  <h5>{{openingDetails.title}}</h5>
+  <h5>{{openingDetails.title}}&emsp;|&emsp;
+    <i *ngIf="!isLiked" (click)="likeClicked()" class="material-icons small clickableIcon tooltipped" materialize="tooltip" data-position="left" data-delay="100" data-tooltip="Like">favorite_border</i>
+    <i *ngIf="isLiked" (click)="unlikeClicked()" class="material-icons small clickableIcon icon-red" materialize="tooltip" data-position="left" data-delay="100" data-tooltip="Remove like">favorite</i>
+     {{likesCount}}
+  </h5>
   <p class="infoTitle">Description:</p>
   <pre class="">{{openingDetails.descrip}}</pre>
   <p class="infoTitle">Responsibilities:</p>
@@ -30,7 +34,7 @@
 <div id="editOpeningModal" class="modal modal-fixed-footer" materialize="modal">
   <div class="modal-content">
     <h5>Edit internship opening</h5>
-    <form (ngSubmit)='saveOpening(form.valid)' #form='ngForm'>
+    <form materialize (ngSubmit)='saveOpening(form.valid)' #form='ngForm'>
       <div class="input-field">
         <label for="title">Opening Title</label>
         <input id="title" name='title' type="text" [(ngModel)]="openingDetails.title" required #title="ngModel">

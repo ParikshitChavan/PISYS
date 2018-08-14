@@ -116,5 +116,28 @@ export class CompanyApiService {
     return this.http.get(this.appUrl + 'company/getAllPublicOpenings', {headers: headers}).map(res => res.json());
   }
 
+  addOpeningLike(companyId, openingId){
+    this.loadToken();
+    let data = {
+      companyId: companyId,
+      openingId: openingId
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/addOpeningLike', data, {headers: headers}).map(res => res.json());
+  }
+
+  removeOpeningLike(companyId, openingId){
+    this.loadToken();
+    let data = {
+      companyId: companyId,
+      openingId: openingId
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/removeOpeningLike', data, {headers: headers}).map(res => res.json());
+  }
+
 }
-//http://localhost:3000/ for local testing
