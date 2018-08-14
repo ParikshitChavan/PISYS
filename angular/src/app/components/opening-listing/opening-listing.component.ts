@@ -10,8 +10,8 @@ import { Router } from '../../../../node_modules/@angular/router';
 })
 export class OpeningListingComponent implements OnInit {
 
-  companies : any[];
-  openingList : any[];
+  companies = [];
+  openingList = [];
 
   constructor(
       private companyAPIService : CompanyApiService,

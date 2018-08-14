@@ -1,11 +1,9 @@
-<div class="container">
-  <h5>List of available internships projects</h5>
-  <div class="container10p">
-    <div class="card opening hoverable" *ngFor='let opening of openingList' (click)='openingClicked(opening.link)'>
-      <div class="card-content">
-        <span class="card-title">{{opening.title}}</span>
-        <p class="max3Lines">{{opening.descrip}}</p>
-      </div>
+<h5>Available projects for internship program</h5>
+<div>
+  <div class="card opening hoverable" *ngFor='let opening of openingList' (click)='openingClicked(opening.link)'>
+    <div class="card-content">
+      <span class="card-title">{{opening.title}}</span>
+      <p class="max3Lines">{{opening.descrip}}</p>
     </div>
   </div>
 </div>

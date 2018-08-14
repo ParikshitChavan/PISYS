@@ -141,8 +141,7 @@ const appRoutes: Routes =[
     ExperienceComponent,
     ProjectsComponent,
     TexttransformPipe,
-    OpeningListingComponent,
-    TexttransformPipe
+    OpeningListingComponent
   ],
   imports: [
     BrowserModule,

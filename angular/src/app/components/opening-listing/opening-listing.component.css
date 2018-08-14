@@ -3,9 +3,9 @@
     cursor: pointer; 
 }
 
-.container10p{
+.container7p{
     width: 100%;
-    padding: 0 10%;
+    padding: 0 7%;
 }
 
 .max3Lines{
@@ -13,4 +13,8 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;  
     overflow: hidden;
+}
+
+h5{
+    margin-bottom: 3%;
 }

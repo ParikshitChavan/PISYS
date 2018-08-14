@@ -181,5 +181,25 @@ module.exports.removeOpeningLiker = function(companyId, openingId, userId, callb
 }
 
 module.exports.getAllPublicOpenings = function(callback){           //callback(err, companies)
-    Company.find({'openings.pblshed': true, 'openings.achivd': false}, {openings: {$elemMatch: {pblshed: true, achivd: false}}}, { lean: true }, callback);
+    //Company.find({'openings.pblshed': true, 'openings.achivd': false}, {openings: {$elemMatch: {pblshed: true, achivd: false}}}, { lean: true }, callback);
+    Company.aggregate(
+        [
+            { $match: {'openings.pblshed': true, 'openings.achivd': false} },
+            { $project: {
+                openings: { 
+                    $filter: {
+                        input: '$openings',
+                        as: 'opening',
+                        cond: {
+                            $and:[
+                                { $eq: ['$$opening.pblshed', true] },
+                                { $eq: ['$$opening.achivd', false] }
+                            ]
+                        }
+                    }
+                }
+            }}
+        ],
+        callback
+    );
 }
