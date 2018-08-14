@@ -339,7 +339,6 @@ module.exports.addOpeningLike = function(companyId, openingId, userId, callback)
 module.exports.removeOpeningLike = function(companyId, openingId, userId, callback){           //callback(err)
     User.findById(userId, 'likedPos', (err, user) =>{
         if(err) return callback(err);
-        let index =  user.likedPos.batch2019.indexOf({cmpId: companyId, opng: openingId});
         let length =  user.likedPos.batch2019.length;
         let index = -1;
         for(let i=0; i<length; i++){

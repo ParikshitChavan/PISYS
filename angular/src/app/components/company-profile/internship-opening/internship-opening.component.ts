@@ -21,7 +21,7 @@ export class InternshipOpeningComponent implements OnInit {
   candidateLikesCount = 0;
   editWrites = false;
   openingDetails = {
-    _id: '',           // not sending the field in API call would result in failure to update
+    _id: '',           // needed for API call
     title:'',
     sklRq: [],        // Skill required max 5
     sklOp: [],        // optional skills max 5
