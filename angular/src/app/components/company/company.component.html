@@ -22,10 +22,6 @@
         <div class="col s5">website:</div>
         <div class="col s7">{{companyDetails.website}}</div>
       </div>
-      <div class="row">
-        <div class="col s12">About us:</div>
-        <div class="col s12"><pre id="cmpAbtUs">{{companyDetails.abtUs}}</pre></div>
-      </div>
       <a id="infoEditBtn" (click)="editInfoClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
     </div>
     <div class="formArea" [hidden]="!editing">
@@ -61,12 +57,6 @@
           <div class="input-field">
             <label for="website" class="active">Website</label>
             <input id="website" type="text" name="website" [(ngModel)]="companyDetails.website">
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field">
-            <label for="abtUs">About Us:</label>
-            <textarea id="abtUs" class="materialize-textarea" name="abtUs" [(ngModel)]="companyDetails.abtUs"></textarea>
           </div>
         </div>
         <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>

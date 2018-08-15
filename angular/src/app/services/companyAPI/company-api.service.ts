@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import { tokenNotExpired } from "angular2-jwt";
 import "rxjs/add/operator/map";
 import { environment } from "../../../environments/environment";
 
@@ -138,6 +137,18 @@ export class CompanyApiService {
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
     return this.http.post(this.appUrl + 'company/removeOpeningLike', data, {headers: headers}).map(res => res.json());
+  }
+
+  updateAbtUs(companyId, abtUs){
+    this.loadToken();
+    let data = {
+      companyId: companyId,
+      aboutUs: abtUs
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/updateAboutUs', data, {headers: headers}).map(res => res.json());
   }
 
 }

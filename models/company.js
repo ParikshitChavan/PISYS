@@ -36,8 +36,8 @@ function validateEmail(email) {
 
                                 /*=====API Functions=====*/
 
-module.exports.getCompanyById = function(id, callback){
-    Company.findById(id, "-isActive").populate('admins', 'name email').exec(callback);
+module.exports.getCompanyInfoById = function(id, callback){
+    Company.findById(id, "name est address admins logo phNum website", { lean: true }).populate('admins', 'name email').exec(callback);
 }
 
 module.exports.getCompanyNames = function (callback){
@@ -45,7 +45,7 @@ module.exports.getCompanyNames = function (callback){
 }
 
 module.exports.updateCmpInfoById = function(id, cmpInfo, callback){
-    Company.findByIdAndUpdate(id, { $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address, website: cmpInfo.website, abtUs: cmpInfo.abtUs }}, callback);
+    Company.findByIdAndUpdate(id, { $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address, website: cmpInfo.website }}, callback);
 }
 
 module.exports.addAdmin = function(companyId, newAdmin, callback){
@@ -88,7 +88,7 @@ module.exports.updateLogo = function(companyId, awsKey, awsUrl, callback){
 module.exports.getSuggestions = function(searchTerm, callback){
     let query = {name: { $regex : '.*' + searchTerm + '.*', $options: 'i' }};
     Company.find(query).select('name logo').limit(10).lean().exec((err, companies)=>{
-        if(err) callback(err, null);
+        if(err) return callback(err, null);
         data = {};
         for( let company of companies){
             data[company.name] = company.logo.url
@@ -104,33 +104,44 @@ module.exports.getCompanyIdByName = function(name, callback){
     });
 }
 
-module.exports.getRecruitmentPage = function(companyId, callback){           //callback(err, cmpProfile)
-    Company.findById(companyId, 'name est address logo website abtUs', {lean: true}, callback);
-}
-
-module.exports.getInternshipOpenings = function(companyId, decodedToken, callback){           //callback(err, cmpProfile)
-    Company.findById(companyId, 'admins openings', {lean: true}, (err, company)=>{
-        if(err) return callback(err, null);
-        let editWrites = false;
+module.exports.getRecruitmentPage = function(companyId, decodedToken, callback){           //callback(err, cmpProfile, editRights)
+    Company.findById(companyId, 'name est address logo website abtUs admins', {lean: true}, (err, company) => {
+        if(err) return callback(err, null, null);
+        let editRights = false;
         if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
-            editWrites = true;
+            editRights = true;
         }
         else{
-            //only select currently active openings 
+            company = {name:'', est:'', logo:{key:'', url:''}, website: '', abtUs: company.abtUs};
+        }
+        delete company.admins;
+        callback(null, company, editRights);
+    });
+}
+
+module.exports.getInternshipOpenings = function(companyId, decodedToken, callback){           //callback(err, cmpProfile, editRights)
+    Company.findById(companyId, 'admins openings', {lean: true}, (err, company)=>{
+        if(err) return callback(err, null);
+        let editRights = false;
+        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+            editRights = true;
+        }
+        else{
+            //filter out non-active openings 
             company.openings = company.openings.filter(opening=> (!opening.achivd && opening.pblshed));
         }
-        callback(null, company.openings, editWrites);
+        callback(null, company.openings, editRights);
     });
 }
 
 module.exports.getOpeningDetails = function(companyId, decodedToken, openingId, callback){
     Company.findById(companyId, 'openings admins', (err, company) =>{
         if(err) callback(err, null);
-        let editWrites = false;
+        let editRights = false;
         if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
-            editWrites = true;
+            editRights = true;
         }
-        callback(null, company.openings.id(openingId), editWrites);
+        callback(null, company.openings.id(openingId), editRights);
     });
 }
 
@@ -181,7 +192,6 @@ module.exports.removeOpeningLiker = function(companyId, openingId, userId, callb
 }
 
 module.exports.getAllPublicOpenings = function(callback){           //callback(err, companies)
-    //Company.find({'openings.pblshed': true, 'openings.achivd': false}, {openings: {$elemMatch: {pblshed: true, achivd: false}}}, { lean: true }, callback);
     Company.aggregate(
         [
             { $match: {'openings.pblshed': true, 'openings.achivd': false} },
@@ -202,4 +212,15 @@ module.exports.getAllPublicOpenings = function(callback){           //callback(e
         ],
         callback
     );
+}
+
+module.exports.updateAboutUs = function(cmpId, decodedToken, abtUs, callback){      //callback(err)
+    Company.findById(cmpId, 'abtUs admins', (err, company) =>{
+        if(err) return callback(err);
+        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+            company.abtUs = abtUs;
+            company.save(callback);
+        }
+        else return callback('not authorised');
+    });
 }

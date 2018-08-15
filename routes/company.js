@@ -88,7 +88,7 @@ router.get('/info', (req, res, next)=>{
         User.getCompany(decoded._id, (err, companyId)=>{
             if (err) throw err;
             if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
-            Company.getCompanyById(companyId, (err, company)=>{
+            Company.getCompanyInfoById(companyId, (err, company)=>{
                 if(err) throw err;
                 res.json({success: true , companyData: company});
             });
@@ -121,7 +121,6 @@ router.post('/updateInfo', (req, res, next)=>{
                 phNum:req.body.phNum,
                 address:req.body.address,
                 website: req.body.website,
-                abtUs: req.body.abtUs
             }
             Company.updateCmpInfoById(companyId, companyData,  (err)=>{
                 if(err) throw err;
@@ -212,9 +211,9 @@ router.post('/getRecruitmentPage', (req, res)=>{
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         let companyId = req.body.companyId;
-        Company.getRecruitmentPage(companyId, (err, company) => {
+        Company.getRecruitmentPage(companyId, decoded, (err, company, editRights) => {
             if(err) return res.json({ success: false, error: err });
-            res.json({success:true, recruitmentDetails: company});
+            res.json({success:true, recruitmentDetails: company, editRights: editRights});
         });
     });
 });
@@ -224,9 +223,9 @@ router.post('/getInternshipOpenings', (req, res)=>{
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         let companyId = req.body.companyId;
-        Company.getInternshipOpenings(companyId, decoded, (err, openings, editWrites) => {
+        Company.getInternshipOpenings(companyId, decoded, (err, openings, editRights) => {
             if(err) return res.json({success: false, error: err});
-            res.json({success:true, editWrites: editWrites, openings: openings});
+            res.json({success:true, editRights: editRights, openings: openings});
         });
     });
 });
@@ -237,9 +236,9 @@ router.post('/getOpeningDetails', (req, res, next)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
         let companyId = req.body.companyId;
         let openingId = req.body.openingId;
-        Company.getOpeningDetails(companyId, decoded, openingId, (err, opening, editWrites) => {
+        Company.getOpeningDetails(companyId, decoded, openingId, (err, opening, editRights) => {
             if(err) return res.json({success: false, error:err});
-            res.json({success:true, editWrites: editWrites,  openingDetails: opening});
+            res.json({success:true, editRights: editRights,  openingDetails: opening});
         });
     });
 });
@@ -300,6 +299,19 @@ router.get('/getAllPublicOpenings', (req, res, next)=>{
         Company.getAllPublicOpenings((err, companies) => {
             if(err) return res.json({success: false, error:err});
             res.json({success:true, companies: companies});
+        });
+    });
+});
+
+router.post('/updateAboutUs', (req, res, next)=>{
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        let companyId = req.body.companyId;
+        let abtUs = req.body.aboutUs;
+        Company.updateAboutUs(companyId, decoded, abtUs, (err) => {
+            if(err) return res.json({success: false, error:err});
+            res.json({success:true, message: 'about us updated successfully'});
         });
     });
 });

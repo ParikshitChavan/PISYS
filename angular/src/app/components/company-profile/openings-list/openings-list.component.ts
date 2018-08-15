@@ -14,7 +14,7 @@ export class OpeningsListComponent implements OnInit {
   rqChipsActions = new EventEmitter<string|MaterializeAction>();
   opnChipsActions = new EventEmitter<string|MaterializeAction>();
   
-  editWrites = false;
+  editRights = false;
   decodedToken = {};
   companyId = '';
   openings: [{
@@ -55,7 +55,7 @@ export class OpeningsListComponent implements OnInit {
         return toast('Some error occurred, Check the console for more details', 3000);
       }
       this.openings = resp.openings;
-      this.editWrites = resp.editWrites;
+      this.editRights = resp.editRights;
       // push openings into appropriate lists
       this.openings.forEach( opening => {
         if(opening.achivd) this.archivedList.push(opening);

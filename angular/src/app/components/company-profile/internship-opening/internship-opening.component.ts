@@ -19,7 +19,7 @@ export class InternshipOpeningComponent implements OnInit {
   rqChipsActions = new EventEmitter<string|MaterializeAction>();
   opnChipsActions = new EventEmitter<string|MaterializeAction>();
   candidateLikesCount = 0;
-  editWrites = false;
+  editRights = false;
   openingDetails = {
     _id: '',           // needed for API call
     title:'',
@@ -69,7 +69,7 @@ export class InternshipOpeningComponent implements OnInit {
       if(this.decodedToken.access == 0){
         if(this.openingDetails.likes.includes(this.decodedToken._id)) this.isLiked = true;
       }
-      this.editWrites = resp.editWrites;
+      this.editRights = resp.editRights;
       this.openingDetails.sklRq.forEach((skill)=>{
         this.rqSklChpArr.push({tag: skill});
       });
