@@ -54,3 +54,8 @@ H3{
     white-space: pre-line;
     font-family: "Roboto", sans-serif;
 }
+
+.rcPageBtn{
+    margin: 10% 0; 
+    text-align: center;
+}

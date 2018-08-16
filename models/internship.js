@@ -279,7 +279,7 @@ module.exports.upsertBasicInfo = function(internshipId, decodedToken, basicInfo,
         .populate({path: 'candidate', select: 'name email', options:{ lean: true}})
         .exec((err, internship)=>{
             if(err) return callback(err, null);
-            if(!internship.company.admins.includes(decodedToken._id)) return callback('Unauthorised', null);
+            if(internship.company.admins.indexOf(decodedToken._id) == -1) return callback('Unauthorised', null);
             let candidate = internship.candidate;
             internship.projectName = basicInfo.projectName;
             internship.designation = basicInfo.designation;

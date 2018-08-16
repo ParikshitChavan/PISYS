@@ -1,4 +1,4 @@
-<div class="container z-depth-2">
+<div class="z-depth-2">
   <div class="container10p">
     <div class="row basicInfo">
       <div [hidden]="!editRights" class="col s12">
@@ -14,7 +14,9 @@
         <h5>About Us:</h5>
         <pre>{{cmpProfile.abtUs}}</pre>
       </div>
-      <a id="abtUsFAB" [hidden]="!editRights" href="#editAbtUsModal" class="btn-floating btn-large waves-effect waves-light red modal-trigger"><i class="material-icons">edit</i></a>
+    </div>
+    <div [hidden]="!editRights" class="fabArea">
+      <a id="abtUsFAB" href="#editAbtUsModal" class="btn-floating btn-large waves-effect waves-light red modal-trigger"><i class="material-icons">edit</i></a>
     </div>
   </div>
 </div>

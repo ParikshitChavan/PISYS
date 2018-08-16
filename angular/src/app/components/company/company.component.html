@@ -67,8 +67,11 @@
   <div class="col s12 l6" id="logo">
     <h3>Company Logo</h3>
     <div class="imgArea">
-      <img [src]="companyDetails.logo.url" class="responsive-img circle" alt="User display picture">
+      <img [src]="companyDetails.logo.url" class="responsive-img circle" alt="Company Logo">
       <a href="#logoUploadModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
+    </div>
+    <div class="rcPageBtn">
+      <a class="waves-effect waves-light btn" [routerLink]="['/companyProfile/'+companyDetails._id]"><i class="material-icons right">arrow_forward</i>Recruitment Page</a>
     </div>
   </div>
 </div>

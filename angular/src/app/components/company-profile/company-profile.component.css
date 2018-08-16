@@ -14,13 +14,13 @@ pre{
     margin-bottom: 30px;
 }
 
-.basicInfo{
+.fabArea{
     position: relative;
 }
 
 #abtUsFAB{
     position: absolute;
-    right: 2%;
+    right: 0%;
     bottom: 0%;
-    transform: translateY(+70%);
+    transform: translateY(+75%);
 }

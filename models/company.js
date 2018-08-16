@@ -105,10 +105,10 @@ module.exports.getCompanyIdByName = function(name, callback){
 }
 
 module.exports.getRecruitmentPage = function(companyId, decodedToken, callback){           //callback(err, cmpProfile, editRights)
-    Company.findById(companyId, 'name est address logo website abtUs admins', {lean: true}, (err, company) => {
+    Company.findById(companyId, 'name est address logo website abtUs admins', (err, company) => {
         if(err) return callback(err, null, null);
         let editRights = false;
-        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
             editRights = true;
         }
         else{
@@ -120,10 +120,11 @@ module.exports.getRecruitmentPage = function(companyId, decodedToken, callback){
 }
 
 module.exports.getInternshipOpenings = function(companyId, decodedToken, callback){           //callback(err, cmpProfile, editRights)
-    Company.findById(companyId, 'admins openings', {lean: true}, (err, company)=>{
+    Company.findById(companyId, 'admins openings', (err, company)=>{
         if(err) return callback(err, null);
+        if(!company.openings) company.openings=[];
         let editRights = false;
-        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
             editRights = true;
         }
         else{
@@ -138,7 +139,7 @@ module.exports.getOpeningDetails = function(companyId, decodedToken, openingId, 
     Company.findById(companyId, 'openings admins', (err, company) =>{
         if(err) callback(err, null);
         let editRights = false;
-        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
             editRights = true;
         }
         callback(null, company.openings.id(openingId), editRights);
@@ -148,7 +149,7 @@ module.exports.getOpeningDetails = function(companyId, decodedToken, openingId, 
 module.exports.upsertOpening = function(companyId, decodedToken, action, newOpening, callback){
     Company.findById(companyId, 'admins', {lean: true}, (err, company) => {
         if(err) return callback(err);
-        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
             if(action == 'insert'){
                 Company.findByIdAndUpdate(companyId, { $push:{ openings: newOpening} }, callback);
             }
@@ -217,7 +218,7 @@ module.exports.getAllPublicOpenings = function(callback){           //callback(e
 module.exports.updateAboutUs = function(cmpId, decodedToken, abtUs, callback){      //callback(err)
     Company.findById(cmpId, 'abtUs admins', (err, company) =>{
         if(err) return callback(err);
-        if(decodedToken.access == 2 || company.admins.includes(decodedToken._id)){
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
             company.abtUs = abtUs;
             company.save(callback);
         }
