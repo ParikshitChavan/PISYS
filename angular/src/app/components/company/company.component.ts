@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { CompanyApiService } from "../../services/companyAPI/company-api.service";
 import { toast } from 'angular2-materialize';
 import { ImageCropperComponent, CropperSettings, Bounds } from "ngx-img-cropper";
@@ -15,14 +15,15 @@ export class CompanyComponent implements OnInit {
   editing: Boolean = false;
   editingAdmin : Boolean = false;
   companyDetails: {
-    name: String,
+    name: string,
     est : any,
-    phNum: String,
+    phNum: string,
     website: String,
     admins: any[],
     address: string,
-    logo: { key: String, url: String }
-  } = { name: "", est: "", phNum: "", admins: [], address: '', website: '', logo: {key:"", url:""} };
+    logo: { key: string, url: string },
+    empSize: string
+  } = { name: '', est: '', phNum: '', admins: [], address: '', website: '', logo: {key: '', url: ''}, empSize: ''};
   newAdmin = { name:'', email:'' };
   companyInfoMsg: String;
   logoMsg: String;
@@ -35,7 +36,10 @@ export class CompanyComponent implements OnInit {
 
   @ViewChild('cropper', undefined) cropper:ImageCropperComponent;
 
-  constructor(private companyAPIService: CompanyApiService, private router:Router) { 
+  constructor(
+      private companyAPIService: CompanyApiService,
+      private route: ActivatedRoute
+    ) { 
     this.cropperSettings = new CropperSettings();
     this.cropperSettings.width = 200;
     this.cropperSettings.height = 200;
@@ -66,7 +70,8 @@ export class CompanyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.companyAPIService.getCmpInfo().subscribe(resp => {
+    const cmpId = this.route.snapshot.paramMap.get('id');
+    this.companyAPIService.getCmpInfo(cmpId).subscribe(resp => {
       if(!resp.success) return false;
       let dateObj = new Date(resp.companyData.est);
       let options = { year: 'numeric', month: 'long', day:'numeric' };

@@ -67,7 +67,7 @@ const appRoutes: Routes =[
   { path: 'internships', component: InternshipsComponent, pathMatch: 'full', canActivate: [AuthGuard]},
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
-  { path: 'company', component: CompanyComponent, canActivate: [AuthGuard]},
+  { path: 'company/:id', component: CompanyComponent, canActivate: [AuthGuard]},
   { path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
   { path: 'findOpenings', component: OpeningListingComponent, canActivate: [AuthGuard]},
   { 

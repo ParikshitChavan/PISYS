@@ -12,7 +12,17 @@ export class CompaniesComponent implements OnInit {
   autocompleteData = {};
   autocompleteActions = new EventEmitter<string|MaterializeAction>();
   modalActions = new EventEmitter<string|MaterializeAction>();
-  autocompleteParams = [{ data: this.autocompleteData}];
+  autocompleteParams = [{
+    data: this.autocompleteData,
+    'onAutocomplete': (val) => {
+      for(let i=0; i < this.loadedCmps.length; i++){
+        if(val == this.loadedCmps[i].name){
+          this.router.navigate(['company/'+ this.loadedCmps[i]._id]);
+          break;
+        } 
+      }
+    }
+  }];
   newCmp: {
     name: string,
     est: any,

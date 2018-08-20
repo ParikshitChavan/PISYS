@@ -81,18 +81,28 @@ router.post('/register', (req, res, next)=>{
     });    
 });
 
-router.get('/info', (req, res, next)=>{
+router.post('/info', (req, res, next) => {
     let token = req.headers['x-access-token'];
-    User.validateToken(token, (err, serverStatus, decoded)=>{
+    User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.getCompany(decoded._id, (err, companyId)=>{
-            if (err) throw err;
-            if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
-            Company.getCompanyInfoById(companyId, (err, company)=>{
-                if(err) throw err;
-                res.json({success: true , companyData: company});
+        const cmpId = req.body.companyId;
+        if(cmpId == 'myCompany'){
+            User.getCompany(decoded._id, (err, companyId) => {
+                if (err) throw err;
+                if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
+                Company.getCompanyInfoById(companyId, (err, company)=>{
+                    if(err) throw err;
+                    return res.json({success: true , companyData: company});
+                });
             });
-        });
+        }
+        else {
+            if(decoded.access != 2) return res.json({ success: false, message: "not authorised" });
+            Company.getCompanyInfoById(cmpId, (err, company) => {
+                if(err) throw err;
+                return res.json({success: true , companyData: company});
+            });
+        }
     });    
 });
 
@@ -121,6 +131,7 @@ router.post('/updateInfo', (req, res, next)=>{
                 phNum:req.body.phNum,
                 address:req.body.address,
                 website: req.body.website,
+                empSize: req.body.empSize
             }
             Company.updateCmpInfoById(companyId, companyData,  (err)=>{
                 if(err) throw err;

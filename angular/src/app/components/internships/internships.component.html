@@ -41,17 +41,11 @@
     <form (ngSubmit)="onIntnshpCreateClick()" #form=ngForm>
       <div class="input-field col s12">
         <label for="company"> Company Name</label>
-        <input id="company" type="text" name="companyName" [formControl]="companySearchControl" [(ngModel)]="newIntnshp.companyName" required  materialize="autocomplete" [materializeParams]="companyAutocompleteParams" [materializeActions]="companySearchBoxAction">
-        <!--<div [hidden]= "cmpName.valid || (cmpName.pristine && !form.submitted)" class="red-text">
-          Please input a valid company name.
-        </div>-->
+        <input id="company" type="text" name="companyName" [formControl]="companySearchControl" [(ngModel)]="newIntnshp.companyName" required  materialize="autocomplete" [materializeParams]="companyAutocompleteParams" [materializeActions]="companySearchBoxAction" autocomplete="off">
       </div>
       <div class="input-field col s12">
         <label for="candidate"> Candidate email address</label>
-        <input id="candidate" type="text" name="candidateEmail" [(ngModel)]="newIntnshp.candidateEmail" required [formControl]="candidateSearchControl" materialize="autocomplete" [materializeParams]="candidateAutocompleteParams" [materializeActions]="candidateSearchBoxAction">
-        <!--<div [hidden]= "candidateName.valid || (candidateName.pristine && !form.submitted)" class="red-text">
-          Please input a valid candidate name.
-        </div>-->
+        <input id="candidate" type="text" name="candidateEmail" [(ngModel)]="newIntnshp.candidateEmail" required [formControl]="candidateSearchControl" materialize="autocomplete" [materializeParams]="candidateAutocompleteParams" [materializeActions]="candidateSearchBoxAction" autocomplete="off">
       </div>
     </form>
   </div>

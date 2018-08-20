@@ -16,12 +16,15 @@ export class CompanyApiService {
   }
 
   //User Protected Routes request below 
-  getCmpInfo(){
+  getCmpInfo(id){
+    const data = {
+      companyId: id
+    }
     this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.get(this.appUrl + 'company/info', {headers: headers}).map(res => res.json());
+    return this.http.post(this.appUrl + 'company/info', data, {headers: headers}).map(res => res.json());
   }
 
   getCmpNames(){

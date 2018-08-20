@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const companySchema = Schema({
     isActive: Boolean,
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true, dropDups: true },
     est: {
         type: Date
     },
@@ -23,7 +23,8 @@ const companySchema = Schema({
         pblshed: { type: Boolean, default: false },   // is a published opening
         achivd: { type: Boolean, default: false },   //is  an archived opening  
         likes: [{type: Schema.Types.ObjectId, ref: 'User'}]
-    }]
+    }],
+    empSize: String
 });
 
 const Company = module.exports = mongoose.model('Company', companySchema);
@@ -37,7 +38,7 @@ function validateEmail(email) {
                                 /*=====API Functions=====*/
 
 module.exports.getCompanyInfoById = function(id, callback){
-    Company.findById(id, "name est address admins logo phNum website", { lean: true }).populate('admins', 'name email').exec(callback);
+    Company.findById(id, "name est address admins logo phNum website empSize", { lean: true }).populate('admins', 'name email').exec(callback);
 }
 
 module.exports.getCompanyNames = function (callback){
@@ -45,7 +46,7 @@ module.exports.getCompanyNames = function (callback){
 }
 
 module.exports.updateCmpInfoById = function(id, cmpInfo, callback){
-    Company.findByIdAndUpdate(id, { $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address, website: cmpInfo.website }}, callback);
+    Company.findByIdAndUpdate(id, { $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address, website: cmpInfo.website, empSize: cmpInfo.empSize }}, callback);
 }
 
 module.exports.addAdmin = function(companyId, newAdmin, callback){
