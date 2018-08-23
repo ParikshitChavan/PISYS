@@ -105,7 +105,7 @@ router.post('/info', (req, res, next) => {
     });    
 });
 
-router.get('/companyNames', (req, res, next)=>{
+router.get('/companyNames', (req, res, next) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
@@ -117,7 +117,7 @@ router.get('/companyNames', (req, res, next)=>{
     });    
 });
 
-router.post('/updateInfo', (req, res, next)=>{
+router.post('/updateInfo', (req, res, next) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
@@ -156,7 +156,7 @@ router.post('/registerAdmin', (req, res, next) => {
                     email: req.body.email,
                     password: link,  //save the link as the password until they use activation link to set password
                     access: 1,
-                    DP: {key:"", url:"https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png"},
+                    DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
                     company: companyId
                 });
                 Company.addAdmin(companyId, newAdmin, (err, company) => {
@@ -199,11 +199,11 @@ router.post('/updateLogo', (req, res, next) => {
 });
 
 //deleting an admin account
-router.delete('/delete', (req, res, next)=>{
+router.delete('/delete', (req, res, next) => {
     res.send("Deleting an Admin");
 });
 
-router.post('/suggestions', (req, res, next)=>{
+router.post('/suggestions', (req, res, next) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });

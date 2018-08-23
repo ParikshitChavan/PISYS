@@ -57,6 +57,7 @@ import { AuthGuard } from "./guards/auth.guard"
 //custom directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
 import { TexttransformPipe } from './pipe/texttransform.pipe';
+import { CandidateMasterListComponent } from './components/candidate-master-list/candidate-master-list.component';
 
 const appRoutes: Routes =[
   { path: '', component: HomeComponent, pathMatch: 'full'},
@@ -141,7 +142,8 @@ const appRoutes: Routes =[
     ExperienceComponent,
     ProjectsComponent,
     TexttransformPipe,
-    OpeningListingComponent
+    OpeningListingComponent,
+    CandidateMasterListComponent
   ],
   imports: [
     BrowserModule,

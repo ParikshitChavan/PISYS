@@ -11,7 +11,6 @@ const Sitelink = require('../models/sitelink');
 //config
 const config = require('../config/cfg');
 
-
 //setting up AWS authentication and S3
 aws.config.update(config.awsAuthObj);
 const s3 = new aws.S3();
