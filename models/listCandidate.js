@@ -11,7 +11,16 @@ const listCandidateSchema = Schema({
         startDate: Date,
         endDate: Date
     },
-    
+    isVeg: String,
+    IntnshpExp: String,
+    skls: [String],
+    skpId: String,
+    cmt: String,             //interviewer comment
+    aval: String,            //availability for internship
+    tchScr: String,           //technical assessment score
+    homeTown: String,
+    familyBack: String,
+    hobbies: String            //hobbies and interests
 });
 
 const Company = module.exports = mongoose.model('ListCandidate', listCandidateSchema);
