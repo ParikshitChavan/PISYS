@@ -5,5 +5,6 @@ export class Education {
     fieldOfStudy: string;
     grade: string;
     startDate: string;
-    endDate?: string
+    endDate?: string;
+    isLatest?: boolean;
 }

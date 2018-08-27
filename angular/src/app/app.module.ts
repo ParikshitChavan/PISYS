@@ -56,6 +56,11 @@ import { EducationComponent } from './components/cvbuilder/education/education.c
 import { ExperienceComponent } from './components/cvbuilder/experience/experience.component';
 import { ProjectsComponent } from './components/cvbuilder/projects/projects.component';
 import { TexttransformPipe } from './pipe/texttransform.pipe';
+import { SkillsComponent } from './components/cvbuilder/skills/skills.component';
+import { CertificationComponent } from './components/cvbuilder/certification/certification.component';
+import { SafePipe } from './pipe/safe.pipe';
+import { InterestsComponent } from './components/cvbuilder/interests/interests.component';
+import { RemarksComponent } from './components/cvbuilder/remarks/remarks.component';
 
 const appRoutes: Routes =[
   { path: '', component: HomeComponent, pathMatch: 'full'},
@@ -86,7 +91,11 @@ const appRoutes: Routes =[
      { path: '', redirectTo: 'education', pathMatch: 'full' },
      { path: 'education', component: EducationComponent },
      { path: 'experience', component: ExperienceComponent },
-     { path: 'projects', component: ProjectsComponent }
+     { path: 'projects', component: ProjectsComponent },
+     { path: 'skills', component: SkillsComponent},
+     { path: 'cert', component: CertificationComponent},
+     { path: 'interests', component: InterestsComponent},
+     { path: 'remarks', component: RemarksComponent}
    ]
   },
   {
@@ -138,7 +147,12 @@ const appRoutes: Routes =[
     EducationComponent,
     ExperienceComponent,
     ProjectsComponent,
-    TexttransformPipe
+    TexttransformPipe,
+    SkillsComponent,
+    CertificationComponent,
+    SafePipe,
+    InterestsComponent,
+    RemarksComponent
   ],
   imports: [
     BrowserModule,
@@ -158,7 +172,6 @@ const appRoutes: Routes =[
     CompanyApiService,
     InternshipApiService,
     AutocompleteApiService,
-    CvBuilderService, // a service for cv builder to save and share data
     CoreHttpService  // a service for http calls. all http calls should use this
   ],
   bootstrap: [AppComponent]

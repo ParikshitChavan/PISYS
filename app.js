@@ -26,6 +26,7 @@ const user = require('./routes/user');
 const company = require('./routes/company');
 const internship = require('./routes/internship');
 const cvbuilder = require('./routes/cvbuilder');
+const migrate = require('./routes/migrate');
 
 //static folder
 app.use(express.static(path.join(__dirname,'public')));
@@ -49,6 +50,7 @@ app.use('/user', user);
 app.use('/company', company);
 app.use('/internship', internship);
 app.use('/cv', cvbuilder);
+app.use('/migrate',migrate)
 
 app.get('*', function(req, res){
     res.sendFile('./public/index.html', {root: __dirname});

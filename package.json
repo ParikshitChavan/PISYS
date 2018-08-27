@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app"
+    "start": "node app"
   },
   "dependencies": {
     "aws-sdk": "^2.283.1",
@@ -14,6 +14,7 @@
     "cors": "*",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
+    "moment": "^2.22.2",
     "mongoose": "^5.2.6",
     "multer": "^1.3.1",
     "multer-s3": "*",

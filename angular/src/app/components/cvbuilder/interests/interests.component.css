@@ -4,8 +4,7 @@
     width: 100%;
     padding: 0 10%;
   }
-  
-  
+
   .input-field{
   margin-bottom: 3rem !important;
 }
@@ -19,81 +18,15 @@ input:not([type]), input[type=text]:not(.browser-default), input[type=password]:
       margin: 0 0 0px 0;
 }
 
-.float-right{
-  float: right;
-}
-
-.actionBtns{
-  display: flex;
-  width: 135px;
-  justify-content: space-around;
-  position: relative;
-  bottom: 15px;
-}
-
 .educationDetail{
   text-transform: capitalize;
     word-break: break-word;
 }
 
-
-.skillSection{
- min-height: 100px;
-}
-
-.skill {
-  float: left;
-  padding: 10px 15px;
-  border: 1px solid #dddddd;
-  border-radius: 20px;
-  margin: 5px;
-  font-size: 14px;
-  height: 40px;
-  background-color: #ffffff;
-  cursor: pointer;
-  width: fit-content;
-  text-align: center;
-  min-width: 113px;
-}
-
-.skill:hover {
-  background-color: #dddddd;
-}
-
-.skill.active {
-  background-color: rgb(0, 188, 212) !important;
-  color: #ffffff;
-  border-color: rgb(0, 188, 212);
-}
-
-.divider {
-  width: 100%;
-}
-
-.list-style {
-  margin-top: 0px;
-}
-
-.list-style li{
-  list-style-type: circle;
-  line-height: 25px;
-  margin-left: 18px;
-}
-
-.skillbtn{
-  margin-top: 5px;
-}
-
-.addBtn{
-  position: relative;
-  float: right;
-  right: 30px;
-}
-
-
 .fixed-action-btn{
   position: relative;
   float: right;
+  bottom: 15px !important;
 }
 
 .fixed-action-btn ul {

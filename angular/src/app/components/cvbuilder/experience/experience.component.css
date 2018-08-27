@@ -89,3 +89,16 @@ input:not([type]), input[type=text]:not(.browser-default), input[type=password]:
   bottom: 30px;
 }
 
+.list-style {
+  margin-top: 0px;
+}
+
+.list-style li{
+  list-style-type: circle;
+  line-height: 25px;
+  margin-left: 18px;
+}
+
+.text-align{
+  text-align: justify;
+}

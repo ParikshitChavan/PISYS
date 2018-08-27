@@ -5,21 +5,16 @@ const Schema = mongoose.Schema;
 
 const cvBuilderSchema = Schema({
     user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-    address: String,
-    skypeId: String,
+    profileVideo: {
+        key : String,
+        location: String,
+        signedOn: String,
+        signExpiry: String
+    },
     skills : {
-        techSkills : [{
-            _id: String,
-            name: String
-        }],
-        otherSkills : [{
-            _id: String,
-            name: String
-        }],
-        languageSkills : [{
-            _id: String,
-            name: String
-        }]
+        techSkills : [],
+        otherStrengths : String,
+        languageSkills : []
     },
     educations: [{
         _id: String,
@@ -27,7 +22,8 @@ const cvBuilderSchema = Schema({
         fieldOfStudy: String,
         grade: String,
         startDate: Date,
-        endDate: Date
+        endDate: Date,
+        isLatest : Boolean
     }],
     projects : [{
         _id: String,
@@ -48,7 +44,7 @@ const cvBuilderSchema = Schema({
         endDate: Date,
         active: Boolean
     }],
-    certifications :[{
+    certificates :[{
         _id: String,
         title: String,
         link: String
@@ -71,6 +67,12 @@ module.exports.createCv = (userId, callback) => {
     userCv.save(callback);
 }
 
+module.exports.updateAllEducations = (id, callback) => {
+    cvBuilder.update({ _id: id, "educations.isLatest" : true }, 
+    { $set: { "educations.$.isLatest" : false } },
+    { "multi" : true }, callback);
+}
+
 // add records
 module.exports.addEducation = (id,newEducation,callback) => {
     newEducation._id = new ObjectID();
@@ -87,6 +89,11 @@ module.exports.addProjects = (id,newProjects,callback) => {
     cvBuilder.findOneAndUpdate( { _id: id}, { $push : { projects: newProjects  } }, {new: true}, callback)
 }
 
+module.exports.addCertificate = (id, newCertificate, callback) => {
+    newCertificate._id = new ObjectID();
+    cvBuilder.findOneAndUpdate( { _id: id}, { $push : { certificates: newCertificate  } }, {new: true}, callback)
+}
+
 // delete records
 module.exports.deleteEducation = (id, educationID, callback) => {
     cvBuilder.findOneAndUpdate( { _id: id}, { $pull: { educations: { _id: educationID } } }, {new: true}, callback);
@@ -98,6 +105,10 @@ module.exports.deleteExperience = (id, experienceId, callback) => {
 
 module.exports.deleteProject = (id, projectId, callback) => {
     cvBuilder.findOneAndUpdate( { _id: id}, { $pull: { projects: { _id: projectId } } }, {new: true}, callback);
+}
+
+module.exports.deleteCertificate = (id, certificateId, callback) => {
+    cvBuilder.findOneAndUpdate( { _id: id}, { $pull: { certificates: { _id: certificateId } } }, {new: true}, callback);
 }
 
 // update records
@@ -119,5 +130,33 @@ module.exports.updateProject = (id, project, callback) => {
         callback);
 }
 
+module.exports.updateCertificate = (id, certificate, callback) => {
+    cvBuilder.findOneAndUpdate( { _id: id, "certificates._id" : certificate._id},
+        { $set: { "certificates.$" : certificate } }, { new: true}, 
+        callback);
+}
 
+module.exports.updateSkills = (id, skills, callback) => {
+    cvBuilder.findOneAndUpdate( { _id: id },
+        { $set: { "skills" : skills } }, { new: true}, 
+        callback);
+}
+
+module.exports.updateInterests = (id, interests, callback) => {
+    cvBuilder.findOneAndUpdate( { _id: id },
+        { $set: { "personalInterest" : interests } }, { new: true}, 
+        callback);
+}
+
+module.exports.updateRemarks = (id, remarks, callback) => {
+    cvBuilder.findOneAndUpdate( { _id: id },
+        { $set: { "remarks" : remarks } }, { new: true}, 
+        callback);
+}
+
+module.exports.updateProfileVideo = (id, fileDetails, callback) => {
+    cvBuilder.findOneAndUpdate( { _id: id },
+        { $set: { "profileVideo" : fileDetails } }, { new: true}, 
+        callback);
+}
 

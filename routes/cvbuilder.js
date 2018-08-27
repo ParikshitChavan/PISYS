@@ -1,7 +1,11 @@
 //API routes for the Company (Company Admins info will be embedded in company document)
 const express = require('express');
+const moment = require('moment');
 const router = express.Router();
 const aws = require('aws-sdk');
+var multer = require('multer')
+var multerS3 = require('multer-s3')
+const bodyParser = require('body-parser');
 
 //models
 const User = require('../models/user');
@@ -26,9 +30,14 @@ const hasPermission = (req, res, next) => {
     isSuperAdminOrOwner(req.decoded, cvUserId) ? next() : util.sendError(res, 'Not authorised for this operation');
 }
 
+const isSuperAdmin = (req, res, next) =>{
+    req.decoded.access == 2 ? next() : util.sendError(res, 'Not authorised for this operation');
+}
+
 const getCv = (req, res, next) => {
     var cvUserId = req.body.userId;
     if (!cvUserId) {    cvUserId = req.params.userId;   }
+    req.tempStore.userId = cvUserId;
     User.getCv(cvUserId, (err, cv) => {
         if (err) {  return util.sendError(res, err); }
         if (!cv) {  return util.sendError(res, 'Cv details are not available'); }
@@ -37,22 +46,74 @@ const getCv = (req, res, next) => {
     });
 }
 
-const getCvById = (req, res, next) => {
+const getCvById = async (req, res, next) => {
     cvBuilder.getCvById(req.tempStore.cv, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
         if (!cvdetails) return util.sendError(res, 'Cv details are not available');
         req.tempStore.cvdetails = cvdetails;
         next()
-    })
+    });
 }
 
-const sendCvDetails = (req, res) => {
-    if (isSuperAdminOrOwner(req.decoded, req.params.userId)) {
-        res.json({ success: true, canEdit: true, cvdetails: req.tempStore.cvdetails });
+
+const getSignedUrl = async (req, res, next) => {
+    const cvdetails = req.tempStore.cvdetails;
+    if (cvdetails.profileVideo.key) {
+        if (moment() > cvdetails.profileVideo.signExpiry) {
+            try {
+                var params = { Bucket: config.awsAuthObj.s3BucketName, Key: cvdetails.profileVideo.key, Expires:  60 * 60 * 24  };
+                const newSignedUrl = await s3.getSignedUrl('getObject', params);
+                var expiryTime = moment().add(1, 'hour')
+                cvBuilder.updateProfileVideo(cvdetails.id, {
+                    key: cvdetails.profileVideo.key,
+                    location: newSignedUrl, 
+                    signedOn: moment(), 
+                    signExpiry: expiryTime
+                }, (err, result) => {
+                    if (err)
+                        return util.sendError('Error saving video details');
+                    req.tempStore.profileVideo = newSignedUrl;
+                    next();
+                });
+            } catch (error) {
+                return util.sendError(res, 'Failed to get signed in url.');
+            }
+        } else {
+            req.tempStore.profileVideo = cvdetails.profileVideo.location;
+            next();
+        }
     } else {
-        delete req.tempStore.cvdetails.address;
-        delete req.tempStore.cvdetails.skypeId;
-        res.json({ success: true, canEdit: false, cvdetails: req.tempStore.cvdetails });
+        req.tempStore.profileVideo = '';
+        next();
+    }
+}
+
+const sendCvDetails = async (req, res) => {
+    let cvDetails = req.tempStore.cvdetails.toObject();
+    delete cvDetails.profileVideo;
+    if (isSuperAdminOrOwner(req.decoded, req.params.userId)) {
+        // const user = await getPesonalDetails(req.tempStore.userId);
+        User.getUserInfoById(req.tempStore.userId, (err, user) => {
+            if(err) return util.sendError('Error getting user details');
+            res.json({ success: true, canEdit: true, cvdetails: cvDetails, profileVideo: req.tempStore.profileVideo, profileData: user });
+        });
+    } else {
+        res.json({ success: true, canEdit: false, cvdetails: cvDetails, profileVideo: req.tempStore.profileVideo });
+    }
+}
+
+const updateAllEducations = (req, res, next) => {
+    const education = req.body.education;
+    if (!education) {
+        return util.sendError(res, 'Please provide all paramters', 400)
+    }
+    if(education.isLatest){
+        cvBuilder.updateAllEducations(req.tempStore.cv, (err, cvdetails) => {
+            if (err) {  return util.sendError(res, err); }
+            next();
+        })
+    }else{
+        next();
     }
 }
 
@@ -163,13 +224,144 @@ const updateProject = (req, res) => {
     })
 }
 
+const addCertificate = (req, res) => {
+    const certificate = req.body.certificate;
+    if(!certificate){
+               return util.sendError(res, 'Please provide all paramters', 422)
+    }
+    cvBuilder.addCertificate(req.tempStore.cv, certificate, (err, cvdetails) => {
+        if (err) return util.sendError(res, err);
+        if (!cvdetails) return util.sendError(res, 'Can not add the certificate');
+        res.json({ success: true, message: 'New Certificate has been added successfully', certificates: cvdetails.certificates });
+    })
+}
+
+const deleteCertificate = (req, res) => {
+    const certificateId = req.body.certificateId;
+    if(!certificateId){
+               return util.sendError(res, 'Please provide all paramters', 422)
+    }
+    cvBuilder.deleteCertificate(req.tempStore.cv, certificateId, (err, cvdetails) => {
+        if (err) return util.sendError(res, err);
+        if (!cvdetails) return util.sendError(res, 'Can not delete the certificate');
+        res.json({ success: true, message: 'Certificate has been removed successfully', certificates: cvdetails.certificates });
+    })
+}
+
+const updateCertificate = (req, res) => {
+    const certificate = req.body.certificate;
+    if(!certificate){
+               return util.sendError(res, 'Please provide all paramters', 422)
+    }
+    cvBuilder.updateCertificate(req.tempStore.cv, certificate, (err, cvdetails) => {
+        if (err) return util.sendError(res, err);
+        if (!cvdetails) return util.sendError(res, 'Can not update the certificate');
+        res.json({ success: true, message: 'Certificate has been updated successfully', certificates: cvdetails.certificates });
+    })
+}
+
+const updateSkills = (req, res) => {
+    const skills = req.body.skills;
+    if(!skills){
+               return util.sendError(res, 'Please provide all paramters', 422)
+    }
+    cvBuilder.updateSkills(req.tempStore.cv, skills, (err, cvdetails) => {
+        if (err) return util.sendError(res, err);
+        if (!cvdetails) return util.sendError(res, 'Can not update the skills');
+        res.json({ success: true, message: 'Skills has been updated successfully', skills: cvdetails.skills });
+    })
+}
+
+const updateInterests = (req, res) => {
+    const interests = req.body.interests;
+    if(!interests){
+               return util.sendError(res, 'Please provide all paramters', 422)
+    }
+    cvBuilder.updateInterests(req.tempStore.cv, interests, (err, cvdetails) => {
+        if (err) return util.sendError(res, err);
+        if (!cvdetails) return util.sendError(res, 'Can not update the Interests');
+        res.json({ success: true, message: 'Interests has been updated successfully', interests: cvdetails.personalInterest });
+    })
+}
+
+const updateRemarks = (req, res) => {
+    const remarks = req.body.remarks;
+    if(!remarks){
+               return util.sendError(res, 'Please provide all paramters', 422)
+    }
+    cvBuilder.updateRemarks(req.tempStore.cv, remarks, (err, cvdetails) => {
+        if (err) return util.sendError(res, err);
+        if (!cvdetails) return util.sendError(res, 'Can not update the Remarks');
+        res.json({ success: true, message: 'Remarks has been updated successfully', remarks: cvdetails.remarks });
+    })
+}
+
+ const checkProfileVideo = async (req, res, next) => {
+     const cvDetails = req.tempStore.cvdetails;
+     if (cvDetails.profileVideo && cvDetails.profileVideo.key) {
+         try {
+             await s3.deleteObject({ Bucket: config.awsAuthObj.s3BucketName, Key: cvDetails.profileVideo.key });
+             next()
+         } catch (error) {
+             return util.sendError(res, 'Please try later, failed to delete old video');
+         }
+     } else {
+         next();
+     }
+}
+const updateProfileVideo = async (req, res) => {
+    try {
+        var params = { Bucket: config.awsAuthObj.s3BucketName, Key: req.file.key, Expires: 60 * 60 * 24 };
+        const newSignedUrl = await s3.getSignedUrl('getObject', params);
+        var expiryTime = moment().add(1, 'hour');
+        cvBuilder.updateProfileVideo(req.tempStore.cvdetails.id, {
+            key: req.file.key,
+            location: newSignedUrl,
+            signedOn: new Date(),
+            signExpiry: expiryTime
+        }, (err, result) => {
+            if (err) return util.sendError(res, 'Failed to save video details');
+            let profileVideo = result.profileVideo.toObject();
+            delete profileVideo.signExpiry;
+            delete profileVideo.signedOn;
+            res.json({ success: true, profileVideo:  profileVideo})
+        })
+    } catch (error) {
+        return util.sendError(res, 'Please try later, failed to upload video');
+    }
+}
+
+//multer setup
+const uploadProfileVideo = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: config.awsAuthObj.s3BucketName,
+        acl:  config.awsAuthObj.acl,
+        contentType: multerS3.AUTO_CONTENT_TYPE,
+        metadata: function (req, file, cb) {
+            cb(null, { 'Content-Type': 'video/mp4'});
+          },
+        key: function (req, file, next) {
+            next(null, file.fieldname + '/' + Date.now() + '.mp4');
+        }
+    }),
+    fileFilter: function (req, file, next){
+      const filetypes = /mp4/;
+      const mimetype = filetypes.test(file.mimetype);
+      if(mimetype){
+        return next(null,true);
+      } else {
+        next('Error: Please select an Video!');
+      }
+    }
+}).single('displayVideo');
 
 router.use(util.authenticate);
-router.get('/cvdetails/:userId', getCv, getCvById, sendCvDetails)
+router.get('/cvdetails/:userId', getCv, getCvById, getSignedUrl, sendCvDetails)
 
-router.post('/addEducation', hasPermission, getCv, addEducation)
+router.post('/addEducation', hasPermission, getCv, updateAllEducations, addEducation)
 router.delete('/deleteEducation', hasPermission, getCv, deleteEducation)
-router.put('/updateEducation', hasPermission, getCv, updateEducation)
+router.put('/updateEducation', hasPermission, getCv, updateAllEducations, updateEducation)
 
 router.post('/addExperience', hasPermission, getCv, addExperience)
 router.put('/updateExperience', hasPermission, getCv, updateExperience)
@@ -179,5 +371,14 @@ router.post('/addProjects', hasPermission, getCv, addProjects)
 router.put('/updateProject', hasPermission, getCv, updateProject)
 router.delete('/deleteProject', hasPermission, getCv, deleteProject)
 
+router.post('/addCertificate', hasPermission, getCv, addCertificate)
+router.put('/updateCertificate', hasPermission, getCv, updateCertificate)
+router.delete('/deleteCertificate', hasPermission, getCv, deleteCertificate)
+
+router.put('/updateSkills', hasPermission, getCv, updateSkills)
+router.put('/updateInterests', hasPermission, getCv, updateInterests)
+router.put('/updateRemarks', isSuperAdmin, getCv, updateRemarks)
+
+router.post('/uploadVideo/:userId', getCv, getCvById, checkProfileVideo, uploadProfileVideo, updateProfileVideo)
 
 module.exports = router;

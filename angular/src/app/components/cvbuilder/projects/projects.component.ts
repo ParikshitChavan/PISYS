@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ActivatedRoute, Params } from '@angular/router';
-
 import { toast, MaterializeAction } from 'angular2-materialize';
 import { EventEmitter } from '@angular/core';
 
@@ -32,12 +30,9 @@ export class ProjectsComponent implements OnInit {
   loading: boolean = true;
   modalPurpose: string = 'add'; // add - adding a new entry, edit - editing new entry. delete - confirmation message
 
-  newSkill: string = '';
-  isSkillValid : boolean = true;
 
   invalidFromDateMsg: string =  'Please input start date.';
   inValidDateMsg: string = 'Please input end date.'
-  skillInValidMsg = 'Please input valid skill';
   
   allITLang = ITSkills.allITLang;
   allITLangArray = ITSkills.allITLangArray;
@@ -47,20 +42,24 @@ export class ProjectsComponent implements OnInit {
     minLength: 1
   }
   chipsInit = { autocompleteOptions: this.autoCompleteOptions };
+  isUserHasCv: boolean = false;
 
-  constructor(public cvBuilderService: CvBuilderService,
-    private route: ActivatedRoute
-  ) { }
+  constructor(public cvBuilderService: CvBuilderService) { }
 
   /**
    *
    * @memberof ProjectComponent
    */
   ngOnInit() {
+    this.cvBuilderService.isUserHasCv.subscribe(this.setHasCv)
     this.cvBuilderService.projects.subscribe(this.setProjects);
     this.cvBuilderService.accessControl.subscribe(canEdit => this.canEdit = canEdit);
     this.setNewProject(this.getDummyProject());
     this.setValidationObject();
+  }
+
+  setHasCv = hasCv => {
+    this.isUserHasCv = hasCv;
   }
 
   /**
@@ -82,6 +81,7 @@ export class ProjectsComponent implements OnInit {
   createProject() {
     this.modalPurpose = 'add';
     this.setNewProject(this.getDummyProject());
+    this.rqChipsActions.emit({ action:"material_chip", params:[{data: '', autocompleteOptions: this.autoCompleteOptions}] });
     this.setValidationObject();
     this.openModal();
   }
@@ -169,7 +169,6 @@ export class ProjectsComponent implements OnInit {
     this.isValidCurrentProject = {
       title: true,
       description: true,
-      usedSkills: true,
       startDate: true,
       endDate: true,
       active: true,
@@ -380,14 +379,6 @@ export class ProjectsComponent implements OnInit {
    */
   isDuplicateSkill(skills: Project["usedSkills"], newSkill){
     return skills.find(skill=> skill === newSkill.trim().toLocaleLowerCase())
-  }
-
-  /**
-   * @param {*} index
-   * @memberof ProjectComponent
-   */
-  removeSkill(index) {
-    this.newProject.usedSkills.splice(index,1);
   }
 
 

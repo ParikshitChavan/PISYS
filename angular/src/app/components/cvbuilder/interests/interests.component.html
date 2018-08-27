@@ -1,0 +1,69 @@
+<div class="row z-depth-1">
+    <div class="container10p" *ngIf="isUserHasCv">
+      <div class="section">
+        <div class="educationDetail">
+          <div class="row" *ngIf="interests.hobbies">
+              <div class="col s3">Hobbies :</div>
+            <div class="col s9  text-align">
+                {{ interests.hobbies }}
+            </div>
+          </div>
+
+          <div class="row" *ngIf="interests.motivation">
+              <div class="col s3">Motivation to come to Japan :</div>
+            <div class="col s9  text-align">
+                    {{ interests.motivation }}
+            </div>
+          </div>
+  
+        </div>
+  
+        <div *ngIf="canEdit"  class="fixed-action-btn fltBtnArea">
+            <a (click)="editInterest()" class="btn-floating red">
+                <i class="material-icons"> {{ interests.hobbies || interests.motivation ? 'edit' : 'add' }}</i>
+            </a>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+
+
+
+<div id="modal" *ngIf="modalPurpose !== 'delete'" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
+  [materializeActions]="modalActions">
+
+  <div class="modal-content">
+    <h4>Add/Edit Interests</h4>
+    <br/>
+    <form>
+
+      <div class="input-field">
+        <label for="hobbies">Hoobies (min 100 chars & max 1000 chars) :</label>
+        <textarea id="hobbies" class="materialize-textarea" name="hobbies" [value]="newInterest.hobbies" (keyup)="onInputChange($event,'hobbies')"
+          required></textarea>
+        <div [hidden]="interestsValidObject.hobbies" class="red-text">
+          Please input your hobbies(min 100 chars & max 1000 chars).
+        </div>
+      </div>
+
+      <div class="input-field">
+        <label for="motivation">Motivation to come to Japan (min 100 chars & max 1000 chars)  :</label>
+        <textarea id="motivation" class="materialize-textarea" name="motivation" [value]="newInterest.motivation" (keyup)="onInputChange($event,'motivation')"
+          required></textarea>
+        <div [hidden]="interestsValidObject.motivation" class="red-text">
+          Please input your motivation to come to Japan(min 100 chars & max 1000 chars).
+        </div>
+      </div>
+
+      <br/>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button (click)='saveInterest()' class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Save' :
+      'Update Changes'}}
+      <i class="material-icons right">send</i>
+    </button>
+    <button type="button" (click)='closeModal()' class="btn red">cancel</button>
+  </div>
+</div>

@@ -8,3 +8,96 @@
 #tabsArea{
     margin-bottom: 50px;
 }
+
+.tabs{
+    display: flex;
+    justify-content: space-around;
+}
+.rawInfo, .imgArea{
+    position: relative;
+}
+
+.imgArea:hover img{
+    opacity:0.5;
+}
+
+.imgArea:hover a {
+    display: block;
+}
+
+.imgArea a {
+    position:absolute;
+    bottom: -9%;
+    left: 90%;
+    display:none;
+    transform: translateY(-50%) translateX(-50%);
+}
+
+H3{
+    text-align: center;
+}
+
+.imgArea, .imagePlace{
+    text-align: center;
+}
+
+.personalInfo{
+    margin-bottom: 50px;
+}
+
+.loaderModal{
+    height: 40% !important;
+    box-shadow: none;
+}
+
+form{
+    margin: 2%;
+}
+
+.loaderModal{
+    box-shadow: none;
+    background: transparent;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+}
+
+.lists ul{
+    margin-top: 0px;
+    margin-left: -15px;
+    margin-top: 5px;
+}
+
+.responsive-video {
+    min-height: 300px;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; 
+    border-top: 16px solid #3498db; 
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.previewVideo{
+    width: 50%;
+    text-align: center;
+    height: 200px;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.red-text{
+    margin-bottom: 10px;
+}

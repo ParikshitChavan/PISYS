@@ -1,0 +1,86 @@
+<div class="row z-depth-1">
+  <div class="container10p" *ngIf="isUserHasCv">
+    <div class="section">
+      <div class="educationDetail">
+        
+        <div class="row" *ngIf="skills.techSkills.length">
+          <div class="col s3">Computing Skills :</div>
+          <div class="col s9"> 
+              <ul class="list-style">
+                  <li *ngFor='let skill of skills.techSkills'> {{ skill.tag }} </li>
+                </ul>
+             </div>
+        </div>
+
+        <div class="row" *ngIf="skills.otherStrengths">
+            <div class="col s3">Other Strenghts :</div>
+          <div class="col s9">
+            <ul class="list-style">
+              <li *ngFor='let skill of skills.otherStrengths | texttransform:skills'> {{ skill }} </li>
+            </ul>
+          </div>
+        </div>
+       
+        <div class="row" *ngIf="skills.languageSkills.length">
+            <div class="col s3">Language Skills :</div>
+         <div class="col s9">
+             <ul class="list-style">
+                <li *ngFor='let skill of skills.languageSkills'> {{ skill.tag }} </li>
+              </ul>
+         </div>
+       </div>
+      
+
+      </div>
+
+      <div *ngIf="canEdit"  class="fixed-action-btn fltBtnArea">
+          <a (click)="editSkills()" class="btn-floating red">
+              <i class="material-icons"> {{ skills.techSkills.length || skills.otherStrengths || skills.languageSkills.length ? 'edit' : 'add' }}</i>
+          </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="modal" *ngIf="modalPurpose !== 'delete'" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
+  [materializeActions]="modalActions">
+
+  <div class="modal-content">
+    <h4>Create/Edit Skills</h4>
+    <br/>
+    <form>
+
+        <div class="input-field chipInp">
+            <label for="techSkills">Computing skills(minimum 2 & maximum of 10):</label>
+            <div id='techSkills' class="chips" materialize="material_chip" (click)="skillValidObject.techSkills = true" [materializeParams]="[chipsInit]" [materializeActions]="techSkillChipsActios" (chip.add)="addTechSkill($event.detail)" (chip.delete)="deleteTechSkill($event.detail)"></div>
+            <div [hidden]="skillValidObject.techSkills" class="red-text">
+                Please input atleast 2 and maximum of 10 skills.
+            </div>
+        </div>
+
+      <div class="input-field">
+        <label for="otherStrengths">Other Strengths(Enter each skill in new line.)</label>
+        <textarea id="otherStrengths" class="materialize-textarea" name="otherStrengths" [value]="otherStrengths"
+          (keyup)="onInputChange($event,'otherStrengths')" required></textarea>
+      </div>
+      
+      <div class="input-field chipInp">
+          <label for="langSkills">Language Skills(Enter atleast 1 language)</label>
+          <div id='langSkills' class="chips" materialize="material_chip"   (click)="skillValidObject.languageSkills = true"  [materializeActions]="languageSkillChipsActions" (chip.add)="addLanguageSkill($event.detail)" (chip.delete)="deleteLanguageSkill($event.detail)"></div>
+          <div [hidden]="skillValidObject.languageSkills" class="red-text">
+              Please input atleast 1 language.
+          </div>
+      </div>
+
+
+      <br/>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button (click)='updateSkills()' class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Save' : 'Update Changes'}}
+      <i class="material-icons right">send</i>
+    </button>
+    <button type="button" (click)='closeModal()' class="btn red">cancel</button>
+  </div>
+</div>

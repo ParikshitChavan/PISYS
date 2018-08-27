@@ -1,0 +1,24 @@
+.container10p{
+    width: 100%;
+    padding: 0 10%;
+  }
+  
+.educationDetail{
+    text-transform: capitalize;
+      word-break: break-word;
+  }
+  
+  .fixed-action-btn{
+    position: relative;
+    float: right;
+    bottom: 15px !important;
+  }
+
+  .input-field{
+    margin-bottom: 3rem !important;
+  }
+    
+  textarea.materialize-textarea{
+    padding: 1em 0 0 0;
+  }
+  

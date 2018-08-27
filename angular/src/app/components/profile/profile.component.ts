@@ -18,8 +18,9 @@ export class ProfileComponent implements OnInit {
     name: string,
     DOB : any,
     phNum: string,
+    skypeId: string,
     DP: {key:string, url:string},
-  }= {_id:'', name: "", DOB: "", phNum: "", DP: {key:"", url:""}};
+  }= {_id:'', name: "", DOB: "", phNum: "", skypeId: "", DP: {key:"", url:""}};
   passwords: {
     currPass: string,
     newPass:string,

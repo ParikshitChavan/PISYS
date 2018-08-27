@@ -112,7 +112,8 @@ router.post('/updateUserInfo', (req, res, next)=>{
     let userInfo ={
         name: req.body.name,
         DOB: req.body.DOB,
-        phNum: req.body.phNum
+        phNum: req.body.phNum,
+        skypeId: req.body.skypeId
     }
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{

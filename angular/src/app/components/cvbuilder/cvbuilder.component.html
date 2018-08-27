@@ -1,5 +1,48 @@
-<div id="tabsArea" class="col s12 z-depth-1">
+
+
+<div class="row">
+    <div *ngIf="canEdit" class="col s12 l6">
+        <div class="row" *ngIf="personalDetails.name">
+            <div class="col s5">Name:</div>
+            <div class="col s7">{{personalDetails.name}}</div>
+        </div>
+        <div class="row" *ngIf="personalDetails.DOB">
+            <div class="col s5">Date of birth</div>
+            <div class="col s7">{{personalDetails.DOB | date:'longDate'}}</div>
+        </div>
+        <div class="row" *ngIf="personalDetails.email">
+            <div class="col s5">Email:</div>
+            <div class="col s7">{{personalDetails.email}}</div>
+        </div>
+        <div class="row" *ngIf="personalDetails.phNum">
+            <div class="col s5">Phone:</div>
+            <div class="col s7">{{personalDetails.phNum}}</div>
+        </div>
+    
+        <div class="row" *ngIf="personalDetails.skypeId">
+            <div class="col s5">Skype Id:</div>
+            <div class="col s7">{{personalDetails.skypeId}}</div>
+        </div>
+    </div>
+
+    <div class="col s12 l6" *ngIf="canEdit && personalDetails && personalDetails.DP">
+        <div class="imagePlace" >
+            <img [src]="personalDetails.DP.url" class="responsive-img circle" alt="User display picture">
+        </div>
+    </div>
+    <div *ngIf="canEdit" class="col s12 l12 personalInfo"></div>
+    <div *ngIf="videoProfileUrl || canEdit" class="col s12 l12 text-center imgArea">
+        <video class="responsive-video" [src]="videoProfileUrl | safe"  controls #videoPlayer preload="auto">
+                </video>
+        <a  *ngIf="canEdit" (click)="showFileUploadModal()" class="btn-floating modal-trigger btn-large waves-effect waves-light red">
+                <i class="material-icons">edit</i>
+        </a>
+    </div>
+</div>
+<div class="personalInfo"> </div>
    
+<div id="tabsArea" class="col s12 z-depth-1">
+
     <ul class="tabs">
         <li class="tab" >
             <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['education']">education</a>
@@ -10,6 +53,56 @@
         <li class="tab">
             <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['projects']">Projects</a>
         </li>
+        <li class="tab">
+            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['skills']">Skills</a>
+        </li>
+        <li class="tab">
+            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['cert']">Certifications</a>
+        </li>
+        <li class="tab">
+            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['interests']">Interests</a>
+        </li>
+        <li class="tab" *ngIf="userAccess == 2" >
+            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['remarks']">Remarks</a>
+        </li>
+
     </ul>
 </div>
 <router-outlet></router-outlet>
+
+<div id="videoProfileModal" class="modal modal-fixed-footer" materialize="modal" [materializeActions]="modalActions"  [materializeParams]="[{dismissible: false}]">
+        <form action="#">
+            <div class="file-field input-field">
+                <div class="btn">
+                    <span>File</span>
+                    <input type="file" #fileUploader  (change)="onFileSelect($event)" accept="video/mp4">
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                    <div *ngIf="fileStatus" class="red-text">
+                            {{ fileStatusMsg[fileStatus] }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 l12">
+                       <i> Note : You can upload your self introduction mp4 video which should not be greater than 1.30 Min in length and 150 MB in size.</i> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 l12 text-center">
+                    <video class="previewVideo" [src]="videoProfilePreviewUrl | safe"  controls #previewVideo preload="auto">
+                    </video>
+                </div>
+            </div>
+        </form>
+        <div class="modal-footer">
+                <button type="button" [disabled]="disabledUpload" (click)='uploadVideo()' class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+                <button type="button" (click)='closeFileUploadModal(false)' class="btn red">Cancel</button>
+           </div>
+</div>
+
+<div class="modal modal-fixed-footer" [ngClass]="{'loaderModal': showFileUpload }"  materialize="modal" [materializeActions]="preLoadModalActions"  [materializeParams]="[{dismissible: false}]">
+    <div class="loader"></div>
+    <div>Please wait, video is being uploaded!</div>
+</div>

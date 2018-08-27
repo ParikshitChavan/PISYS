@@ -37,6 +37,7 @@ const userSchema = Schema({
     },
     DOB: Date,
     phNum: String,
+    skypeId: String,
     DP: { key: String, url: String },                 //display picture
     internships: [{ type: Schema.Types.ObjectId, ref: 'Internship' }],       //What internship she/he has done!
     company: {type: Schema.Types.ObjectId, ref: 'Company'},                 //Company that she/he is an admin for
@@ -77,7 +78,7 @@ module.exports.addUser = function(newUser, callback){
 }
 
 module.exports.getUserInfoById = function(userId, callback){
-    User.findById(userId,'name email phNum DP DOB', callback);
+    User.findById(userId,'name email phNum DP DOB skypeId', callback);
 }
 
 module.exports.getUserPassById = function(userId, callback){
@@ -141,7 +142,7 @@ module.exports.getDashBoardInternships = function(decoded, callback){         //
 }
 
 module.exports.updateInfoById = function(userId, userInfo, callback){
-    User.findByIdAndUpdate(userId, { $set: { name: userInfo.name, DOB: userInfo.DOB, phNum: userInfo.phNum }}, callback);
+    User.findByIdAndUpdate(userId, { $set: { name: userInfo.name, DOB: userInfo.DOB, phNum: userInfo.phNum, skypeId: userInfo.skypeId }}, callback);
 }
 
 module.exports.getCompany = function(userId, callback){
@@ -322,6 +323,10 @@ module.exports.getCv = function(userId, callback){
         if(!user.cv) return callback(null, null);
         callback(null, user.cv);
     });
+}
+
+module.exports.getUsers = (query, callback) => {
+ User.find(query, 'email access cv', callback);
 }
 
 module.exports.addCv = function(userId, cvId, callback){
