@@ -34,7 +34,12 @@ router.post('/addCandidate', (req, res) => {
         if(err) return res.json({success: false, error: err});
         CvBuilder.getDetailsForList(req.body.candidateId, (err, CV)=>{
             if(err) return res.json({success: false, error: err});
-            //push into collection with year=req.body.year
+            /*push into collection with year=req.body.year*/
+            //create candidate Obj
+            ListCandidate.addCandidate(candidate, (err) => {
+                if(err) return res.json({success: false, error: err});
+                res.json({success: true, message: 'candidate added successfully'});
+            });
         });
     });
 
@@ -51,5 +56,14 @@ router.post('/updateCandidate', (req, res)=>{
     ListCandidate.updateCandidateById(req.body.id, (err) => {
         if(err) return res.json({success: false, error: err});
         res.json({success: true, message: 'candidate removed successfully'});
+    });
+});
+
+router.post('/getListOfYear', (req, res) => {
+    let seasonYr = req.body.year;
+    let data = [];
+    ListCandidate.getCandidatesOfYear(seasonYr, (err, candidates) =>{
+        if(err) return res.json({success: false, error: err});
+        res.json({success: true, candidates: candidates});
     });
 });
