@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const listCandidateSchema = Schema({
     year: Number,
-    candidate: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+    candidate: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     education: {
         schoolName: String,
         fieldOfStudy: String,
@@ -14,7 +14,7 @@ const listCandidateSchema = Schema({
     isVeg: String,
     IntnshpExp: String,
     skls: [String],
-    skpId: String,
+    skpId: String,            //skypeId
     cmt: String,             //interviewer comment
     aval: String,            //availability for internship
     tchScr: String,           //technical assessment score
@@ -24,3 +24,12 @@ const listCandidateSchema = Schema({
 });
 
 const Company = module.exports = mongoose.model('ListCandidate', listCandidateSchema);
+
+//addSeason()
+//addCandidate()
+//removeCandidate()
+
+/*Function for update in the CVBuilder*/
+// updateEducation()
+// updateSkls()
+//updateSkypeId()
