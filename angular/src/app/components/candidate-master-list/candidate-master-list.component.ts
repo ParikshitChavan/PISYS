@@ -26,7 +26,7 @@ export class CandidateMasterListComponent implements OnInit {
       this.yearArr.push(tmpYear);
       tmpYear--;
     }
-    this.onYearTabClick(currYear);
+    //this.onYearTabClick(currYear);
   }
 
   /*onYearTabClick(year){
