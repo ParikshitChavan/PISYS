@@ -52,6 +52,16 @@ export class CvBuilderService {
   private _accessControlSubject = new BehaviorSubject<boolean>(false);
   public accessControl = this._accessControlSubject.asObservable();
 
+  private _isUserHasCv = new BehaviorSubject<boolean>(false);
+  public isUserHasCv = this._isUserHasCv.asObservable();
+
+  private _profileVideoSubject = new BehaviorSubject<string>('');
+  public profileVideo = this._profileVideoSubject.asObservable();
+
+  private _personalDetailsSubject = new BehaviorSubject<string>('');
+  public personalDetails = this._personalDetailsSubject.asObservable();
+
+  public cvOwnerUserId : string = '';
   
   constructor(
     private httpService:CoreHttpService,
@@ -74,7 +84,7 @@ export class CvBuilderService {
   //   });
   // }
 
-  setEducations(educations) {
+   setEducations(educations) {
     this._educationsSubject.next(educations);
   }
 
@@ -118,6 +128,18 @@ export class CvBuilderService {
     this._loadingSubject.next(showLoader);
   }
 
+  setUserHasCv(hasCv) {
+    this._isUserHasCv.next(hasCv);
+  }
+
+  setProfileVideo(profileVideo: string) {
+    this._profileVideoSubject.next(profileVideo);
+  }
+
+  serPersonalDetails(personalDetails) {
+    this._personalDetailsSubject.next(personalDetails)
+  }
+
   applyData = (response) => {
     const data = response.cvdetails;
 
@@ -126,8 +148,11 @@ export class CvBuilderService {
     }
 
     if(!data){
+      this.setUserHasCv(false);
       return;
     }
+
+    this.setUserHasCv(true);
 
     if(data.educations){
       this.setEducations(data.educations);
@@ -141,8 +166,8 @@ export class CvBuilderService {
       this.setProjects(data.projects)
     }
 
-    if(data.certifications){
-      this.setCertifications(data.certifications);
+    if(data.certificates){
+      this.setCertifications(data.certificates);
     }
 
     if(data.personalInterest){
@@ -161,10 +186,26 @@ export class CvBuilderService {
       this.setSkypeId(data.skypeId);
     }
 
+    if(data.remarks){
+      this.setRemarks(data.remarks);
+    }
+
+    if(response.profileVideo){
+      this.setProfileVideo(response.profileVideo);
+    }
+
+    if(response.profileData){
+      this.serPersonalDetails(response.profileData);
+    }
+
+  }
+
+  setUserId (userId) {
+    this.cvOwnerUserId = userId;
   }
 
   getUserId () {
-     return this.authService.user._id;
+     return this.cvOwnerUserId;
   }
 
   addEducation (education: Education) {
@@ -215,6 +256,39 @@ export class CvBuilderService {
     return this.httpService.put('cv/updateProject', data);
   }
   
+  addCertificate (certificate: Certification) {
+    const data ={ certificate : certificate, userId :  this.getUserId() }
+    return this.httpService.post('cv/addCertificate', data);
+  }
+
+  deleteCertificate (certificateId: string) {
+    const data = { certificateId : certificateId,  userId :  this.getUserId() }
+    return this.httpService.delete('cv/deleteCertificate', data);
+  }
+  
+  updateCertificate (certificate: Certification) {
+    const data = { certificate : certificate, userId :  this.getUserId() }
+    return this.httpService.put('cv/updateCertificate', data);
+  }
+  
+  updateSkills (skills: {}) {
+    const data = { skills : skills, userId :  this.getUserId() }
+    return this.httpService.put('cv/updateSkills', data);
+  }
+  
+  updateProfileVideo (videoData) {
+    return this.httpService.multipartPost('cv/uploadVideo/' + this.getUserId(), videoData);
+  }
+
+  updateInterest (interests) {
+    const data = { interests : interests, userId :  this.getUserId() }
+    return this.httpService.put('cv/updateInterests', data);
+  }
+
+  updateRemarks ( remarks) {
+    const data = { remarks : remarks, userId :  this.getUserId() }
+    return this.httpService.put('cv/updateRemarks', data);
+  }
 }
 
 

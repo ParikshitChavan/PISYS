@@ -1,5 +1,5 @@
 <div class="row z-depth-1">
-    <div class="container10p">
+    <div class="container10p" *ngIf="isUserHasCv">
       <div *ngFor='let experience of experiences;' class="section">
           <div class="educationDetail">
               <div class="row">
@@ -8,7 +8,7 @@
               </div>
               <div class="row">
                   <div class="col s3">Description:</div>
-                  <div class="col s9">{{ experience.description }}</div>
+                  <div class="col s9 text-align">{{ experience.description }}</div>
               </div>
               <div class="row">
                   <div class="col s3">Duration:</div>
@@ -68,7 +68,7 @@
 <div id="modal" *ngIf="modalPurpose !== 'delete'" class="modal modal-fixed-footer" materialize="modal"  [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
 
   <div class="modal-content">
-    <h4>Create/Edit Experience</h4>
+    <h4>Create/Edit Internship Experience</h4>
     <br/>
     <form>
       <div class="input-field">
@@ -98,7 +98,7 @@
         <div class="input-field">
           <label for="sDate" class="active">Start Date</label>
           <input id="sDate" type="text" name="sDate" class="datepicker" 
-          materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]"
+          materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy', value: newExperience.startDate}]"
           [(ngModel)]="newExperience.startDate"
           required>
           <div [hidden]="isValidCurrentExperience.startDate" class="red-text">
@@ -110,7 +110,7 @@
         <div class="input-field">
           <label for="eDate" class="active">End Date</label>
           <input id="eDate" type="text" name="eDate"  class="datepicker"
-           materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]"
+           materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy', value: newExperience.endDate}]"
           [(ngModel)]="newExperience.endDate" 
           required>
           <div [hidden]="isValidCurrentExperience.endDate" class="red-text">
@@ -122,9 +122,6 @@
       <div class="input-field chipInp">
           <label for="rqSkl">Used skills(maximum of 5):</label>
           <div id='rqSkl' class="chips" materialize="material_chip" [materializeParams]="[chipsInit]" [materializeActions]="rqChipsActions" (chip.add)="addSkill($event.detail)" (chip.delete)="deleteSkill($event.detail)"></div>
-          <div [hidden]= "isSkillValid" class="red-text">
-            Please input at least one required skill for the opening.
-          </div>
         </div>
 
       <br/>

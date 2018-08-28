@@ -61,5 +61,10 @@ margin-top: 10px;
   bottom: 30px;
 }
 
+.chkBxDiv{
+  margin-bottom: 30px;
+}
 
-
+.text-align{
+  text-align: justify;
+}

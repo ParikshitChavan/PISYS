@@ -1,5 +1,6 @@
 
 export class Certification {
-    name: string;
-    link?: string
+    _id: string;
+    title: string;
+    link: string
 }

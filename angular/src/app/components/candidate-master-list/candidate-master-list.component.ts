@@ -29,10 +29,10 @@ export class CandidateMasterListComponent implements OnInit {
   }
 
   onYearTabClick(year){
-    this.internshipService.getCandidates(year).subscribe(resp => {
-      if(!resp.success) return toast("Some error occurred, Please try again later.", 3000);
-      this.candidates = resp.candidates;
-    });
+    // this.internshipService.getCandidates(year).subscribe(resp => {
+    //   if(!resp.success) return toast("Some error occurred, Please try again later.", 3000);
+    //   this.candidates = resp.candidates;
+    // });
   }
 
   onIntnshpClick(id){

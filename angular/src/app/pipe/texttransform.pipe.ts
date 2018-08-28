@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class TexttransformPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
-    if(!value){
+    if(!value || !value.length){
       return
     }
 
