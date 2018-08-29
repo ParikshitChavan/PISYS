@@ -24,6 +24,12 @@ export class CoreHttpService {
     return headers;
   }
 
+  private getMultiPartHeader() {
+    let headers = new Headers;
+    headers.append('x-access-token', this.getToken());
+    return headers;
+  }
+
   get(extension:string): Promise<any>{
     let url = this.appUrl + extension
     return this.http.get(url, { headers: this.getHeader() })
@@ -45,6 +51,12 @@ export class CoreHttpService {
   delete(extension:string, data): Promise<any>{
     let url = this.appUrl + extension;
     return this.http.delete(url, { headers:  this.getHeader() , body : data })
+    .toPromise().then(this.onSuccessHandle).catch(this.onErrorHandle);
+  }
+
+  multipartPost(extension:string, data): Promise<any>{
+    let url = this.appUrl + extension;
+    return this.http.post(url, data, { headers: this.getMultiPartHeader() })
     .toPromise().then(this.onSuccessHandle).catch(this.onErrorHandle);
   }
 

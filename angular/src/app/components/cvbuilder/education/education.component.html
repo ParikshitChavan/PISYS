@@ -1,6 +1,5 @@
 <div class="row z-depth-1" *ngIf="educations.length">
-  <div class="divider"></div>
-  <div class="container10p">
+  <div class="container10p" *ngIf="isUserHasCv">
     <div *ngFor='let education of educations;' class="section">
 
       <div class="educationDetail">
@@ -77,6 +76,11 @@
     <h4>Create/Edit Education</h4>
     <br/>
     <form>
+        <div class="chkBxDiv col s2">
+            <input id="isLatest" type="checkbox" name='isLatest' [(ngModel)]="newEducation.isLatest">
+            <label for="isLatest">Latest Education.</label>
+        </div>
+       
       <div class="input-field">
         <label for="schoolName">School Name</label>
         <input type="text" id="schoolName" class="materialize-textarea" name="schoolName" [value]="newEducation.schoolName" (keyup)="onInputChange($event,'schoolName')"
@@ -105,7 +109,7 @@
       <div class="col s6">
         <div class="input-field">
           <label for="sDate" class="active">Start Date</label>
-          <input id="sDate" type="text" name="sDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]"
+          <input id="sDate" type="text" name="sDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy', value: newEducation.startDate }]"
             [(ngModel)]="newEducation.startDate" required>
           <div [hidden]="isValidCurrentEducation.startDate" class="red-text">
             {{ invalidFromDateMsg}}
@@ -115,7 +119,7 @@
       <div class="col s6">
         <div class="input-field">
           <label for="eDate" class="active">End Date</label>
-          <input id="eDate" type="text" name="eDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]"
+          <input id="eDate" type="text" name="eDate" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy', value: newEducation.endDate}]"
             [(ngModel)]="newEducation.endDate" required>
           <div [hidden]="isValidCurrentEducation.endDate" class="red-text">
             {{ inValidDateMsg }}

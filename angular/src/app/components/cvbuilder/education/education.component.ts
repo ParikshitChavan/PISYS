@@ -30,6 +30,9 @@ export class EducationComponent implements OnInit {
   invalidFromDateMsg: string = 'Please input start date.'
   inValidDateMsg: string = 'Please input end date.'
   modalPurpose : string = 'add'; // add - adding a new entry, edit - editing new entry. delete - confirmation message
+  isUserHasCv: boolean = false;
+
+  isRecentEducationfound : boolean = false;;
 
   constructor(public cvBuilderService:CvBuilderService,
     private route:ActivatedRoute
@@ -41,22 +44,32 @@ export class EducationComponent implements OnInit {
    * @memberof EducationComponent
    */
   ngOnInit() {
-    this.cvBuilderService.educations.subscribe(this.setEducations);
+    this.cvBuilderService.isUserHasCv.subscribe(this.setHasCv)
+    this.cvBuilderService.educations.subscribe( educations => {
+      this.setEducations(educations);
+      // this.findRecentEducation(educations);
+     });
     this.cvBuilderService.accessControl.subscribe(canEdit => this.canEdit = canEdit);
     this.setNewEducation(this.getDummyEducation());
     this.setValidationObject();
   }
 
+  setHasCv = hasCv => {
+    this.isUserHasCv = hasCv;
+  }
   /**
    * @memberof EducationComponent
    */
-  setEducations = educations =>{
+  setEducations (educations) {
     this.educations = educations;
   }
 
-  /**
-   * @memberof EducationComponent
-   */
+
+  // findRecentEducation (educations) {
+  //   if(educations instanceof Array){
+  //     this.isRecentEducationfound = educations.find( education => education.isLatest );
+  //   }
+  // }
 
   /**
    * @memberof EducationComponent
@@ -109,12 +122,7 @@ export class EducationComponent implements OnInit {
    * @memberof EducationComponent
    */
   setNewEducation (education: Education) {
-    this.newEducation =  {
-      _id: education._id,
-      schoolName: education.schoolName,  
-      fieldOfStudy: education.fieldOfStudy, 
-      grade: education.grade, startDate: education.startDate,  endDate: education.endDate
-    }
+    this.newEducation =  Object.assign({}, education)
     // convert dates in readable format
     if(education.startDate){
       this.newEducation.startDate = moment(this.newEducation.startDate).format('ll'); 
@@ -153,7 +161,7 @@ export class EducationComponent implements OnInit {
    * @memberof EducationComponent
    */
   getDummyEducation(){
-    return { _id: '', schoolName: '',  fieldOfStudy: '', grade: '', startDate: null,  endDate: null };
+    return { _id: '', schoolName: '',  fieldOfStudy: '', grade: '', startDate: null,  endDate: null, isLatest: false };
   }
 
   onInputChange(event, field){

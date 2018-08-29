@@ -1,61 +1,204 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params }                 from '@angular/router';
 
-import {MaterializeAction} from 'angular2-materialize';
+import {MaterializeAction, toast} from 'angular2-materialize';
 import { EventEmitter } from '@angular/core';
 
 import { CvBuilderService } from '../../services/cvbuilder/cvbuilder.service'
+import {AuthService} from "../../services/auth/auth.service";
+
+interface FileReaderEventTarget extends EventTarget {
+  result:string
+}
+
+interface FileReaderEvent extends Event {
+  target: FileReaderEventTarget
+}
+
+declare let Materialize: any;
+const VIDEOLENGTH = 75; 
 
 @Component({
   selector: 'app-cvbuilder',
   templateUrl: './cvbuilder.component.html',
-  styleUrls: ['./cvbuilder.component.css']
+  styleUrls: ['./cvbuilder.component.css'],
+  providers: [ CvBuilderService ] // a service for cv builder to save and share data
 })
 export class CvBuilderComponent implements OnInit {
+
+  @ViewChild('fileUploader') fileUploader: ElementRef;
+  @ViewChild('previewVideo') previewVideo: ElementRef;
+  @ViewChild('videoPlayer') videoPlayer:ElementRef;
+
   modalActions = new EventEmitter<string|MaterializeAction>();
-  
+  preLoadModalActions = new EventEmitter<string|MaterializeAction>();
+
+
   public _actionProgress: string = 'action'; // form to add new entry into one of the subsection.  action to show a message like failed, invalid.
   userAccess : 0;
   userId : string = '';
-  loading: boolean = false;
+  loading: boolean = false;w
 
-  formModalConfig = {
-    type : 'action',
-    title: ''
-  }
-  modalConfig = {
-    type : 'invalid',
-    title: '',
-    message: '',
-    locked : false,
-    reasons: []
-  }
+  videoProfileUrl = '';
+  personalDetails: {} = {};
+  canEdit : boolean = false;
+  uploadedFile : File;
+  fileStatus : number = 0;
+  showFileUpload : boolean = false;
 
+  videoProfilePreviewUrl = '';
+  disabledUpload: boolean = true;
+  
+  fileStatusMsg = ['',
+   'Please select a file.', 
+   'Only mp4 files are allowed.', 
+   'File size should be smaller than 150 MB.', 
+   'Video length should be max to 1.30 mins.']
+
+   allowedFileType = [ 'video/mp4']
   constructor(private cvBuilderService: CvBuilderService,
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    public authService: AuthService
   ) { }
 
   ngOnInit() {
     this.route.params.subscribe( (params:Params)=>{
       this.userId = params['id'];
+      this.cvBuilderService.setUserId(this.userId);
       this.cvBuilderService.loadCv(this.userId);
+      this.setUserAccess(this.authService.user.access)
+      this.cvBuilderService.profileVideo.subscribe(this.setUrl);
+      this.cvBuilderService.personalDetails.subscribe(this.setPersonalDetails);
+      this.cvBuilderService.accessControl.subscribe(canEdit => this.canEdit = canEdit);
+
      })
   }
 
+  setPersonalDetails = (personalDetails) => {
+    this.personalDetails = personalDetails;
+  }
+
+  setUserAccess = (accessCode) =>{
+      this.userAccess = accessCode;
+  }
+
+  setUrl = (url )=>{
+    this.videoProfileUrl = url;
+  }
+
+  isValidFile (file: File) {
+
+    if(!(file instanceof File)) {
+      this.fileStatus = 1;
+      return false;
+    }
+
+    if(!this.allowedFileType.includes(file.type)){
+      this.fileStatus = 2;
+      return false;
+    }
+    
+    if((file.size / (1024 * 1024)) > 150 ) {
+      this.fileStatus = 3;
+      return false;
+    }
+    this.fileStatus = 0;
+    return true;
+  }
+
+  onFileSelect(event) {
+    this.disabledUpload = true;
+    let files  = event.target.files;
+    this.fileStatus = 0;
+    if(files.length && this.isValidFile(files[0])){
+      this.uploadedFile = files[0];
+      this.setPreview(this.uploadedFile);
+    }else{
+      this.uploadedFile = null;
+    }
+  }
+
+  setPreview (file) {
+    var fileReader = new FileReader();
+      fileReader.onload = () => {
+        var blob = new Blob([fileReader.result], {type: file.type});
+        var url = URL.createObjectURL(blob);
+        this.previewVideo.nativeElement.ondurationchange = this.durationChange;
+        this.previewVideo.nativeElement.preload = 'metadata';
+        this.setPreviewUrl(url);
+        // Load video in Safari / IE11
+        this.previewVideo.nativeElement.muted = true;
+        this.previewVideo.nativeElement.play();
+      };
+      fileReader.readAsArrayBuffer(file);
+  }
+
+  durationChange = (evnt) =>{
+    if(this.previewVideo.nativeElement.duration < VIDEOLENGTH){
+      this.disabledUpload = false;
+      this.fileStatus = 0;
+    }else{
+      this.fileStatus = 4;
+    }
+  }
+
+  setPreviewUrl = ( url) => {
+    this.previewVideo.nativeElement.src = url;
+  }
+
+  uploadVideo () {
+    if(this.isValidFile(this.uploadedFile)){
+      let formData: FormData = new FormData();
+      formData.append('displayVideo',  this.uploadedFile);
+      this.closeFileUploadModal();  // close form modal
+      this.openModal();             // open loader
+      this.cvBuilderService.updateProfileVideo(formData).then(this.onFileUploadSuccess).catch(this.onFileUploadFailure);
+    }
+  }
+
+  onFileUploadSuccess = (resp) => {
+    this.cvBuilderService.setProfileVideo(resp.profileVideo.location);
+    this.postUploadFile('Your video profile has been added succuessfully');
+  }
+
+  postUploadFile = (msg) => {
+    this.closeModal();
+    this.uploadedFile = null;
+    toast(msg, 2000);
+  }
+
+  onFileUploadFailure  = (resp) => {
+    this.postUploadFile('Failed to upload video, Please try again later');
+  }
+
+  showFileUploadModal() {
+    this.setPreviewUrl('');
+    this.fileUploader.nativeElement.form.reset()
+    this.uploadedFile = null;
+    this.fileStatus = 0;
+    this.disabledUpload = true;
+    this.modalActions.emit({action:"modal",params:['open']});
+  }
+
+  closeFileUploadModal() {
+    this.modalActions.emit({action:"modal",params:['close']});
+  }
 
   /**
    * modal methods to close and open
    * @memberof CvBuilderComponent
    */
   openModal() {
-    this.modalActions.emit({action:"modal",params:['open']});
+    this.showFileUpload = true;
+    this.preLoadModalActions.emit({action:"modal",params:['open']});
   }
 
   /**
    * @memberof CvBuilderComponent
    */
   closeModal() {
-    this.modalActions.emit({action:"modal",params:['close']});
+    this.showFileUpload = false;
+    this.preLoadModalActions.emit({action:"modal",params:['close']});
   }
 
 }

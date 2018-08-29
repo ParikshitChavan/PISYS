@@ -4,7 +4,14 @@
     width: 100%;
     padding: 0 10%;
   }
-  
+  .list-style {
+    margin-top: 0px;
+  }
+  .list-style li{
+    list-style-type: circle;
+    line-height: 25px;
+    margin-left: 18px;
+  }
   
   .input-field{
   margin-bottom: 3rem !important;
@@ -70,36 +77,15 @@ input:not([type]), input[type=text]:not(.browser-default), input[type=password]:
   width: 100%;
 }
 
-.list-style {
-  margin-top: 0px;
-}
-
-.list-style li{
-  list-style-type: circle;
-  line-height: 25px;
-  margin-left: 18px;
-}
-
 .skillbtn{
   margin-top: 5px;
 }
 
-.addBtn{
+.fltBtnArea{
   position: relative;
+}
+
+#addBtn {
+  transform: translateY(+50%);
   float: right;
-  right: 30px;
-}
-
-
-.fixed-action-btn{
-  position: relative;
-  float: right;
-}
-
-.fixed-action-btn ul {
-  bottom: 30px;
-}
-
-.text-align{
-  text-align: justify;
 }

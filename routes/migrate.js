@@ -1,0 +1,40 @@
+
+
+
+//API routes for the Company (Company Admins info will be embedded in company document)
+const express = require('express');
+const router = express.Router();
+
+//models
+const User = require('../models/user');
+const cvBuilder = require('../models/cvbuilder');
+
+const util = require('../helpers/common');
+//config
+
+const getUsers = (req, res, next) => {
+    const userQuery = { access : 0};
+    User.getUsers(userQuery, (err,users) => {
+        if(err){
+            return res.json({ success: false, message: err});
+        }
+        if(!users)  return res.json({ success: false, message: 'No users found'});
+        users.forEach(user => {
+                if(!user.cv.length){
+                    cvBuilder.createCv(user._id,(error,cv) => {
+                        if(err) return res.json({success: false, message: err});
+                        // add cv details to user collection
+                        User.addCv(cv.user, cv._id, (err) => {
+                            if(err) return res.json({success: false, message: err});
+                        })
+                    })
+                }
+            })
+
+            res.json({users : users});
+    })
+}
+
+router.get('/migrateUserCv', util.authenticate, getUsers )
+
+module.exports = router;

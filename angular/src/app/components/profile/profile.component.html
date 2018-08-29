@@ -24,6 +24,13 @@
             <input type="text" [(ngModel)]="userDetails.phNum" name="phNum" id="phNum">
           </div>
         </div>
+        <div class="row">
+            <div class="input-field">
+              <label for="skypeId" class="active">Skype Id</label>
+              <input type="text" [(ngModel)]="userDetails.skypeId" name="skypeId" id="skypeId">
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
         <button type="button" (click)='cancelInfoEditClick()' class="btn red">cancel</button>
       </form>
@@ -41,6 +48,10 @@
         <div class="col s5">Phone:</div>
         <div class="col s7">{{userDetails.phNum}}</div>
       </div>
+      <div class="row" *ngIf="userDetails.skypeId">
+          <div class="col s5">Skype Id:</div>
+          <div class="col s7">{{userDetails.skypeId}}</div>
+        </div>
       <a id="infoEditBtn" (click)="editInfoClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
     </div>
   </div>

@@ -1,0 +1,40 @@
+<div class="row z-depth-1">
+    <div class="container10p" *ngIf="isUserHasCv">
+      <div class="section">
+        <div class="educationDetail">
+          <div class="row" *ngIf="remarks && !editing">
+              <div class="col s3">Remarks/Notes :</div>
+            <div class="col s9 text-align">
+                {{ remarks }}
+            </div>
+          </div>
+
+          <div class="row" *ngIf="editing">
+              <div class="input-field">
+                  <label for="remarks">Remarks/Notes :</label>
+                  <textarea id="remarks" class="materialize-textarea" name="remarks" [(ngModel)]="newRemark"
+                    required></textarea>
+                  <div [hidden]="isRemarkValid" class="red-text">
+                    Please input your remarks if any.
+                  </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" (click)='saveRemarks()' class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+                    <button type="button" (click)='toggleRemarksEdit(false)' class="btn red">cancel</button>
+                </div>
+          </div>
+
+        </div>
+
+  
+        <div *ngIf="!editing"  class="fltBtnArea">
+            <a (click)="toggleRemarksEdit(true)" id="addBtn" class="btn-floating btn-large waves-effect waves-light red">
+                <i class="material-icons"> {{ remarks ? 'edit' : 'add' }}</i>
+            </a>
+        </div>
+
+      </div>
+  
+    </div>
+  </div>

@@ -41,6 +41,7 @@ export class ExperienceComponent implements OnInit {
   inValidDateMsg: string = 'Please input end date.'
   modalPurpose: string = 'add'; // add - adding a new entry, edit - editing new entry. delete - confirmation message
 
+  isUserHasCv: boolean = false;
 
   allITLang = ITSkills.allITLang;
   allITLangArray = ITSkills.allITLangArray;
@@ -60,13 +61,14 @@ export class ExperienceComponent implements OnInit {
    * @memberof ExperienceComponent
    */
   ngOnInit() {
+    this.cvBuilderService.isUserHasCv.subscribe(this.setHasCv)
     this.cvBuilderService.experiences.subscribe(this.setExperiences);
     this.cvBuilderService.accessControl.subscribe(canEdit => this.canEdit = canEdit);
     this.setNewExperience(this.getDummyExperience());
     this.setValidationObject();
   }
 
-
+  
   /**
    * adds new skills into usedSkills array entered by user 
    * @param {*} chip
@@ -91,6 +93,9 @@ export class ExperienceComponent implements OnInit {
     this.newExperience.usedSkills = this.newExperience.usedSkills.filter(item => item.tag != chip.tag);
   }
 
+  setHasCv = hasCv => {
+    this.isUserHasCv = hasCv;
+  }
   /**
    * set experience return by subscriber
    * @memberof ExperienceComponent
@@ -106,12 +111,13 @@ export class ExperienceComponent implements OnInit {
   createExperience() {
     this.modalPurpose = 'add';
     this.setNewExperience(this.getDummyExperience());
+    this.rqChipsActions.emit({ action:"material_chip", params:[{data: '', autocompleteOptions: this.autoCompleteOptions}] });
     this.setValidationObject();
     this.openModal();
   }
 
   /**
-   * sets modal purpose to edit and sets education, validation object
+   * sets modal purpose to edit and sets Experience, validation object
    * emits actions for chips & then opens the modal
    * @param {Experience} experience
    * @memberof ExperienceComponent
@@ -161,7 +167,7 @@ export class ExperienceComponent implements OnInit {
   }
 
   /**
-   *  sets new expereince object with passed education
+   *  sets new expereince object with passed Experience
    * @param {Experience} experience
    * @memberof ExperienceComponent
    */
@@ -191,7 +197,6 @@ export class ExperienceComponent implements OnInit {
     this.isValidCurrentExperience = {
       title: true,
       description: true,
-      usedSkills: true,
       startDate: true,
       endDate: true,
       active: true
@@ -261,7 +266,7 @@ export class ExperienceComponent implements OnInit {
     } else {
       this.isValidCurrentExperience.description = true;
     }
-
+    
     if (!moment(experience.startDate).isValid()) {
       this.isValidCurrentExperience.startDate = false;
       formValid = false;
