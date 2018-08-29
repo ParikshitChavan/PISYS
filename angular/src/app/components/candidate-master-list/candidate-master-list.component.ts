@@ -26,10 +26,10 @@ export class CandidateMasterListComponent implements OnInit {
       this.yearArr.push(tmpYear);
       tmpYear--;
     }
-    //this.onYearTabClick(currYear);
+    this.onYearTabClick(currYear);
   }
 
-  /*onYearTabClick(year){
+  onYearTabClick(year){
     this.listCandidateService.getCandidates(year).subscribe(resp => {
       if(!resp.success) return toast("Some error occurred, please try again later.", 3000);
       this.candidates = resp.candidates;
@@ -52,10 +52,10 @@ export class CandidateMasterListComponent implements OnInit {
     });
   }
 
-  deleteSeason(){
+  deleteSeason(a){
     //first confirf wirh big warning then make them type the year
     if(!this.dltSeason) return toast('Please write the year you want to delete.');
-    this.listCandidateService.deleteSeason().subscribe(resp=>{
+    this.listCandidateService.deleteSeason(a).subscribe(resp=>{
       if(!resp.success) {
         console.log(resp.error);
         return toast('Some error occurred, please try again later.', 3000);
@@ -67,12 +67,37 @@ export class CandidateMasterListComponent implements OnInit {
   onAddCandidate(validForm){
     if(!validForm) return false;
     //get candidateId, year
-    this.listCandidateService.addCandidate().subscribe(resp=>{
+    this.listCandidateService.addCandidate(validForm).subscribe(resp=>{
       if(!resp.success) {
         console.log(resp.error);
         return toast('Some error occurred, please try again later.', 3000);
       }
       toast('new season deleted successfully', 3000); 
     });
-  }*/
+  }
+
+  removeCandidate(validForm){
+    if(!validForm) return false;
+    //get candidateId, year
+    this.listCandidateService.removeCandidate(validForm).subscribe(resp=>{
+      if(!resp.success) {
+        console.log(resp.error);
+        return toast('Some error occurred, please try again later.', 3000);
+      }
+      toast('new season deleted successfully', 3000); 
+    });
+  }
+
+  updateCandidate(validForm){
+    if(!validForm) return false;
+    //get candidateId, year
+    this.listCandidateService.updateCandidate(validForm).subscribe(resp=>{
+      if(!resp.success) {
+        console.log(resp.error);
+        return toast('Some error occurred, please try again later.', 3000);
+      }
+      toast('new season deleted successfully', 3000); 
+    });
+  }
+
 }

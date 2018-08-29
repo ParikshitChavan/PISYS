@@ -46,7 +46,7 @@ app.use('/user', user);
 app.use('/company', company);
 app.use('/internship', internship);
 app.use('/cv', cvbuilder);
-// app.use('/listCandidate', listCandidate);
+app.use('/listCandidate', listCandidate);
 app.use('/migrate',migrate)
 
 //invalid route fallback to index.js for angular path based routing strategy 

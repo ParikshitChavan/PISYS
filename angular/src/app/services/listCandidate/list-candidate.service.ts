@@ -16,19 +16,69 @@ export class ListCandidateService {
     this.authToken = localStorage.getItem('authToken');
   }
 
-  getCandidates(id){
+  getCandidates(yr){
     const data = {
-      companyId: id
+      season: yr
     }
     this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
-    return this.http.post(this.apiUrl + 'company/info', data, {headers: headers}).map(res => res.json());
+    return this.http.post(this.apiUrl + 'listCandidate/getListOfYear', data, {headers: headers}).map(res => res.json());
   }
 
-  createSeason(){}
-  deleteSeason(){}
-  addCandidate(){}
+  createSeason(yr){
+    const data = {
+      season: yr
+    }
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.apiUrl + 'listCandidate/createSeason', data, {headers: headers}).map(res => res.json());
+  }
 
+  deleteSeason(yr){
+    const data = {
+      season: yr
+    }
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.apiUrl + 'listCandidate/deleteSeason', data, {headers: headers}).map(res => res.json());
+  }
+
+  addCandidate(candidateId){
+    const data = {
+      season: candidateId
+    }
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.apiUrl + 'listCandidate/addCandidate', data, {headers: headers}).map(res => res.json());
+  }
+
+  removeCandidate(candidateId){
+    const data = {
+      season: candidateId
+    }
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.apiUrl + 'listCandidate/removeCandidate', data, {headers: headers}).map(res => res.json());
+  }
+
+  updateCandidate(candidate){
+    const data = {
+      candidate: candidate
+    }
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.apiUrl + 'listCandidate/updateCandidate', data, {headers: headers}).map(res => res.json());
+  }
 }

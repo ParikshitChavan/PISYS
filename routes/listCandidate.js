@@ -10,7 +10,7 @@ const ListCandidate = require('../models/listCandidate');
 //config
 const config = require('../config/cfg');
 
-router.post('/addSeason', (req, res) => {
+router.post('/createSeason', (req, res) => {
     let seasonYr = req.body.year;
     let data = [];
     User.getLastYearRegistrants((err, candidates) => {
@@ -55,7 +55,7 @@ router.post('/removeCandidate', (req, res) => {
 router.post('/updateCandidate', (req, res)=>{
     ListCandidate.updateCandidateById(req.body.id, (err) => {
         if(err) return res.json({success: false, error: err});
-        res.json({success: true, message: 'candidate removed successfully'});
+        res.json({success: true, message: 'candidate information updated successfully'});
     });
 });
 
