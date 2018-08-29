@@ -19,6 +19,12 @@ const config = require('../config/cfg');
 aws.config.update(config.awsAuthObj);
 const s3 = new aws.S3();
 
+const S3_BUCKET_OBJECT = {
+    acl: 'authenticated-read',
+    region: 'ap-northeast-1',
+    s3BucketName: 'piitscrm',
+    keyPrefix: 'profileVideos'
+}
 
 // superadmin is willings member whose access code is = 2.
 const isSuperAdminOrOwner = function (decoded, cvOwnerId) {
@@ -61,7 +67,7 @@ const getSignedUrl = async (req, res, next) => {
     if (cvdetails.profileVideo.key) {
         if (moment() > cvdetails.profileVideo.signExpiry) {
             try {
-                var params = { Bucket: config.awsAuthObj.s3BucketName, Key: cvdetails.profileVideo.key, Expires:  60 * 60 * 24  };
+                var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvdetails.profileVideo.key, Expires:  60 * 60 * 24  };
                 const newSignedUrl = await s3.getSignedUrl('getObject', params);
                 var expiryTime = moment().add(1, 'hour')
                 cvBuilder.updateProfileVideo(cvdetails.id, {
@@ -300,7 +306,7 @@ const updateRemarks = (req, res) => {
      const cvDetails = req.tempStore.cvdetails;
      if (cvDetails.profileVideo && cvDetails.profileVideo.key) {
          try {
-             await s3.deleteObject({ Bucket: config.awsAuthObj.s3BucketName, Key: cvDetails.profileVideo.key });
+             await s3.deleteObject({ Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvDetails.profileVideo.key });
              next()
          } catch (error) {
              return util.sendError(res, 'Please try later, failed to delete old video');
@@ -311,7 +317,7 @@ const updateRemarks = (req, res) => {
 }
 const updateProfileVideo = async (req, res) => {
     try {
-        var params = { Bucket: config.awsAuthObj.s3BucketName, Key: req.file.key, Expires: 60 * 60 * 24 };
+        var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: req.file.key, Expires: 60 * 60 * 24 };
         const newSignedUrl = await s3.getSignedUrl('getObject', params);
         var expiryTime = moment().add(1, 'hour');
         cvBuilder.updateProfileVideo(req.tempStore.cvdetails.id, {
@@ -335,8 +341,8 @@ const updateProfileVideo = async (req, res) => {
 const uploadProfileVideo = multer({
     storage: multerS3({
         s3: s3,
-        bucket: config.awsAuthObj.s3BucketName,
-        acl:  config.awsAuthObj.acl,
+        bucket: S3_BUCKET_OBJECT.s3BucketName,
+        acl:  S3_BUCKET_OBJECT.acl,
         contentType: multerS3.AUTO_CONTENT_TYPE,
         metadata: function (req, file, cb) {
             cb(null, { 'Content-Type': 'video/mp4'});
