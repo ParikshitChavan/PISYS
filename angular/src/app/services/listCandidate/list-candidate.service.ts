@@ -16,7 +16,17 @@ export class ListCandidateService {
     this.authToken = localStorage.getItem('authToken');
   }
 
-  getCandidates(){}
+  getCandidates(id){
+    const data = {
+      companyId: id
+    }
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.apiUrl + 'company/info', data, {headers: headers}).map(res => res.json());
+  }
+
   createSeason(){}
   deleteSeason(){}
   addCandidate(){}
