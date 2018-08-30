@@ -103,3 +103,7 @@ input:not([type]), input[type=text]:not(.browser-default), input[type=password]:
 .text-align{
   text-align: justify;
 }
+
+.fltBtnArea{
+  position: relative;
+}

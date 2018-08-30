@@ -43,18 +43,24 @@
       </div>
       <div class="divider"></div>
     </div>
-   
+  </div>
+</div>
+
+<div class="section">
+  <div *ngIf="!educations.length">
+    <div class="col s12 center-align no-data-cls">
+      <h5> {{ canEdit ? 'Please add education details.' : 'Candidate have not entered any education details.' }} </h5>
+    </div>
+  </div>
+
+  <div  *ngIf="canEdit"  class="fltBtnArea right-align">
+    <a id="reptCreateBtn" (click)="createEducation()" class="btn-floating  btn-large  waves-effect waves-light red">
+      <i class="material-icons">add</i>
+    </a>
   </div>
 </div>
 
 
-<div class="fltBtnArea" *ngIf="canEdit" >
-    <div class="section addBtn">
-        <a id="reptCreateBtn" (click)="createEducation()" class="btn-floating waves-effect waves-light red">
-            <i class="material-icons">add</i>
-          </a>
-    </div>
-</div>
 
 <div id="modal1" *ngIf="modalPurpose == 'delete'" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"
   [materializeActions]="modalActions">

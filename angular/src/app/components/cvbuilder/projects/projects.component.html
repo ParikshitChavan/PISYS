@@ -1,4 +1,4 @@
-<div class="row z-depth-1">
+<div class="row z-depth-1" *ngIf="projects.length">
 
 
   <div class="container10p" *ngIf="isUserHasCv">
@@ -65,13 +65,20 @@
   </div>
 </div>
 
-<div class="fltBtnArea" *ngIf="canEdit" >
-    <div class="section addBtn">
-        <a (click)="createProject()" class="btn-floating waves-effect waves-light red">
+
+<div class="section">
+    <div *ngIf="!projects.length">
+      <div class="col s12 center-align no-data-cls">
+        <h5> {{ canEdit ? 'Please add projects details.' : 'Candidate have not entered any projects.' }} </h5>
+      </div>
+    </div>
+  
+    <div *ngIf="canEdit" class="fltBtnArea right-align">
+        <a (click)="createProject()" class="btn-floating  btn-large  waves-effect waves-light red">
             <i class="material-icons">add</i>
           </a>
     </div>
-</div>
+  </div>
 
 
 <div id="modal" *ngIf="modalPurpose === 'delete'" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"

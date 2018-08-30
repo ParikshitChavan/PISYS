@@ -26,6 +26,8 @@ const S3_BUCKET_OBJECT = {
     keyPrefix: 'profileVideos'
 }
 
+const CANDIDATE_PER_PAGE = 10;
+
 // superadmin is willings member whose access code is = 2.
 const isSuperAdminOrOwner = function (decoded, cvOwnerId) {
     return decoded.access == 2 || decoded._id == cvOwnerId;
@@ -69,7 +71,7 @@ const getSignedUrl = async (req, res, next) => {
             try {
                 var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvdetails.profileVideo.key, Expires:  60 * 60 * 24  };
                 const newSignedUrl = await s3.getSignedUrl('getObject', params);
-                var expiryTime = moment().add(1, 'hour')
+                var expiryTime = moment().add(24, 'hour')
                 cvBuilder.updateProfileVideo(cvdetails.id, {
                     key: cvdetails.profileVideo.key,
                     location: newSignedUrl, 
@@ -292,9 +294,6 @@ const updateInterests = (req, res) => {
 
 const updateRemarks = (req, res) => {
     const remarks = req.body.remarks;
-    if(!remarks){
-               return util.sendError(res, 'Please provide all paramters', 422)
-    }
     cvBuilder.updateRemarks(req.tempStore.cv, remarks, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
         if (!cvdetails) return util.sendError(res, 'Can not update the Remarks');
@@ -319,7 +318,7 @@ const updateProfileVideo = async (req, res) => {
     try {
         var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: req.file.key, Expires: 60 * 60 * 24 };
         const newSignedUrl = await s3.getSignedUrl('getObject', params);
-        var expiryTime = moment().add(1, 'hour');
+        var expiryTime = moment().add(24, 'hour');
         cvBuilder.updateProfileVideo(req.tempStore.cvdetails.id, {
             key: req.file.key,
             location: newSignedUrl,
@@ -362,6 +361,23 @@ const uploadProfileVideo = multer({
     }
 }).single('displayVideo');
 
+
+const getCandidates = async (req, res) => {
+    let { name, pageNumber } = req.body;
+    let query = { access: 0 };
+    if (name) {
+        var regex = new RegExp( name, "i");
+        query.name =  regex;
+    }
+    const candidates = User.pullCandidates(query, CANDIDATE_PER_PAGE, pageNumber, (err, users) => {
+        if (err) res.json({ candidates: [], err: "Error" });
+          User.countDocuments(query, function (err, total) {
+            if (err) res.json({ candidates: [], err: "Error" });
+            res.json({ success: true, candidates: users, count: total });
+          });
+        })
+}
+
 router.use(util.authenticate);
 router.get('/cvdetails/:userId', getCv, getCvById, getSignedUrl, sendCvDetails)
 
@@ -386,5 +402,7 @@ router.put('/updateInterests', hasPermission, getCv, updateInterests)
 router.put('/updateRemarks', isSuperAdmin, getCv, updateRemarks)
 
 router.post('/uploadVideo/:userId', getCv, getCvById, checkProfileVideo, uploadProfileVideo, updateProfileVideo)
+
+router.post('/pullCandidates', getCandidates)
 
 module.exports = router;

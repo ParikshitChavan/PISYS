@@ -1,4 +1,4 @@
-<div class="row z-depth-1">
+<div class="row z-depth-1" *ngIf="certificates.length">
   <div class="container10p" *ngIf="isUserHasCv">
     <div *ngFor='let certificate of certificates;' class="section">
         <div class="educationDetail">
@@ -33,12 +33,18 @@
 </div>
 </div>
 
-<div class="fltBtnArea" *ngIf="canEdit" >
-  <div class="section addBtn">
-      <a (click)="createCertificate()" class="btn-floating waves-effect waves-light red">
-          <i class="material-icons">add</i>
-        </a>
-  </div>
+<div class="section">
+    <div *ngIf="!certificates.length">
+      <div class="col s12 center-align no-data-cls">
+        <h5> {{ canEdit ? 'Please add certification details.' : 'Candidate have not entered any certification details.' }} </h5>
+      </div>
+    </div>
+  
+    <div  *ngIf="canEdit" class="fltBtnArea right-align">
+        <a (click)="createCertificate()" class="btn-floating  btn-large  waves-effect waves-light red">
+            <i class="material-icons">add</i>
+          </a>
+    </div>
 </div>
 
 

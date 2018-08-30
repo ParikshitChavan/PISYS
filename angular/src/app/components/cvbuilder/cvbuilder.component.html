@@ -1,49 +1,56 @@
 
+<div class="">
+    <div  *ngIf="canEdit"  class="row  z-depth-2 padding-container">
+        <div class="col s12 l6">
+            <div class="row" *ngIf="personalDetails.name">
+                <div class="col s5">Name:</div>
+                <div class="col s7">{{personalDetails.name}}</div>
+            </div>
+            <div class="row" *ngIf="personalDetails.DOB">
+                <div class="col s5">Date of birth</div>
+                <div class="col s7">{{personalDetails.DOB | date:'longDate'}}</div>
+            </div>
+            <div class="row" *ngIf="personalDetails.email">
+                <div class="col s5">Email:</div>
+                <div class="col s7 truncate">{{personalDetails.email}}</div>
+            </div>
+            <div class="row" *ngIf="personalDetails.phNum">
+                <div class="col s5">Phone:</div>
+                <div class="col s7">{{personalDetails.phNum}}</div>
+            </div>
 
-<div class="row">
-    <div *ngIf="canEdit" class="col s12 l6">
-        <div class="row" *ngIf="personalDetails.name">
-            <div class="col s5">Name:</div>
-            <div class="col s7">{{personalDetails.name}}</div>
+            <div class="row" *ngIf="personalDetails.skypeId">
+                <div class="col s5">Skype Id:</div>
+                <div class="col s7">{{personalDetails.skypeId}}</div>
+            </div>
         </div>
-        <div class="row" *ngIf="personalDetails.DOB">
-            <div class="col s5">Date of birth</div>
-            <div class="col s7">{{personalDetails.DOB | date:'longDate'}}</div>
+        <div class="col s12 l6 center-align" *ngIf="canEdit && personalDetails && personalDetails.DP">
+            <div class="center-align">
+                <img [src]="personalDetails.DP.url" class="imagePlace responsive-img circle" alt="User display picture">
+            </div>
         </div>
-        <div class="row" *ngIf="personalDetails.email">
-            <div class="col s5">Email:</div>
-            <div class="col s7">{{personalDetails.email}}</div>
-        </div>
-        <div class="row" *ngIf="personalDetails.phNum">
-            <div class="col s5">Phone:</div>
-            <div class="col s7">{{personalDetails.phNum}}</div>
-        </div>
-    
-        <div class="row" *ngIf="personalDetails.skypeId">
-            <div class="col s5">Skype Id:</div>
-            <div class="col s7">{{personalDetails.skypeId}}</div>
-        </div>
-    </div>
 
-    <div class="col s12 l6" *ngIf="canEdit && personalDetails && personalDetails.DP">
-        <div class="imagePlace" >
-            <img [src]="personalDetails.DP.url" class="responsive-img circle" alt="User display picture">
-        </div>
     </div>
-    <div *ngIf="canEdit" class="col s12 l12 personalInfo"></div>
-    <div *ngIf="videoProfileUrl || canEdit" class="col s12 l12 text-center imgArea">
-        <video class="responsive-video" [src]="videoProfileUrl | safe"  controls #videoPlayer preload="auto">
-                </video>
-        <a  *ngIf="canEdit" (click)="showFileUploadModal()" class="btn-floating modal-trigger btn-large waves-effect waves-light red">
-                <i class="material-icons">edit</i>
-        </a>
+    <div class="row  z-depth-2 padding-container">
+        <div *ngIf="videoProfileUrl || canEdit" class="col s12 l12 text-center imgArea">
+            <video class="responsive-video" [src]="videoProfileUrl | safe" controls #videoPlayer preload="none">
+            </video>
+
+            <div *ngIf="canEdit" class="fltBtnArea">
+                <a *ngIf="canEdit" (click)="showFileUploadModal()" class="btn-floating modal-trigger btn-large waves-effect waves-light red">
+                    <i class="material-icons">edit</i>
+                </a>
+            </div>
+
+
+        </div>
     </div>
 </div>
 <div class="personalInfo"> </div>
    
-<div id="tabsArea" class="col s12 z-depth-1">
+<div id="tabsArea" class="row col s12 z-depth-1">
 
-    <ul class="tabs">
+    <ul class="tabs" materialize="tabs">
         <li class="tab" >
             <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['education']">education</a>
         </li>

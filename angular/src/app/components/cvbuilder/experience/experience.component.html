@@ -1,4 +1,4 @@
-<div class="row z-depth-1">
+<div class="row z-depth-1" *ngIf="experiences.length">
     <div class="container10p" *ngIf="isUserHasCv">
       <div *ngFor='let experience of experiences;' class="section">
           <div class="educationDetail">
@@ -38,19 +38,22 @@
             </div>
           <div class="divider"></div>
       </div>
-
-     
   </div>
 </div>
 
-<div class="fltBtnArea" *ngIf="canEdit" >
-    <div class="section addBtn">
-        <a (click)="createExperience()" class="btn-floating waves-effect waves-light red">
+<div class="section">
+    <div *ngIf="!experiences.length">
+      <div class="col s12 center-align no-data-cls">
+        <h5> {{ canEdit ? 'Please add previous experience details.' : 'Candidate have not entered any experience details.' }} </h5>
+      </div>
+    </div>
+  
+    <div  *ngIf="canEdit" class="fltBtnArea right-align">
+        <a (click)="createExperience()" class="btn-floating  btn-large  waves-effect waves-light red">
             <i class="material-icons">add</i>
           </a>
     </div>
-</div>
-
+  </div>
 
 
 <div id="modal1" *ngIf="modalPurpose == 'delete'" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">

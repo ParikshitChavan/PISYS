@@ -63,6 +63,7 @@ import { CertificationComponent } from './components/cvbuilder/certification/cer
 import { SafePipe } from './pipe/safe.pipe';
 import { InterestsComponent } from './components/cvbuilder/interests/interests.component';
 import { RemarksComponent } from './components/cvbuilder/remarks/remarks.component';
+import { CandidatesComponent } from './components/candidates/candidates.component';
 
 
 const appRoutes: Routes =[
@@ -77,6 +78,7 @@ const appRoutes: Routes =[
   { path: 'company/:id', component: CompanyComponent, canActivate: [AuthGuard]},
   { path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
   { path: 'findOpenings', component: OpeningListingComponent, canActivate: [AuthGuard]},
+  { path: 'candidates', component: CandidatesComponent, canActivate: [AuthGuard]},
   { 
     path: 'companyProfile/:cmpId',
     component: CompanyProfileComponent,
@@ -158,7 +160,8 @@ const appRoutes: Routes =[
     CertificationComponent,
     SafePipe,
     InterestsComponent,
-    RemarksComponent
+    RemarksComponent,
+    CandidatesComponent
   ],
   imports: [
     BrowserModule,

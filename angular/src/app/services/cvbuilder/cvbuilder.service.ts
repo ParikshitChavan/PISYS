@@ -63,6 +63,9 @@ export class CvBuilderService {
 
   public cvOwnerUserId : string = '';
   
+  private _candidateListSubject = new BehaviorSubject<any[]>([]);
+  public candidateList = this._candidateListSubject.asObservable();
+
   constructor(
     private httpService:CoreHttpService,
     private authService: AuthService
@@ -138,6 +141,10 @@ export class CvBuilderService {
 
   serPersonalDetails(personalDetails) {
     this._personalDetailsSubject.next(personalDetails)
+  }
+
+  setCandidateList(candidates) {
+    this._candidateListSubject.next(candidates);
   }
 
   applyData = (response) => {
@@ -289,6 +296,11 @@ export class CvBuilderService {
     const data = { remarks : remarks, userId :  this.getUserId() }
     return this.httpService.put('cv/updateRemarks', data);
   }
+
+  pullCandidates (searchQuery) {
+    return this.httpService.post('cv/pullCandidates', searchQuery);
+  }
+
 }
 
 
