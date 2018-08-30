@@ -10,56 +10,59 @@ const ListCandidate = require('../models/listCandidate');
 //config
 const config = require('../config/cfg');
 
-router.post('/createSeason', (req, res) => {
+const validateWLMember = (req, res, next) => {
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access != 2) return res.status(500).json({ success: false, message: 'not authorised' });
+        next();
+    });
+}
+
+router.post('/createSeason', validateWLMember, (req, res) => {
     let seasonYr = req.body.year;
-    let data = [];
-    User.getLastYearRegistrants((err, candidates) => {
+    User.getLastYearRegistrants(seasonYr, (err, candidates) => {              //{year, _id, skypeId}
         if(err) return res.json({success: false, error: err});
-        candidates.forEach(candidate => {
-            /*
-            format
-            the
-            data(array of the data needed)
-            */
-        });
-        ListCandidate.addSeason(seasonYr, data, (err) =>{
+        CvBuilder.getDetailsForList(candidates, (err, entries) => {
             if(err) return res.json({success: false, error: err});
-            res.json({success: true, message: 'season created successfully'});
+            ListCandidate.addSeason(entries, (err) => {
+                if(err) return res.json({success: false, error: err});
+                res.json({success: true, message: 'season created successfully'});
+            });
         });
     });
 });
 
-router.post('/addCandidate', (req, res) => {
-    User.getUserById(req.body.candidateId, (err, user)=>{
+router.post('/addCandidate', validateWLMember, (req, res) => {
+    const userId = req.body.listCandidate.candidate._id;
+    User.getSkypeId(userId, (err, user) => {
         if(err) return res.json({success: false, error: err});
-        CvBuilder.getDetailsForList(req.body.candidateId, (err, CV)=>{
+        user['year'] = req.body.year;
+        CvBuilder.getDetailsForList(user, (err, listEntry)=>{
             if(err) return res.json({success: false, error: err});
-            /*push into collection with year=req.body.year*/
-            //create candidate Obj
-            ListCandidate.addCandidate(candidate, (err) => {
+            ListCandidate.addCandidate(listEntry, (err) => {
                 if(err) return res.json({success: false, error: err});
                 res.json({success: true, message: 'candidate added successfully'});
             });
         });
     });
-
 });
 
-router.post('/removeCandidate', (req, res) => {
+router.post('/removeCandidate', validateWLMember, (req, res) => {
     ListCandidate.removeCandidate(req.body.candidateId, err => {
         if(err) return res.json({success: false, error: err});
         res.json({success: true, message: 'candidate removed successfully'});
     });
 });
 
-router.post('/updateCandidate', (req, res)=>{
-    ListCandidate.updateCandidateById(req.body.id, (err) => {
+router.post('/updateCandidate', validateWLMember, (req, res)=>{
+    ListCandidate.updateCandidate(req.body.candidate, (err) => {
         if(err) return res.json({success: false, error: err});
         res.json({success: true, message: 'candidate information updated successfully'});
     });
 });
 
-router.post('/getListOfYear', (req, res) => {
+router.post('/getListOfYear', validateWLMember, (req, res) => {
     let seasonYr = req.body.year;
     let data = [];
     ListCandidate.getCandidatesOfYear(seasonYr, (err, candidates) =>{
@@ -67,3 +70,5 @@ router.post('/getListOfYear', (req, res) => {
         res.json({success: true, candidates: candidates});
     });
 });
+
+module.exports = router;

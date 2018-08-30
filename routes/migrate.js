@@ -20,19 +20,18 @@ const getUsers = (req, res, next) => {
         }
         if(!users)  return res.json({ success: false, message: 'No users found'});
         users.forEach(user => {
-                if(!user.cv.length){
-                    cvBuilder.createCv(user._id,(error,cv) => {
+            if(!user.cv.length){
+                cvBuilder.createCv(user._id,(error,cv) => {
+                    if(err) return res.json({success: false, message: err});
+                    // add cv details to user collection
+                    User.addCv(cv.user, cv._id, (err) => {
                         if(err) return res.json({success: false, message: err});
-                        // add cv details to user collection
-                        User.addCv(cv.user, cv._id, (err) => {
-                            if(err) return res.json({success: false, message: err});
-                        })
-                    })
-                }
-            })
-
-            res.json({users : users});
-    })
+                        res.json({users : users});
+                    });
+                });
+            }
+        });
+    });
 }
 
 router.get('/migrateUserCv', util.authenticate, getUsers )

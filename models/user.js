@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const ObjectId = require('mongodb').ObjectID;
 const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -371,4 +372,22 @@ module.exports.getUsers = (query, callback) => {
 
 module.exports.addCv = function(userId, cvId, callback){
     User.findByIdAndUpdate(userId, { $set: { cv: cvId }}, callback);
+}
+
+
+module.exports.getLastYearRegistrants = function(season, callback){
+    User.find(
+        { _id: { $gt: ObjectId.createFromTime(new Date(new Date().setFullYear(new Date().getFullYear() - 1)))}},
+        'skypeId',
+        (err, users)=>{
+            if(err) return callback(err, null);
+            users.forEach(user=>{
+                user['year'] = season;
+            });
+        }
+    );
+}
+
+module.exports.getSkypeId = function(candidateId, callback){
+    User.findById(candidateId, 'skypeId', {lean: true}, callback);
 }

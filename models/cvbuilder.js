@@ -160,3 +160,14 @@ module.exports.updateProfileVideo = (id, fileDetails, callback) => {
         callback);
 }
 
+module.exports.getDetailsForList = (candi, callback) => { //isArray on first argument
+    if(Array.isArray(candi)){
+
+    }
+    else{
+        cvBuilder.findById(candi._id, 'education skills.techSkills', { lean: true }, (err, cv)=>{
+            if(err) return callback(err, null);
+            
+        })
+    }
+}

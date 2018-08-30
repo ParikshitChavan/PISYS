@@ -22,7 +22,7 @@ export class CandidateMasterListComponent implements OnInit {
   ngOnInit() {
     let currYear = (new Date()).getFullYear();
     let tmpYear = currYear;
-    while(tmpYear>= 2018){          //2018 oldest intership in database
+    while(tmpYear >= 2018){          //2018 oldest intership in database
       this.yearArr.push(tmpYear);
       tmpYear--;
     }

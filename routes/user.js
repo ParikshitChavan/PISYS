@@ -47,6 +47,7 @@ router.post('/register', (req, res, next)=>{
         DOB: req.body.DOB,
         phNum: req.body.phNum,
         access: 0,
+        skypeId: '',
         DP: {key:"", url:"https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png"}
     });
     User.addUser(newUser, (err, user)=>{
