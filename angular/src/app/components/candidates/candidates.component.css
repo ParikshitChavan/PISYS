@@ -1,0 +1,11 @@
+
+
+.mainContainer{
+    text-transform: capitalize;
+    word-break: break-word;
+    padding: 10px
+}
+
+.text-center{
+    text-align: center;
+}

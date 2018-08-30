@@ -66,7 +66,7 @@ export class InterestsComponent implements OnInit {
   }
 
   isInputValid (input: string) {
-    return (input && input.trim() && input !== undefined && input.length > 100 && input.length < 1000  ) ? true : false;
+    return (input && input.trim() && input !== undefined && input.length >= 100 && input.length < 1000  ) ? true : false;
   }
 
   isFormValid (interests) {

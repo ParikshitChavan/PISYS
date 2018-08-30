@@ -67,3 +67,5 @@ router.post('/getListOfYear', (req, res) => {
         res.json({success: true, candidates: candidates});
     });
 });
+
+module.exports = router;

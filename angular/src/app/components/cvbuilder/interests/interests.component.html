@@ -1,4 +1,4 @@
-<div class="row z-depth-1">
+<div class="row z-depth-1" *ngIf="interests.hobbies || interests.motivation">
     <div class="container10p" *ngIf="isUserHasCv">
       <div class="section">
         <div class="educationDetail">
@@ -20,7 +20,7 @@
   
         <div *ngIf="canEdit"  class="fltBtnArea">
             <a (click)="editInterest()" id="addBtn" class="btn-floating btn-large waves-effect waves-light red">
-                <i class="material-icons"> {{ interests.hobbies || interests.motivation ? 'edit' : 'add' }}</i>
+                <i class="material-icons">edit</i>
             </a>
         </div>
       </div>
@@ -28,6 +28,19 @@
     </div>
   </div>
 
+  <div class="section" *ngIf="!( interests.hobbies || interests.motivation )">
+      <div>
+          <div class="col s12 center-align no-data-cls">
+              <h5> {{ canEdit ? 'Please add your interest.' : 'Candidate have not entered his interest.' }} </h5>
+            </div>
+      </div>
+
+    <div *ngIf="canEdit" class="fltBtnArea right-align">
+      <a (click)="editInterest()" class="btn-floating  btn-large  waves-effect waves-light red">
+        <i class="material-icons">add</i>
+      </a>
+    </div>
+  </div>
 
 
 <div id="modal" *ngIf="modalPurpose !== 'delete'" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"

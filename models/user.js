@@ -372,3 +372,7 @@ module.exports.getUsers = (query, callback) => {
 module.exports.addCv = function(userId, cvId, callback){
     User.findByIdAndUpdate(userId, { $set: { cv: cvId }}, callback);
 }
+
+module.exports.pullCandidates = (query, perPage, pageNumber, callback) => {
+    User.find(query, callback).sort('-name').skip((pageNumber-1)*perPage).limit(perPage);;
+}

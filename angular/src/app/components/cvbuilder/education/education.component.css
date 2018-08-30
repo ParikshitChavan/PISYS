@@ -65,6 +65,6 @@ margin-top: 10px;
   margin-bottom: 30px;
 }
 
-.text-align{
-  text-align: justify;
+.fltBtnArea{
+  position: relative;
 }
