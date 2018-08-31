@@ -391,3 +391,6 @@ module.exports.getLastYearRegistrants = function(season, callback){
 module.exports.getSkypeId = function(candidateId, callback){
     User.findById(candidateId, 'skypeId', {lean: true}, callback);
 }
+module.exports.pullCandidates = (query, perPage, pageNumber, callback) => {
+    User.find(query, callback).sort('-name').skip((pageNumber-1)*perPage).limit(perPage);;
+}

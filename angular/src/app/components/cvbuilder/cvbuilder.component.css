@@ -27,7 +27,6 @@
 
 .imgArea a {
     position:absolute;
-    bottom: -9%;
     left: 90%;
     display:none;
     transform: translateY(-50%) translateX(-50%);
@@ -37,8 +36,8 @@ H3{
     text-align: center;
 }
 
-.imgArea, .imagePlace{
-    text-align: center;
+.imagePlace{
+    max-width: 200px;
 }
 
 .personalInfo{
@@ -101,3 +100,11 @@ form{
 .red-text{
     margin-bottom: 10px;
 }
+
+.padding-container{
+    padding: 10px;
+}
+
+.fltBtnArea{
+    position: relative;
+  }

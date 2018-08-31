@@ -16,7 +16,6 @@ export class RemarksComponent implements OnInit {
   remarks : string = '';
   newRemark: string = ''
   isUserHasCv: boolean = false;
-  isRemarkValid: boolean = true;
   constructor(public cvBuilderService: CvBuilderService) { }
 
   ngOnInit() {
@@ -40,6 +39,11 @@ export class RemarksComponent implements OnInit {
 
   updateTextFields () {
     setTimeout(()=> Materialize.updateTextFields(),0);
+  }
+
+  
+  isInputValid (input: string) {
+    return (input && input.trim() && input !== undefined && input.length >= 10 && input.length < 1000  ) ? true : false;
   }
 
   saveRemarks(){

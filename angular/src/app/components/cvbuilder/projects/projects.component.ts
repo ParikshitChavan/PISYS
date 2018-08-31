@@ -140,16 +140,8 @@ export class ProjectsComponent implements OnInit {
    * @memberof ProjectComponent
    */
   setNewProject(project: Project) {
-    this.newProject =  {
-      _id: project._id,
-      title: project.title,
-      usedSkills: project.usedSkills,  
-      description: project.description,
-      startDate: project.startDate,
-      endDate: project.endDate,
-      teamSize: project.teamSize,
-      responsibilities: project.responsibilities
-    }
+    this.newProject =  Object.assign({}, project);
+    this.newProject.usedSkills =  [...project.usedSkills]
 
     // convert dates in readable format
     if (project.startDate) {
