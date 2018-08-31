@@ -33,11 +33,11 @@
     </div>
     <div class="row  z-depth-2 padding-container">
         <div *ngIf="videoProfileUrl || canEdit" class="col s12 l12 text-center imgArea">
-            <video class="responsive-video" [src]="videoProfileUrl | safe" controls #videoPlayer preload="none">
+            <video class="responsive-video" [src]="videoProfileUrl | safe" controls #videoPlayer preload="metadata">
             </video>
 
             <div *ngIf="canEdit" class="fltBtnArea">
-                <a *ngIf="canEdit" (click)="showFileUploadModal()" class="btn-floating modal-trigger btn-large waves-effect waves-light red">
+                <a *ngIf="canEdit" (click)="showFileUploadModal()" class="btn-floating btn-large waves-effect waves-light red">
                     <i class="material-icons">edit</i>
                 </a>
             </div>

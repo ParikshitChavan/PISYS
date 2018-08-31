@@ -34,7 +34,15 @@ export class CvBuilderService {
   private _certificationSubject = new BehaviorSubject<Certification[]>([new Certification()]);
   public certifications = this._certificationSubject.asObservable();
   
-  private _skillsSubject = new BehaviorSubject<{}>({});
+  private _skillsSubject = new BehaviorSubject<{
+    techSkills : [],
+    otherStrengths : '',
+    languageSkills : []
+  }>({
+    techSkills : [],
+    otherStrengths : '',
+    languageSkills : []
+  });
   public skills = this._skillsSubject.asObservable();
 
   private _personalInterestSubject = new BehaviorSubject<{}>({});

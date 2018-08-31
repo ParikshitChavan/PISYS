@@ -363,11 +363,11 @@ const uploadProfileVideo = multer({
 
 
 const getCandidates = async (req, res) => {
-    let { name, pageNumber } = req.body;
+    let { email, pageNumber } = req.body;
     let query = { access: 0 };
-    if (name) {
-        var regex = new RegExp( name, "i");
-        query.name =  regex;
+    if (email) {
+        var regex = new RegExp( email, "i");
+        query.email =  regex;
     }
     const candidates = User.pullCandidates(query, CANDIDATE_PER_PAGE, pageNumber, (err, users) => {
         if (err) res.json({ candidates: [], err: "Error" });

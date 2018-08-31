@@ -74,7 +74,7 @@
 
       <div class="input-field">
         <label for="otherStrengths">Other Strengths(Enter each skill in new line.)</label>
-        <textarea id="otherStrengths" class="materialize-textarea" name="otherStrengths" [value]="otherStrengths"
+        <textarea id="otherStrengths" class="materialize-textarea" name="otherStrengths" [(ngModel)]="otherStrengths"
           (keyup)="onInputChange($event,'otherStrengths')" required></textarea>
       </div>
       
@@ -91,7 +91,7 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button (click)='updateSkills()' class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Save' : 'Update Changes'}}
+    <button (click)='updateSkills()' class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Add' : 'Save'}}
       <i class="material-icons right">send</i>
     </button>
     <button type="button" (click)='closeModal()' class="btn red">cancel</button>
