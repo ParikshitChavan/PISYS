@@ -13,7 +13,7 @@ export class CvBuilder {
         techSkills?: [{
             name: string
         }];
-        otherSkills?: [{
+        otherStrengths?: [{
             name: string
         }];
         languageSkills?: [{

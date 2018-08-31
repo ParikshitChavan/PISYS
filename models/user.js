@@ -374,5 +374,5 @@ module.exports.addCv = function(userId, cvId, callback){
 }
 
 module.exports.pullCandidates = (query, perPage, pageNumber, callback) => {
-    User.find(query, callback).sort('-name').skip((pageNumber-1)*perPage).limit(perPage);;
+    User.find(query, 'name email', callback).sort('-email').skip((pageNumber-1)*perPage).limit(perPage);;
 }
