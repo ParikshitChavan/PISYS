@@ -35,9 +35,9 @@ export class CvBuilderService {
   public certifications = this._certificationSubject.asObservable();
   
   private _skillsSubject = new BehaviorSubject<{
-    techSkills : [],
-    otherStrengths : '',
-    languageSkills : []
+    techSkills?: any[],
+    otherStrengths?: '',
+    languageSkills?: any[]
   }>({
     techSkills : [],
     otherStrengths : '',
@@ -132,7 +132,7 @@ export class CvBuilderService {
   }
 
   setSkypeId(skypeId: string) {
-    this._skillsSubject.next(skypeId);
+    this._skypeIdSubject.next(skypeId);
   }
 
   setShowLoader(showLoader: boolean) {
