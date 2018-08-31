@@ -9,3 +9,23 @@
 .text-center{
     text-align: center;
 }
+
+.postfix{
+    color: black !important;
+    top: 7px !important;
+}
+
+.linkRow{
+    outline: none !important;
+}
+
+.linkRow:hover{
+    cursor: pointer;
+}
+
+.name{
+    text-decoration: underline !important;
+    text-transform: capitalize;
+}
+
+

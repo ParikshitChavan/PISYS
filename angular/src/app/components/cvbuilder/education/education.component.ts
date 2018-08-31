@@ -169,10 +169,24 @@ export class EducationComponent implements OnInit {
     this.isValidCurrentEducation[field] = true;
   }
 
+  setLatest(isLatest) {
+    this.newEducation.isLatest = isLatest;
+  }
+
+  isLatestEduExists(educations: Education[]){
+    return educations.some((education) => {
+      return education.isLatest === true;
+    })
+  }
+
   submitEducation () {
    if (this.isFormValid(this.newEducation)) {
      switch (this.modalPurpose) {
       case 'add':
+         let isLatest =this.isLatestEduExists(this.educations);
+         if(!isLatest){
+          this.setLatest(true);
+        }
          this.addEducation();
          break;
       case 'edit':

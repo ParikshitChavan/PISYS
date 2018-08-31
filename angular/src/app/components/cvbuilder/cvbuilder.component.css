@@ -71,6 +71,7 @@ form{
 
 .responsive-video {
     min-height: 300px;
+    width: 80% !important;
 }
 
 .loader {
