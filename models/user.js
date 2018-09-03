@@ -40,16 +40,16 @@ const userSchema = Schema({
     phNum: String,
     skypeId: String,
     DP: { key: String, url: String },                 //display picture
-    internships: [{ type: Schema.Types.ObjectId, ref: 'Internship' }],       //What internship she/he has done!
+    internships: [{ type: Schema.Types.ObjectId, ref: 'Internship' }],      //What internship she/he has done!
     company: {type: Schema.Types.ObjectId, ref: 'Company'},                 //Company that she/he is an admin for
-    inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}],
+    inchargeOf: [{type: Schema.Types.ObjectId, ref: 'Internship'}],         //Internships for which she/he is a supervisor
     likedPos : {
         batch2019: [{
             _id: false,
             cmpId: {type: Schema.Types.ObjectId, ref: 'Company'},
             opng: {type: Schema.Types.ObjectId}
         }]
-    },           //Internships for which she/he is a supervisor
+    },           
     cv: [{type: Schema.Types.ObjectId, ref: 'CvBuilder'}]
     //gender: Number,              //1.Male, 2.Female, 3.Other, 4.Do not wish to disclose
 });
@@ -378,19 +378,44 @@ module.exports.addCv = function(userId, cvId, callback){
 module.exports.getLastYearRegistrants = function(season, callback){
     User.find(
         { _id: { $gt: ObjectId.createFromTime(new Date(new Date().setFullYear(new Date().getFullYear() - 1)))}},
-        'skypeId',
-        (err, users)=>{
+        'skypeId', { lean: true })
+        .populate({
+            path:'cv',
+            select: {educations: {$elemMatch:{isLatest: true}}, 'skills.techSkills': 1}
+        }).exec((err, users)=>{
             if(err) return callback(err, null);
             users.forEach(user=>{
+                user['candidate'] = user._id;
+                delete user._id;
                 user['year'] = season;
+                delete user.cv[0].educations[0]._id;
+                user['education'] = user.cv[0].educations[0];
+                user['skills'] = user.cv[0].skills.techSkills;
+                delete user.cv;
             });
-        }
-    );
+            callback(null, users);
+        });
 }
 
-module.exports.getSkypeId = function(candidateId, callback){
-    User.findById(candidateId, 'skypeId', {lean: true}, callback);
+module.exports.getListCandidateDetails = function(candidateId, season, callback){
+    User.findOne({_id: candidateId}, '-_id skypeId', {lean: true})
+    .populate({
+        path: 'cv',
+        select: {educations: {$elemMatch:{isLatest: true}}, 'skills.techSkills': 1, '_id': 0}
+    })
+    .exec((err, user)=>{
+        if(err) return callback(err, null);
+        user['year'] = season;
+        user['candidate'] = candidateId;
+        delete user.cv[0].educations[0]._id;
+        delete user.cv[0].educations[0].isLatest;
+        user['education'] = user.cv[0].educations[0];
+        user['skills'] = user.cv[0].skills.techSkills;
+        delete user.cv;
+        callback(null, user);
+    });
 }
+
 module.exports.pullCandidates = (query, perPage, pageNumber, callback) => {
     User.find(query, 'name email', callback).sort('-email').skip((pageNumber-1)*perPage).limit(perPage);;
 }
