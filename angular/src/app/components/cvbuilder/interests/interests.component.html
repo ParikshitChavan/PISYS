@@ -4,16 +4,12 @@
         <div class="educationDetail">
           <div class="row" *ngIf="interests.hobbies">
               <div class="col s3">Hobbies :</div>
-            <div class="col s9  text-align">
-                {{ interests.hobbies }}
-            </div>
+            <div class="col s9  text-align preline">{{ interests.hobbies }}</div>
           </div>
 
           <div class="row" *ngIf="interests.motivation">
               <div class="col s3">Motivation to come to Japan :</div>
-            <div class="col s9  text-align">
-                    {{ interests.motivation }}
-            </div>
+            <div class="col s9  text-align preline">{{ interests.motivation }}</div>
           </div>
   
         </div>
@@ -73,8 +69,7 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button (click)='saveInterest()' class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Save' :
-      'Update Changes'}}
+    <button (click)='saveInterest()' class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Add' : 'Save'}}
       <i class="material-icons right">send</i>
     </button>
     <button type="button" (click)='closeModal()' class="btn red">cancel</button>

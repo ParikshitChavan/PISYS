@@ -11,8 +11,8 @@ import { toast } from 'angular2-materialize';
 })
 export class CandidatesComponent implements OnInit {
   candidates : any[] = [];
-  candidateName: string = null;
-  candidatesPerPage: number = 10;
+  candidateEmail: string = null;
+  candidatesPerPage: number = 2;
 
   pagination : {
     currentPage:  number, totalCandidates: number  } = {
@@ -41,19 +41,28 @@ export class CandidatesComponent implements OnInit {
     this.getCandidates ();
   }
 
-  getQuery (name, currentPage) {
+  getQuery (email, currentPage) {
     let query = {};
     if(currentPage){
       query = { ...query, pageNumber: currentPage };
     }
-    if(name){
-      query = { ...query, name: name };
+    if(email){
+      query = { ...query, email: email };
     }
     return query;
   }
 
+  clearSearch () {
+    this.candidateEmail = '';
+    this.getCandidates();
+  }
+
+  searchCandidates () {
+    this.getCandidates();
+  }
+
   getCandidates  () {
-    this.cvBuilderService.pullCandidates(this.getQuery(this.candidateName, this.pagination.currentPage)).then(this.onCandidatePullSuccess).catch(this.onCandidatePullFailed);
+    this.cvBuilderService.pullCandidates(this.getQuery(this.candidateEmail, this.pagination.currentPage)).then(this.onCandidatePullSuccess).catch(this.onCandidatePullFailed);
   }
 
   onCandidatePullSuccess = (response) => {

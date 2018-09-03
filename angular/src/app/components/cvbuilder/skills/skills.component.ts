@@ -119,9 +119,9 @@ export class SkillsComponent implements OnInit {
    * @memberof SkillsComponent
    */
   initPrevSkill (skills) {
-    this.techSkills = skills.techSkills;
+    this.techSkills = Array.from(skills.techSkills);
     this.otherStrengths = skills.otherStrengths;
-    this.languageSkills = skills.languageSkills;
+    this.languageSkills = Array.from(skills.languageSkills);
   }
 
   editSkills() {
@@ -148,7 +148,6 @@ export class SkillsComponent implements OnInit {
   }
 
   onInputChange(event, field) {
-    this.otherStrengths = event.target.value;
     this.skillValidObject[field] = true;
   }
 

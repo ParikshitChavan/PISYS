@@ -1,51 +1,58 @@
-
-
 <div class="row z-depth-2">
-          <div class="row">
-              <div class="col s10">
-                  <input type="text" id="name" class="materialize-textarea" [(ngModel)]="candidateName" name="name" required>
-              </div>
-              <div class="col s2">
-                  <input type="submit" (click)="getCandidates()" class="waves-effect waves-green btn btn-submit" value="Search" type="button">
-              </div>
-          </div>
+    <div class="col s12 l12">
+        <div class="row">
 
-          <div class="row" *ngIf="!candidates.length">
-              <div class="col s12 text-center">
-                <h1>Oops! No Candidates Found!</h1>
-              </div>
-          </div>
+            <div class="input-field col s10">
+                <input id="icon_prefix" type="search" class="validate" placeholder="Search by email"  [(ngModel)]="candidateEmail">
+                <i class="material-icons postfix" (click)="clearSearch()">cancel</i>
+            </div>
+            
+            <div class="input-field col s2">
+                <button type="button"  (click)="searchCandidates()" class="btn btn-submit">Search<i class="material-icons right">send</i></button>
+            </div>
+        </div>
 
-          <div class="row" *ngIf="candidates.length">
-              <div class="col s12">
-                  <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th class="col-md-3">
-                            Name
+        <div class="row" *ngIf="!candidates.length">
+            <div class="col s12 text-center">
+              <h1>Oops! No Candidates Found!</h1>
+            </div>
+        </div>
+
+        <div class="row" *ngIf="candidates.length">
+            <div class="col s12">
+                <table class="table striped table-bordered responsive-table highlight">
+                    <thead>
+                      <tr>
+                        <th class="col-md-3">
+                          Name
+                        </th>
+                        <th class="col-md-3">
+                            Email
                           </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let candidate of candidates" [routerLink]="['/cvbuilder/' + candidate._id ]" class="linkRow">
+                        <td class="name">
+                          <a i18n>
+                            {{ candidate.name}}
+                          </a>
+                        </td>
+                        <td><a>{{ candidate.email}}</a></td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let candidate of candidates">
-                          <td>
-                            <a [routerLink]="['/cvbuilder/' + candidate._id ]" i18n>
-                              {{ candidate.name}}
-                            </a>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-              </div>
-          </div>
+                    </tbody>
+                  </table>
+            </div>
+        </div>
 
-          <div class="row" *ngIf="candidates.length >= 10">
-              <div class="col s12">
-                  <ul class="pagination">
-                      <li [ngClass]="{'disabled': currentPage === 1 }" class="waves-effect"><i class="material-icons">chevron_left</i></li>
-                        <li class="active">1</li>
-                      <li  [ngClass]="{'disabled': disableNext() }"  class="waves-effect"><i class="material-icons">chevron_right</i></li>
-                    </ul>
-              </div>
-          </div>
+        <div class="row" *ngIf="candidates.length >= 10">
+            <div class="col s12">
+                <ul class="pagination">
+                    <li [ngClass]="{'disabled': currentPage === 1 }" class="waves-effect"><i class="material-icons">chevron_left</i></li>
+                      <li class="active">1</li>
+                    <li  [ngClass]="{'disabled': disableNext() }"  class="waves-effect"><i class="material-icons">chevron_right</i></li>
+                  </ul>
+            </div>
+        </div>
 </div>
+  </div>
