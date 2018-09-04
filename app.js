@@ -14,6 +14,7 @@ const listCandidate = require('./routes/listCandidate');
 const migrate = require('./routes/migrate');
 
 //connect to database and checking connection
+mongoose.set('useFindAndModify', false);
 mongoose.connect(config.database.uri, config.database.options);
 mongoose.connection.on('connected', ()=>{
     console.log("Connection to database successful");
@@ -25,7 +26,7 @@ mongoose.connection.on('error', (error)=>{
 //starting up server
 const app = express();
 const port = process.env.PORT || 3000;
-app.listen(port,()=>{
+app.listen(port, ()=>{
     console.log("Server started on port "+ port);
 });
 
@@ -47,7 +48,7 @@ app.use('/company', company);
 app.use('/internship', internship);
 app.use('/cv', cvbuilder);
 app.use('/listCandidate', listCandidate);
-app.use('/migrate',migrate)
+app.use('/migrate', migrate);
 
 //invalid route fallback to index.js for angular path based routing strategy 
 app.get('*', function(req, res){

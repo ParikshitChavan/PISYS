@@ -68,9 +68,9 @@ module.exports.createCv = (userId, callback) => {
 }
 
 module.exports.updateAllEducations = (id, callback) => {
-    cvBuilder.update({ _id: id, "educations.isLatest" : true }, 
+    cvBuilder.updateMany({ _id: id, "educations.isLatest" : true }, 
     { $set: { "educations.$.isLatest" : false } },
-    { "multi" : true }, callback);
+    callback);
 }
 
 // add records
@@ -158,16 +158,4 @@ module.exports.updateProfileVideo = (id, fileDetails, callback) => {
     cvBuilder.findOneAndUpdate( { _id: id },
         { $set: { "profileVideo" : fileDetails } }, { new: true}, 
         callback);
-}
-
-module.exports.getDetailsForList = (candi, callback) => { //isArray on first argument
-    if(Array.isArray(candi)){
-
-    }
-    else{
-        cvBuilder.findById(candi._id, 'education skills.techSkills', { lean: true }, (err, cv)=>{
-            if(err) return callback(err, null);
-            
-        })
-    }
 }

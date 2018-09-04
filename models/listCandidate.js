@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const listCandidateSchema = Schema({
-    year: Number,
+    year: { type:Number, index: true },
     candidate: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     education: {
         schoolName: String,

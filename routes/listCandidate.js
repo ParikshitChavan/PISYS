@@ -1,14 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
 
 //models
 const User = require('../models/user');
 const CvBuilder = require('../models/cvbuilder');
 const ListCandidate = require('../models/listCandidate');
-
-//config
-const config = require('../config/cfg');
 
 const validateWLMember = (req, res, next) => {
     let token = req.headers['x-access-token'];
@@ -21,29 +17,23 @@ const validateWLMember = (req, res, next) => {
 
 router.post('/createSeason', validateWLMember, (req, res) => {
     let seasonYr = req.body.year;
-    User.getLastYearRegistrants(seasonYr, (err, candidates) => {              //{year, _id, skypeId}
+    User.getLastYearRegistrants(seasonYr, (err, entries) => {              //{year, _id, skypeId}
         if(err) return res.json({success: false, error: err});
-        CvBuilder.getDetailsForList(candidates, (err, entries) => {
+        ListCandidate.addSeason(entries, (err) => {
             if(err) return res.json({success: false, error: err});
-            ListCandidate.addSeason(entries, (err) => {
-                if(err) return res.json({success: false, error: err});
-                res.json({success: true, message: 'season created successfully'});
-            });
+            res.json({success: true, message: 'season created successfully'});
         });
     });
 });
 
 router.post('/addCandidate', validateWLMember, (req, res) => {
-    const userId = req.body.listCandidate.candidate._id;
-    User.getSkypeId(userId, (err, user) => {
+    const userId = req.body.candidateId;
+    const year = req.body.year; 
+    User.getListCandidateDetails(userId, year, (err, listEntry) => {
         if(err) return res.json({success: false, error: err});
-        user['year'] = req.body.year;
-        CvBuilder.getDetailsForList(user, (err, listEntry)=>{
+        ListCandidate.addCandidate(listEntry, (err) => {
             if(err) return res.json({success: false, error: err});
-            ListCandidate.addCandidate(listEntry, (err) => {
-                if(err) return res.json({success: false, error: err});
-                res.json({success: true, message: 'candidate added successfully'});
-            });
+            res.json({success: true, message: 'candidate added successfully'});
         });
     });
 });
@@ -64,7 +54,6 @@ router.post('/updateCandidate', validateWLMember, (req, res)=>{
 
 router.post('/getListOfYear', validateWLMember, (req, res) => {
     let seasonYr = req.body.year;
-    let data = [];
     ListCandidate.getCandidatesOfYear(seasonYr, (err, candidates) =>{
         if(err) return res.json({success: false, error: err});
         res.json({success: true, candidates: candidates});
