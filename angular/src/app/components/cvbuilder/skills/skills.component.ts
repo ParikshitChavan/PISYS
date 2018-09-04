@@ -55,7 +55,7 @@ export class SkillsComponent implements OnInit {
    */
   ngOnInit() {
     this.cvBuilderService.isUserHasCv.subscribe(this.setHasCv)
-    this.cvBuilderService.skills.subscribe(this.setSkills);
+    this.cvBuilderService.skills.subscribe(this.onSkillsChange);
     this.cvBuilderService.accessControl.subscribe(canEdit => this.canEdit = canEdit);
   }
 
@@ -64,6 +64,20 @@ export class SkillsComponent implements OnInit {
     this.isUserHasCv = hasCv;
   }
 
+  formatSkillsForChips(skills) {
+    let skillsObject = JSON.parse(JSON.stringify(skills));
+    skillsObject.techSkills = skillsObject.techSkills.map(techSkill => {
+      return { tag: techSkill }
+    });
+    skillsObject.languageSkills = skillsObject.languageSkills.map(languageSkills => {
+      return { tag: languageSkills }
+    });
+    return skillsObject;
+  }
+
+  onSkillsChange = skills => {
+   this.setSkills(this.formatSkillsForChips(skills))
+  }
   /**
    * set skills return by subscriber
    * @memberof SkillsComponent
@@ -105,11 +119,15 @@ export class SkillsComponent implements OnInit {
     this.languageSkills= this.languageSkills.filter(item => item.tag != chip.tag);
   }
 
+  convertSkills = (skills) =>{
+    return skills.map(skill => skill.tag);
+  }
+
   getEditedSkill() {
    return {
-     techSkills : this.techSkills,
+     techSkills : this.convertSkills(this.techSkills),
      otherStrengths: this.otherStrengths,
-     languageSkills: this.languageSkills
+     languageSkills: this.convertSkills(this.languageSkills)
    }
   }
 

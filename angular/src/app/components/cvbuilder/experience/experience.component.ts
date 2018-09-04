@@ -62,7 +62,7 @@ export class ExperienceComponent implements OnInit {
    */
   ngOnInit() {
     this.cvBuilderService.isUserHasCv.subscribe(this.setHasCv)
-    this.cvBuilderService.experiences.subscribe(this.setExperiences);
+    this.cvBuilderService.experiences.subscribe(this.onExperienceChange);
     this.cvBuilderService.accessControl.subscribe(canEdit => this.canEdit = canEdit);
     this.setNewExperience(this.getDummyExperience());
     this.setValidationObject();
@@ -96,6 +96,28 @@ export class ExperienceComponent implements OnInit {
   setHasCv = hasCv => {
     this.isUserHasCv = hasCv;
   }
+ 
+  /**
+   * convert skills array, from string of array to object of array.
+   * @param {*} experiences
+   * @returns
+   * @memberof ExperienceComponent
+   */
+  formatSkillsForChips (experiences){
+    let experiencesList = JSON.parse(JSON.stringify(experiences));
+    experiencesList.map((experience)=>{
+      experience.usedSkills = experience.usedSkills.map( skill => { 
+        return { tag: skill} 
+      });
+      return experience;
+    });
+    return experiencesList;
+  }
+
+  onExperienceChange = experiences => {
+    experiences.length ? this.setExperiences(this.formatSkillsForChips(experiences)) : this.setExperiences([]);
+  }
+
   /**
    * set experience return by subscriber
    * @memberof ExperienceComponent
@@ -298,6 +320,9 @@ export class ExperienceComponent implements OnInit {
     return formValid;
   }
 
+  convertSkills = (skills) =>{
+    return skills.map(skill => skill.tag);
+  }
 
   /**
    *
@@ -306,12 +331,14 @@ export class ExperienceComponent implements OnInit {
    */
   submitExperience () {
     if (this.isFormValid(this.newExperience)) {
+      let experience = Object.assign({}, this.newExperience);
+      experience.usedSkills = this.convertSkills(experience.usedSkills);
       switch (this.modalPurpose) {
        case 'add':
-          this.addExperience();
+          this.addExperience(experience);
           break;
        case 'edit':
-          this.updateExperience() 
+          this.updateExperience(experience) 
           break;
       }
      }
@@ -322,16 +349,16 @@ export class ExperienceComponent implements OnInit {
    *
    * @memberof ExperienceComponent
    */
-  addExperience() {
-    this.cvBuilderService.addExperience(this.newExperience).then(this.onExperienceSubmitSuccess).catch(this.onExperienceSubmitFailed);
+  addExperience(newExperience) {
+    this.cvBuilderService.addExperience(newExperience).then(this.onExperienceSubmitSuccess).catch(this.onExperienceSubmitFailed);
   }
 
   /**
    *
    * @memberof ExperienceComponent
    */
-  updateExperience() {
-    this.cvBuilderService.updateExperience(this.newExperience).then(this.onExperienceSubmitSuccess).catch(this.onExperienceSubmitFailed);
+  updateExperience(newExperience) {
+    this.cvBuilderService.updateExperience(newExperience).then(this.onExperienceSubmitSuccess).catch(this.onExperienceSubmitFailed);
   }
 
   /**

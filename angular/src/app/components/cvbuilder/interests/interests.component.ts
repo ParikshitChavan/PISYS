@@ -65,21 +65,21 @@ export class InterestsComponent implements OnInit {
     this.modalActions.emit({ action: "modal", params: ['close'] });
   }
 
-  isInputValid (input: string) {
-    return (input && input.trim() && input !== undefined && input.length >= 100 && input.length < 1000  ) ? true : false;
+  isInputValid (input: string, minLength, maxLength) {
+    return (input && input.trim() && input !== undefined && input.length >= minLength && input.length < maxLength  ) ? true : false;
   }
 
   isFormValid (interests) {
     let formValid = true;
 
-    if (!this.isInputValid(interests.hobbies) ) {
+    if (!this.isInputValid(interests.hobbies, 5, 1000) ) {
       this.interestsValidObject.hobbies = false;
       formValid = false;
     } else {
       this.interestsValidObject.hobbies = true;
     }
 
-    if (!this.isInputValid(interests.motivation)) {
+    if (!this.isInputValid(interests.motivation, 100, 1000)) {
       this.interestsValidObject.motivation = false;
       formValid = false;
     } else {

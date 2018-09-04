@@ -52,7 +52,7 @@ export class ProjectsComponent implements OnInit {
    */
   ngOnInit() {
     this.cvBuilderService.isUserHasCv.subscribe(this.setHasCv)
-    this.cvBuilderService.projects.subscribe(this.setProjects);
+    this.cvBuilderService.projects.subscribe(this.onProjectsChange);
     this.cvBuilderService.accessControl.subscribe(canEdit => this.canEdit = canEdit);
     this.setNewProject(this.getDummyProject());
     this.setValidationObject();
@@ -63,6 +63,26 @@ export class ProjectsComponent implements OnInit {
   }
 
   /**
+   *  aconvert skills array, from string of array to object of arry.
+   * @param {*} projects
+   * @returns
+   * @memberof ProjectsComponent
+   */
+  formatSkillsForChips (projects){
+    let projectsList = JSON.parse(JSON.stringify(projects));
+    projectsList.map((project)=>{
+      project.usedSkills = project.usedSkills.map( skill => { 
+        return { tag: skill} 
+      });
+      return project;
+    });
+    return projectsList;
+  }
+
+  onProjectsChange = projects => {
+    projects.length ? this.setProjects(this.formatSkillsForChips(projects)) : this.setProjects([]);
+  }
+  /**
    *
    * @memberof ProjectComponent
    */
@@ -70,9 +90,6 @@ export class ProjectsComponent implements OnInit {
     this.projects = project;
   }
 
-  typeOf(variable) {
-    return typeof(variable);
-  }
   /**
    *
    *
@@ -281,6 +298,9 @@ export class ProjectsComponent implements OnInit {
     return formValid;
   }
 
+  convertSkills = (skills) =>{
+    return skills.map(skill => skill.tag);
+  }
 
   /**
    *
@@ -289,12 +309,14 @@ export class ProjectsComponent implements OnInit {
    */
   submitProject () {
     if (this.isFormValid(this.newProject)) {
+      let project = Object.assign({}, this.newProject);
+      project.usedSkills = this.convertSkills(project.usedSkills);
       switch (this.modalPurpose) {
        case 'add':
-          this.addProject();
+          this.addProject(project);
           break;
        case 'edit':
-          this.updateProject() 
+          this.updateProject(project) 
           break;
       }
      }
@@ -305,16 +327,16 @@ export class ProjectsComponent implements OnInit {
    *
    * @memberof ProjectComponent
    */
-  addProject() {
-    this.cvBuilderService.addProject(this.newProject).then(this.onProjectSubmitSuccess).catch(this.onProjectSubmitFailed);
+  addProject(newProject) {
+    this.cvBuilderService.addProject(newProject).then(this.onProjectSubmitSuccess).catch(this.onProjectSubmitFailed);
   }
 
   /**
    *
    * @memberof ProjectComponent
    */
-  updateProject() {
-    this.cvBuilderService.updateProject(this.newProject).then(this.onProjectSubmitSuccess).catch(this.onProjectSubmitFailed);
+  updateProject(newProject) {
+    this.cvBuilderService.updateProject(newProject).then(this.onProjectSubmitSuccess).catch(this.onProjectSubmitFailed);
   }
 
   /**

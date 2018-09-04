@@ -26,7 +26,7 @@ const S3_BUCKET_OBJECT = {
     keyPrefix: 'profileVideos'
 }
 
-const CANDIDATE_PER_PAGE = 10;
+const CANDIDATE_PER_PAGE = 100;
 
 // superadmin is willings member whose access code is = 2.
 const isSuperAdminOrOwner = function (decoded, cvOwnerId) {
@@ -369,12 +369,16 @@ const getCandidates = async (req, res) => {
         var regex = new RegExp( email, "i");
         query.email =  regex;
     }
-    const candidates = User.pullCandidates(query, CANDIDATE_PER_PAGE, pageNumber, (err, users) => {
+    User.pullCandidates(query, CANDIDATE_PER_PAGE, pageNumber, (err, users) => {
         if (err) res.json({ candidates: [], err: "Error" });
-          User.countDocuments(query, function (err, total) {
-            if (err) res.json({ candidates: [], err: "Error" });
-            res.json({ success: true, candidates: users, count: total });
-          });
+         if(pageNumber === 1){
+            User.countDocuments(query, function (err, total) {
+                if (err) res.json({ candidates: [], err: "Error" });
+                res.json({ success: true, candidates: users, count: total });
+              });
+         }else{
+            res.json({ success: true, candidates: users});
+         }
         })
 }
 

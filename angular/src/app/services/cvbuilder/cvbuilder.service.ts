@@ -22,13 +22,13 @@ export class CvBuilderService {
   private _loadingSubject = new BehaviorSubject<boolean>(false);
   public showLoader = this._loadingSubject.asObservable();
 
-  private _educationsSubject = new BehaviorSubject<Education[]>([new Education()]);
+  private _educationsSubject = new BehaviorSubject<Education[]>([]);
   public educations = this._educationsSubject.asObservable();
   
-  private _experienceSubject = new BehaviorSubject<Experience[]>([new Experience()]);
+  private _experienceSubject = new BehaviorSubject<Experience[]>([]);
   public experiences = this._experienceSubject.asObservable();
 
-  private _projectsSubject = new BehaviorSubject<Project[]>([new Project()]);
+  private _projectsSubject = new BehaviorSubject<Project[]>([]);
   public projects = this._projectsSubject.asObservable();
 
   private _certificationSubject = new BehaviorSubject<Certification[]>([new Certification()]);

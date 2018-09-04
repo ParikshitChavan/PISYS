@@ -31,7 +31,7 @@
         </div>
 
     </div>
-    <div class="row  z-depth-2 padding-container">
+    <div  *ngIf="canEdit" class="row  z-depth-2 padding-container">
         <div *ngIf="videoProfileUrl || canEdit" class="col s12 l12 text-center imgArea">
             <video class="responsive-video" [src]="videoProfileUrl | safe" controls #videoPlayer preload="metadata">
             </video>
@@ -41,8 +41,6 @@
                     <i class="material-icons">edit</i>
                 </a>
             </div>
-
-
         </div>
     </div>
 </div>
