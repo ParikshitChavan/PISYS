@@ -32,6 +32,7 @@ export class CvBuilderComponent implements OnInit {
 
   modalActions = new EventEmitter<string|MaterializeAction>();
   preLoadModalActions = new EventEmitter<string|MaterializeAction>();
+  confirmProfileChange = new EventEmitter<string|MaterializeAction>();
 
 
   public _actionProgress: string = 'action'; // form to add new entry into one of the subsection.  action to show a message like failed, invalid.
@@ -48,7 +49,9 @@ export class CvBuilderComponent implements OnInit {
 
   videoProfilePreviewUrl = '';
   disabledUpload: boolean = true;
-  
+
+  isProfilePublished : boolean = false;
+  profileChangeMessage: string = '';
   fileStatusMsg = ['',
    'Please select a file.', 
    'Only mp4 files are allowed.', 
@@ -69,9 +72,17 @@ export class CvBuilderComponent implements OnInit {
       this.setUserAccess(this.authService.user.access)
       this.cvBuilderService.profileVideo.subscribe(this.setUrl);
       this.cvBuilderService.personalDetails.subscribe(this.setPersonalDetails);
-      this.cvBuilderService.accessControl.subscribe(canEdit => this.canEdit = canEdit);
-
+      this.cvBuilderService.accessControl.subscribe(this.setAccesssControl);
+      this.cvBuilderService.isProfilePublished.subscribe(this.setProfilePublished);
      })
+  }
+
+  setProfilePublished = (isProfilePublished) => {
+    this.isProfilePublished = isProfilePublished;
+  }
+
+  setAccesssControl = (canEdit) => {
+    this.canEdit = canEdit
   }
 
   setPersonalDetails = (personalDetails) => {
@@ -162,8 +173,12 @@ export class CvBuilderComponent implements OnInit {
   }
 
   postUploadFile = (msg) => {
-    this.closeModal();
     this.uploadedFile = null;
+    this.postApiCall(msg);
+  }
+
+  postApiCall(msg){
+    this.closeModal();
     toast(msg, 2000);
   }
 
@@ -199,6 +214,36 @@ export class CvBuilderComponent implements OnInit {
   closeModal() {
     this.showFileUpload = false;
     this.preLoadModalActions.emit({action:"modal",params:['close']});
+  }
+
+  showPofileChange() {
+    this.confirmProfileChange.emit({action:"modal",params:['open']});
+  }
+
+  hidePofileChange() {
+    this.confirmProfileChange.emit({action:"modal",params:['close']});
+  }
+
+  onProfileStatusChange () {
+    this.profileChangeMessage = this.isProfilePublished ? 'Once you publish the profile, recruiter can able to see your profile.' : 'Do you wish to unpublish your profile, recruiters will not be able to see your profile.'
+    this.showPofileChange();
+  }
+
+  cancelProfileChange(){
+    this.isProfilePublished = !this.isProfilePublished;
+    this.hidePofileChange();
+  }
+
+  updatePublishStatue () {
+      this.cvBuilderService.updateProfileStatus(this.isProfilePublished).then(this.onPublishChangeSuccess).catch(this.onPublishchangeFail);
+  }
+
+  onPublishChangeSuccess = (resp) => {
+    this.postApiCall('Profile status changed successfully.')
+  }
+
+  onPublishchangeFail = () => {
+    this.postApiCall('Failed to update profile the status');
   }
 
 }

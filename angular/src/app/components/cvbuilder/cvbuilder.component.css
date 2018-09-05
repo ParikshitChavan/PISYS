@@ -109,3 +109,10 @@ form{
 .fltBtnArea{
     position: relative;
   }
+.chkBxDiv{
+    margin-bottom: 30px;
+    text-align: right;
+  }
+  .chkBxDiv label {
+      color: black !important;
+  }

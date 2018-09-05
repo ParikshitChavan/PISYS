@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 
 const cvBuilderSchema = Schema({
     user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+    isProfilePublished: Boolean,
     profileVideo: {
         key : String,
         location: String,
@@ -158,4 +159,8 @@ module.exports.updateProfileVideo = (id, fileDetails, callback) => {
     cvBuilder.findOneAndUpdate( { _id: id },
         { $set: { "profileVideo" : fileDetails } }, { new: true}, 
         callback);
+}
+
+module.exports.updatePublish = function(id, publishProfile, callback){
+    cvBuilder.findByIdAndUpdate({ _id: id }, { $set: { "isProfilePublished": publishProfile }}, callback);
 }

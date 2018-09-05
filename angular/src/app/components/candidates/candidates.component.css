@@ -80,3 +80,7 @@
 .prefix{
     top: 7px !important;
 }
+
+.tablecontainer{
+    overflow: auto;
+}
