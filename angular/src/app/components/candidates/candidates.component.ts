@@ -11,14 +11,21 @@ import { toast } from 'angular2-materialize';
 })
 export class CandidatesComponent implements OnInit {
   candidates : any[] = [];
-  candidateEmail: string = null;
-  candidatesPerPage: number = 2;
-
-  pagination : {
-    currentPage:  number, totalCandidates: number  } = {
-      currentPage:  1, totalCandidates: 0
-    }
-
+  candidateEmail: string = '';
+  candidatesPerPage: number = 10;
+  
+  private bufferedCandidates: any[] = [];
+ 
+    // pager object
+    pager: any = {
+      currentPage  : 1
+    };
+    totalCandidatesCount : 0;
+    // paged candidates
+    pagedCandidates: any[] = [];
+    nextPage = 1;
+    bufferedPage = 0;
+    loading = true;
   constructor(public cvBuilderService:CvBuilderService,
     private route:ActivatedRoute) { }
 
@@ -29,50 +36,118 @@ export class CandidatesComponent implements OnInit {
      });
   }
 
-  setCandidates (candidates) {
-    this.candidates = candidates;
+  setCandidates = (candidates) => {
+    this.bufferedCandidates.push(...candidates);
+    this.setPage(this.nextPage);
   }
 
-  disableNext(){
-    return !this.pagination.totalCandidates || ( this.pagination.totalCandidates/this.candidatesPerPage === this.pagination.currentPage )
-  }
-
-  nextPage () {
-    this.getCandidates ();
-  }
-
-  getQuery (email, currentPage) {
+  getQuery (email: string, currentPage: number) {
     let query = {};
     if(currentPage){
-      query = { ...query, pageNumber: currentPage };
+      query = { ...query, pageNumber: currentPage};
     }
-    if(email){
+    if(email && email.trim().length){
       query = { ...query, email: email };
     }
     return query;
   }
 
   clearSearch () {
+    this.resetPagination();
     this.candidateEmail = '';
     this.getCandidates();
   }
 
+  resetPagination () {
+    this.pager.currentPage  = 1
+    this.totalCandidatesCount = 0;
+    this.pagedCandidates = [];
+    this.nextPage = 1;
+    this.bufferedPage = 0;
+    this.bufferedCandidates = [];
+  }
+
   searchCandidates () {
+    this.resetPagination();
     this.getCandidates();
   }
 
   getCandidates  () {
-    this.cvBuilderService.pullCandidates(this.getQuery(this.candidateEmail, this.pagination.currentPage)).then(this.onCandidatePullSuccess).catch(this.onCandidatePullFailed);
+    this.loading = true;
+    this.cvBuilderService.pullCandidates(this.getQuery(this.candidateEmail, ++this.bufferedPage )).then(this.onCandidatePullSuccess).catch(this.onCandidatePullFailed);
   }
 
   onCandidatePullSuccess = (response) => {
     if(response.success){
+      if(response.count){
+         this.totalCandidatesCount = response.count;
+      }
       this.cvBuilderService.setCandidateList(response.candidates);
     }
+    this.loading = false;
   }
 
   onCandidatePullFailed  = (err) => {
+    this.loading = false;
     toast(err, 2000);
   }
+
+
+  setPage(page: number) {
+    if(this.pager.totalPages && page > this.pager.totalPages){
+      return
+    }
+    if (this.bufferedCandidates.length > 0 && page > ( Math.ceil(this.bufferedCandidates.length / 10) )) {
+      this.loading = true;
+      this.getCandidates();
+      this.nextPage = page; 
+    }else{
+      // get current page of candidates
+      this.pager = this.getPager(this.totalCandidatesCount, page);
+      this.pagedCandidates = this.bufferedCandidates.slice(this.pager.startIndex, this.pager.endIndex + 1);
+    }
+  }
+
+  getPager(totalCandidates: number, currentPage: number = 1, pageSize: number = 10) {
+    // calculate total pages
+    let totalPages = Math.ceil(totalCandidates / pageSize);
+
+    // ensure current page isn't out of range
+    if (currentPage < 1) {
+      currentPage = 1;
+    } else if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+
+    let startPage: number, endPage: number;
+    if (totalPages <= 10) {
+      // less than 10 total pages so show all
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      // more than 10 total pages so calculate start and end pages to show current line at center
+      if (currentPage <= 6) {
+        startPage = 1;
+        endPage = 10;
+      } else if (currentPage + 4 >= totalPages) {
+        startPage = totalPages - 9;
+        endPage = totalPages;
+      } else {
+        startPage = currentPage - 5;
+        endPage = currentPage + 4;
+      }
+    }
+
+    // calculate start and end item indexes
+    let startIndex = (currentPage - 1) * pageSize;
+    let endIndex = Math.min(startIndex + pageSize - 1, totalCandidates - 1);
+
+    // create an array of pages to ng-repeat in the pager control
+    let pages = Array.from(Array((endPage + 1) - startPage).keys()).map(i => startPage + i);
+
+    // return object with all pager properties required by the view
+    return {  totalCandidates, currentPage, pageSize, totalPages, startPage, endPage, startIndex, endIndex, pages  };
+  }
+
 
 }

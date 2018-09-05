@@ -28,4 +28,55 @@
     text-transform: capitalize;
 }
 
+.search-form{
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+    align-items: baseline;
+}
 
+.search-form .input-field{
+    flex-grow: 1;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; 
+    border-top: 16px solid #3498db; 
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    margin: auto;
+    animation: spin 2s linear infinite;
+    display: block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+.activeModal {
+    display: block !important;
+}
+
+.loaderParent {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 0.5;
+    background-color: #fafafa;
+    padding: 15rem 10rem;
+}
+
+.loading-msg{
+    text-align: center;
+    color: black;
+}
+
+.prefix{
+    top: 7px !important;
+}
