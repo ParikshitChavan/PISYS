@@ -42,6 +42,15 @@ const isSuperAdmin = (req, res, next) =>{
     req.decoded.access == 2 ? next() : util.sendError(res, 'Not authorised for this operation');
 }
 
+const updatePublish = (req, res) => {
+    const publishProfile = req.body.publishProfile;
+    cvBuilder.updatePublish(req.tempStore.cv, publishProfile, (err, cvdetails) => {
+        if (err) return util.sendError(res, err);
+        if (!cvdetails) return util.sendError(res, 'Can not changed the profile status this time.');
+        res.json({ success: true, message: 'Your profile status has been changed successfully' });
+    })
+}
+
 const getCv = (req, res, next) => {
     var cvUserId = req.body.userId;
     if (!cvUserId) {    cvUserId = req.params.userId;   }
@@ -67,7 +76,7 @@ const getCvById = async (req, res, next) => {
 const getSignedUrl = async (req, res, next) => {
     const cvdetails = req.tempStore.cvdetails;
     if (cvdetails.profileVideo.key) {
-        if (moment() > cvdetails.profileVideo.signExpiry) {
+        if ( moment().toISOString() > moment(cvdetails.profileVideo.signExpiry).toISOString() ) {
             try {
                 var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvdetails.profileVideo.key, Expires:  60 * 60 * 24  };
                 const newSignedUrl = await s3.getSignedUrl('getObject', params);
@@ -76,11 +85,11 @@ const getSignedUrl = async (req, res, next) => {
                     key: cvdetails.profileVideo.key,
                     location: newSignedUrl, 
                     signedOn: moment(), 
-                    signExpiry: expiryTime
+                    signExpiry: expiryTime.toISOString()
                 }, (err, result) => {
                     if (err)
                         return util.sendError('Error saving video details');
-                    req.tempStore.profileVideo = newSignedUrl;
+                    req.tempStore.profileVideo = result.profileVideo.location;
                     next();
                 });
             } catch (error) {
@@ -323,7 +332,7 @@ const updateProfileVideo = async (req, res) => {
             key: req.file.key,
             location: newSignedUrl,
             signedOn: new Date(),
-            signExpiry: expiryTime
+            signExpiry: expiryTime.toISOString()
         }, (err, result) => {
             if (err) return util.sendError(res, 'Failed to save video details');
             let profileVideo = result.profileVideo.toObject();
@@ -405,6 +414,7 @@ router.put('/updateSkills', hasPermission, getCv, updateSkills)
 router.put('/updateInterests', hasPermission, getCv, updateInterests)
 router.put('/updateRemarks', isSuperAdmin, getCv, updateRemarks)
 
+router.put('/updatePublish', hasPermission, getCv, updatePublish)
 router.post('/uploadVideo/:userId', getCv, getCvById, checkProfileVideo, uploadProfileVideo, updateProfileVideo)
 
 router.post('/pullCandidates', getCandidates)

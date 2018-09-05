@@ -1,4 +1,8 @@
 
+  <div *ngIf="canEdit"  class="chkBxDiv col s12 l12">
+        <input id="isProfilePublished" type="checkbox" name='isProfilePublished' (change)="onProfileStatusChange()" [(ngModel)]="isProfilePublished">
+        <label for="isProfilePublished">Publish your profile</label>
+    </div>
 <div class="">
     <div  *ngIf="canEdit"  class="row  z-depth-2 padding-container">
         <div class="col s12 l6">
@@ -110,4 +114,14 @@
 <div class="modal modal-fixed-footer" [ngClass]="{'loaderModal': showFileUpload }"  materialize="modal" [materializeActions]="preLoadModalActions"  [materializeParams]="[{dismissible: false}]">
     <div class="loader"></div>
     <div>Please wait, video is being uploaded!</div>
+</div>
+
+<div class="modal middle-sheet" materialize="modal" [materializeActions]="confirmProfileChange" [materializeParams]="[{dismissible: false}]">
+    <div class="modal-content">
+        <p> {{  profileChangeMessage }} </p>
+    </div>
+    <div class="modal-footer">
+        <button class="waves-effect waves-green btn-flat" (click)="cancelProfileChange()">Close</button>
+        <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="updatePublishStatue()">Agree</button>
+    </div>
 </div>
