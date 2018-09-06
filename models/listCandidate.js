@@ -65,6 +65,10 @@ module.exports.updateCandidate = function(candidate, callback){
         callback);
 }
 
+module.exports.getSeasons = function(callback){
+    ListCandidate.distinct(year, callback);
+}
+
 /*Function if update is made in the cvBuilder*/
 module.exports.updateEducation = function(candidateId, education, callback){
     ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { education: education }}, callback);

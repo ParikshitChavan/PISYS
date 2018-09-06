@@ -15,6 +15,13 @@ const validateWLMember = (req, res, next) => {
     });
 }
 
+router.get('/getSeasons', validateWLMember, (req, res) => {
+    ListCandidate.getSeasons((err, seasons) => {
+        if(err) return res.json({success: false, error: err});
+        res.json({success: true, seasons: seasons});
+    });
+});
+
 router.post('/createSeason', validateWLMember, (req, res) => {
     let seasonYr = req.body.year;
     User.getLastYearRegistrants(seasonYr, (err, entries) => {              //{year, _id, skypeId}

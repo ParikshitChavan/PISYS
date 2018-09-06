@@ -15,6 +15,9 @@ const migrate = require('./routes/migrate');
 
 //connect to database and checking connection
 mongoose.set('useFindAndModify', false);
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useCreateIndex', true);
+
 mongoose.connect(config.database.uri, config.database.options);
 mongoose.connection.on('connected', ()=>{
     console.log("Connection to database successful");

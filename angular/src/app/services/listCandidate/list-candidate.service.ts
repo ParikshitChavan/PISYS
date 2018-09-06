@@ -16,6 +16,13 @@ export class ListCandidateService {
     this.authToken = localStorage.getItem('authToken');
   }
 
+  getSeasons(){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('x-access-token', this.authToken);
+    return this.http.get(this.apiUrl + 'listCandidate/getSeasons', {headers: headers}).map(res => res.json());
+  }
+
   getCandidates(yr){
     const data = {
       season: yr
