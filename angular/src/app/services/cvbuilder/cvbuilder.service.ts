@@ -74,6 +74,9 @@ export class CvBuilderService {
   private _candidateListSubject = new BehaviorSubject<any[]>([]);
   public candidateList = this._candidateListSubject.asObservable();
 
+  private _isProfilePublished = new BehaviorSubject<boolean>(false);
+  public isProfilePublished = this._isProfilePublished.asObservable();
+
   constructor(
     private httpService:CoreHttpService,
     private authService: AuthService
@@ -155,6 +158,10 @@ export class CvBuilderService {
     this._candidateListSubject.next(candidates);
   }
 
+  setIsProfilePublished(_isProfilePublished) {
+    this._isProfilePublished.next(_isProfilePublished);
+  }
+
   applyData = (response) => {
     const data = response.cvdetails;
 
@@ -203,6 +210,10 @@ export class CvBuilderService {
 
     if(data.remarks){
       this.setRemarks(data.remarks);
+    }
+
+    if(data.isProfilePublished){
+      this.setIsProfilePublished(data.isProfilePublished);
     }
 
     if(response.profileVideo){
@@ -307,6 +318,11 @@ export class CvBuilderService {
 
   pullCandidates (searchQuery) {
     return this.httpService.post('cv/pullCandidates', searchQuery);
+  }
+
+  updateProfileStatus (profileStatus) {
+    const data = { publishProfile : profileStatus, userId :  this.getUserId() }
+    return this.httpService.put('cv/updatePublish', data);
   }
 
 }

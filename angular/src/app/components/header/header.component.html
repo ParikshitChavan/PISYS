@@ -22,7 +22,7 @@
         <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" i18n>Internships</a></li>
         <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" i18n>Company</a></li>
         <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" i18n>Companies</a></li>
-        <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
+        <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
 
         <li *ngIf="authService.isLoggedIn()"><a class="dropdown-button" data-activates="dropdown1"
           materialize ="dropdown" [materializeParams]="dropdownParams" [materializeActions]="dropdownActions">
@@ -37,7 +37,7 @@
           <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" >Internships</a></li>
           <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" >Company</a></li>
           <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" >Companies</a></li>
-          <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
+          <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
 
           <li *ngIf="authService.isLoggedIn()"><a class="dropdown-button" data-activates="dropdown2" 
             materialize="dropdown" [materializeParams]="dropdownParams" [materializeActions]="dropdownActions">

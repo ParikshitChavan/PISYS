@@ -20,7 +20,7 @@
     </div>
 
     <div class="row" *ngIf="pagedCandidates.length">
-      <div class="col s12">
+      <div class="col s12 tablecontainer">
         <table class="table striped table-bordered highlight">
           <thead>
             <tr>
@@ -29,6 +29,9 @@
               </th>
               <th>
                 Email
+              </th>
+              <th>
+                Publish status
               </th>
             </tr>
           </thead>
@@ -40,6 +43,10 @@
                 </a>
               </td>
               <td><a>{{ candidate.email}}</a></td>
+              <td >
+                  <input id="isProfilePublished" *ngIf="candidate.cv.length" type="checkbox" name='isProfilePublished' (change)="onProfileStatusChange()" [checked]="candidate.cv.length ? candidate.cv[0].isProfilePublished : false">
+                  <label for="isProfilePublished" *ngIf="candidate.cv.length"></label>
+              </td>
             </tr>
           </tbody>
         </table>
