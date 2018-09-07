@@ -17,6 +17,7 @@ const config = require('../config/cfg');
 
 //setting up AWS authentication and S3
 aws.config.update(config.awsAuthObj);
+aws.config.update({region: 'ap-northeast-1'});
 const s3 = new aws.S3();
 
 const S3_BUCKET_OBJECT = {
@@ -75,50 +76,50 @@ const getCvById = async (req, res, next) => {
 
 const getSignedUrl = async (req, res, next) => {
     const cvdetails = req.tempStore.cvdetails;
-    if (cvdetails.profileVideo.key) {
-        if ( moment().toISOString() > moment(cvdetails.profileVideo.signExpiry).toISOString() ) {
+    if (cvdetails.profileVideo.key && (moment() > moment(cvdetails.profileVideo.signExpiry))) {
             try {
                 var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvdetails.profileVideo.key, Expires:  60 * 60 * 24  };
                 const newSignedUrl = await s3.getSignedUrl('getObject', params);
-                var expiryTime = moment().add(24, 'hour')
                 cvBuilder.updateProfileVideo(cvdetails.id, {
                     key: cvdetails.profileVideo.key,
-                    location: newSignedUrl, 
-                    signedOn: moment(), 
-                    signExpiry: expiryTime.toISOString()
+                    location: newSignedUrl,
+                    signedOn: moment().toDate(),
+                    signExpiry: moment().add(24,'hours').toDate()
                 }, (err, result) => {
                     if (err)
                         return util.sendError('Error saving video details');
-                    req.tempStore.profileVideo = result.profileVideo.location;
+                    req.tempStore.cvdetails = result.toObject();
                     next();
                 });
             } catch (error) {
                 return util.sendError(res, 'Failed to get signed in url.');
             }
-        } else {
-            req.tempStore.profileVideo = cvdetails.profileVideo.location;
-            next();
-        }
     } else {
-        req.tempStore.profileVideo = '';
         next();
     }
 }
 
 const sendCvDetails = async (req, res) => {
-    let cvDetails = req.tempStore.cvdetails.toObject();
-    delete cvDetails.profileVideo;
     if (isSuperAdminOrOwner(req.decoded, req.params.userId)) {
         // const user = await getPesonalDetails(req.tempStore.userId);
         User.getUserInfoById(req.tempStore.userId, (err, user) => {
             if(err) return util.sendError('Error getting user details');
-            res.json({ success: true, canEdit: true, cvdetails: cvDetails, profileVideo: req.tempStore.profileVideo, profileData: user });
+            res.json({ success: true, canEdit: true, cvdetails: req.tempStore.cvdetails, profileData: user });
         });
     } else {
-        res.json({ success: true, canEdit: false, cvdetails: cvDetails, profileVideo: req.tempStore.profileVideo });
+        res.json({ success: true, canEdit: false, cvdetails: req.tempStore.cvdetails, });
     }
 }
 
+
+/**
+ *  if new education is latest then it will change existing latest educations as false.
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
+ */
 const updateAllEducations = (req, res, next) => {
     const education = req.body.education;
     if (!education) {
@@ -146,6 +147,17 @@ const addEducation = (req, res) => {
     })
 }
 
+const checkIfLatestExist = (educations = []) => {
+    return educations.some(record => record.isLatest === true);
+}
+
+/**
+ * deletes the education, in remaining records if delete is not exist it will change last record as Latest one.
+ *
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 const deleteEducation = (req, res) => {
     const educationID = req.body.educationID;
     if (!educationID) {
@@ -154,7 +166,17 @@ const deleteEducation = (req, res) => {
     cvBuilder.deleteEducation(req.tempStore.cv, educationID, (err, cvdetails) => {
         if (err) {  return util.sendError(res, err); }
         if (!cvdetails) return util.sendError(res, 'Cant delete the education this time!.');
-        res.json({ success: true, message: 'Education has been removed successfully', educations: cvdetails.educations });
+        if(cvdetails.educations.length && !checkIfLatestExist(cvdetails.educations)){
+            let lastEducation = cvdetails.educations[cvdetails.educations.length-1].toObject();
+            lastEducation.isLatest = true
+            cvBuilder.updateEducation(req.tempStore.cv, lastEducation, (err, cvDetails) => {
+                if (err) {  return util.sendError(res, 'Please manually set atleast one of the education as latest'); }
+                if (!cvDetails) return util.sendError(res, 'Please manually set atleast one of the education as latest' );
+                res.json({ success: true, message: 'Education has been removed successfully', educations: cvDetails.educations });
+            })
+        }else{
+            res.json({ success: true, message: 'Education has been removed successfully', educations: cvdetails.educations });
+        }
     })
 }
 
@@ -310,7 +332,7 @@ const updateRemarks = (req, res) => {
     })
 }
 
- const checkProfileVideo = async (req, res, next) => {
+ const deleteOldIfExist = async (req, res, next) => {
      const cvDetails = req.tempStore.cvdetails;
      if (cvDetails.profileVideo && cvDetails.profileVideo.key) {
          try {
@@ -325,20 +347,17 @@ const updateRemarks = (req, res) => {
 }
 const updateProfileVideo = async (req, res) => {
     try {
-        var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: req.file.key, Expires: 60 * 60 * 24 };
+        let objectKey = req.file ? req.file.key : req.body.videoKey;
+        var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: objectKey, Expires: 60 * 60 * 24 };
         const newSignedUrl = await s3.getSignedUrl('getObject', params);
-        var expiryTime = moment().add(24, 'hour');
         cvBuilder.updateProfileVideo(req.tempStore.cvdetails.id, {
-            key: req.file.key,
+            key: objectKey,
             location: newSignedUrl,
-            signedOn: new Date(),
-            signExpiry: expiryTime.toISOString()
+            signedOn: moment().toDate(),
+            signExpiry: moment().add(24,'hours').toDate()
         }, (err, result) => {
             if (err) return util.sendError(res, 'Failed to save video details');
-            let profileVideo = result.profileVideo.toObject();
-            delete profileVideo.signExpiry;
-            delete profileVideo.signedOn;
-            res.json({ success: true, profileVideo:  profileVideo})
+            res.json({ success: true, profileVideo:  result.profileVideo})
         })
     } catch (error) {
         return util.sendError(res, 'Please try later, failed to upload video');
@@ -415,8 +434,8 @@ router.put('/updateInterests', hasPermission, getCv, updateInterests)
 router.put('/updateRemarks', isSuperAdmin, getCv, updateRemarks)
 
 router.put('/updatePublish', hasPermission, getCv, updatePublish)
-router.post('/uploadVideo/:userId', getCv, getCvById, checkProfileVideo, uploadProfileVideo, updateProfileVideo)
-
-router.post('/pullCandidates', getCandidates)
+router.post('/uploadVideo/:userId', getCv, getCvById, deleteOldIfExist, uploadProfileVideo, updateProfileVideo)
+router.post('/getSignedUrl', getCv, getCvById, updateProfileVideo )
+router.post('/pullCandidates', isSuperAdmin, getCandidates)
 
 module.exports = router;

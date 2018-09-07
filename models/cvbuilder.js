@@ -9,8 +9,8 @@ const cvBuilderSchema = Schema({
     profileVideo: {
         key : String,
         location: String,
-        signedOn: String,
-        signExpiry: String
+        signedOn: Date,
+        signExpiry: Date
     },
     skills : {
         techSkills : [],

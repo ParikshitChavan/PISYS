@@ -36,8 +36,8 @@
 
     </div>
     <div  *ngIf="canEdit" class="row  z-depth-2 padding-container">
-        <div *ngIf="videoProfileUrl || canEdit" class="col s12 l12 text-center imgArea">
-            <video class="responsive-video" [src]="videoProfileUrl | safe" controls #videoPlayer preload="metadata">
+        <div *ngIf="videoDetails.location || canEdit" class="col s12 l12 text-center imgArea">
+            <video (error)="onVideoError($event)" class="responsive-video" [src]="videoDetails.location | safe" controls #videoPlayer preload="metadata">
             </video>
 
             <div *ngIf="canEdit" class="fltBtnArea">

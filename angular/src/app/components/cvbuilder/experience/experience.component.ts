@@ -12,6 +12,7 @@ import { ITSkills } from '../../../helpers/ITSkills.helper';
 
 
 declare let Materialize: any;
+declare let  $ : any;
 
 /**
  *
@@ -149,14 +150,23 @@ export class ExperienceComponent implements OnInit {
     this.setValidationObject();
     this.setNewExperience(experience);
     this.rqChipsActions.emit({ action:"material_chip", params:[{data: this.newExperience.usedSkills, autocompleteOptions: this.autoCompleteOptions}] });
-    setTimeout(() => {
-      this.openModal();
-    });
+    this.openModal();
     setTimeout(() => {
       Materialize.updateTextFields();
+      this.autoresizeTextArea();
     });
   }
 
+  autoresizeTextArea () {
+    $('textarea, .input').each(function () {
+      this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+    $('.chipInp input').each(function(){
+      $(this).focusin()
+    })
+  }
   /**
    * sets modal purpose to delete and opens the modal
    * @param {*} experienceId
