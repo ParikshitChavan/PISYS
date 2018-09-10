@@ -121,6 +121,7 @@ router.post('/updateUserInfo', (req, res, next)=>{
         User.updateInfoById(decoded._id, userInfo, (err)=>{
             if(err) throw err;
             res.status(serverStatus).json({ success: true, message: "User info updated successfully" });
+            
         });
     });
 });

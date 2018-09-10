@@ -137,7 +137,7 @@ const updateAllEducations = (req, res, next) => {
 const addEducation = (req, res) => {
     const education = req.body.education;
     if (!education) {
-        return util.sendError(res, 'Please provide all paramters', 400)
+        return util.sendError(res, 'Please provide all parameters', 400)
     }
     cvBuilder.addEducation(req.tempStore.cv, education, (err, cvdetails) => {
         if (err) {  return util.sendError(res, err); }
@@ -149,7 +149,7 @@ const addEducation = (req, res) => {
 const deleteEducation = (req, res) => {
     const educationID = req.body.educationID;
     if (!educationID) {
-               return util.sendError(res, 'Please provide all paramters', 400)
+               return util.sendError(res, 'Please provide all parameters', 400)
     }
     cvBuilder.deleteEducation(req.tempStore.cv, educationID, (err, cvdetails) => {
         if (err) {  return util.sendError(res, err); }
@@ -160,7 +160,7 @@ const deleteEducation = (req, res) => {
 
 const updateEducation = (req, res) => {
     const education = req.body.education;
-    if (!education) {   return util.sendError(res, 'Please provide all paramters' )   }
+    if (!education) {   return util.sendError(res, 'Please provide all parameters' )   }
     cvBuilder.updateEducation(req.tempStore.cv, education, (err, cvDetails) => {
         if (err) {  return util.sendError(res, err); }
         if (!cvDetails) return util.sendError(res, 'Cant update the education this time!.' );
@@ -172,7 +172,7 @@ const updateEducation = (req, res) => {
 const addExperience = (req, res) => {
     const experience = req.body.experience;
     if(!experience) {
-        return util.sendError(res, 'Please provide all paramters, experience is missing')
+        return util.sendError(res, 'Please provide all parameters, experience is missing')
     }
     cvBuilder.addExperience(req.tempStore.cv, experience, (err, cvdetails) => {
         if(err){    return util.sendError(res, 'Failed to add experience');  }
@@ -184,7 +184,7 @@ const addExperience = (req, res) => {
 const updateExperience =(req, res) => {
     const experience = req.body.experience;
     if(!experience){
-        return util.sendError(res, 'Please provide all paramters', 422)
+        return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.updateExperience(req.tempStore.cv, experience, (err,cvdetails) => {
         if(err) return util.sendError(res, err);
@@ -196,7 +196,7 @@ const updateExperience =(req, res) => {
 const deleteExperience = (req, res) => {
     const experienceId = req.body.experienceId;
     if(!experienceId){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.deleteExperience(req.tempStore.cv, experienceId, (err,cvdetails) => {
         if(err) return util.sendError(res, err );
@@ -208,7 +208,7 @@ const deleteExperience = (req, res) => {
 const addProjects = (req, res) => {
     const project = req.body.project;
     if(!project){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.addProjects(req.tempStore.cv, project, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -220,7 +220,7 @@ const addProjects = (req, res) => {
 const deleteProject = (req, res) => {
     const projectId = req.body.projectId;
     if(!projectId){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.deleteProject(req.tempStore.cv, projectId, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -232,7 +232,7 @@ const deleteProject = (req, res) => {
 const updateProject = (req, res) => {
     const project = req.body.project;
     if(!project){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.updateProject(req.tempStore.cv, project, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -244,7 +244,7 @@ const updateProject = (req, res) => {
 const addCertificate = (req, res) => {
     const certificate = req.body.certificate;
     if(!certificate){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.addCertificate(req.tempStore.cv, certificate, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -256,7 +256,7 @@ const addCertificate = (req, res) => {
 const deleteCertificate = (req, res) => {
     const certificateId = req.body.certificateId;
     if(!certificateId){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.deleteCertificate(req.tempStore.cv, certificateId, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -268,7 +268,7 @@ const deleteCertificate = (req, res) => {
 const updateCertificate = (req, res) => {
     const certificate = req.body.certificate;
     if(!certificate){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.updateCertificate(req.tempStore.cv, certificate, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -280,7 +280,7 @@ const updateCertificate = (req, res) => {
 const updateSkills = (req, res) => {
     const skills = req.body.skills;
     if(!skills){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.updateSkills(req.tempStore.cv, skills, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -292,7 +292,7 @@ const updateSkills = (req, res) => {
 const updateInterests = (req, res) => {
     const interests = req.body.interests;
     if(!interests){
-               return util.sendError(res, 'Please provide all paramters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422)
     }
     cvBuilder.updateInterests(req.tempStore.cv, interests, (err, cvdetails) => {
         if (err) return util.sendError(res, err);

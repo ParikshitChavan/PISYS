@@ -11,7 +11,7 @@ import { MaterializeAction } from 'angular2-materialize'
 })
 export class CandidateMasterListComponent implements OnInit {
 
-  yearArr = [];
+  seasons = [];
   candidates = [];
   newSeason: string;
   dltSeason: string;
@@ -20,13 +20,13 @@ export class CandidateMasterListComponent implements OnInit {
   constructor(private listCandidateService : ListCandidateService, private router:Router) { }
 
   ngOnInit() {
-    let currYear = (new Date()).getFullYear();
-    let tmpYear = currYear;
-    while(tmpYear >= 2018){          //2018 oldest intership in database
-      this.yearArr.push(tmpYear);
-      tmpYear--;
-    }
-    this.onYearTabClick(currYear);
+    this.listCandidateService.getSeasons().subscribe(resp=>{
+      if(!resp.success) {
+        console.log(resp.error);
+        return toast('some error occurred please try later');
+      }
+      this.seasons = resp.seasons; 
+    });
   }
 
   onYearTabClick(year){

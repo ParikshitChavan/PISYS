@@ -78,6 +78,6 @@ module.exports.updateSkills = function(candidateId, skills, callback){
     ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { skls: skills }}, callback);
 }
 
-module.exports.updateSkills = function(candidateId, skypeId, callback){
+module.exports.updateSkypeID = function(candidateId, skypeId, callback){
     ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { skypeId: skypeId }}, callback);
 }
