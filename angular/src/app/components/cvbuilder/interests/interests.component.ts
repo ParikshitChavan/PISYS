@@ -4,7 +4,7 @@ import { CvBuilderService } from '../../../services/cvbuilder/cvbuilder.service'
 import { toast, MaterializeAction } from 'angular2-materialize';
 import { EventEmitter } from '@angular/core';
 declare let Materialize: any;
-
+declare let  $ : any;
 
 @Component({
   selector: 'app-intersts',
@@ -93,6 +93,15 @@ export class InterestsComponent implements OnInit {
     this.openModal();
     setTimeout(() => {
       Materialize.updateTextFields();
+      this.autoresizeTextArea();
+    });
+  }
+
+  autoresizeTextArea () {
+    $('textarea').each(function () {
+      this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
     });
   }
 

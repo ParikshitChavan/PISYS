@@ -63,7 +63,7 @@ export class CvBuilderService {
   private _isUserHasCv = new BehaviorSubject<boolean>(false);
   public isUserHasCv = this._isUserHasCv.asObservable();
 
-  private _profileVideoSubject = new BehaviorSubject<string>('');
+  private _profileVideoSubject = new BehaviorSubject<any>({});
   public profileVideo = this._profileVideoSubject.asObservable();
 
   private _personalDetailsSubject = new BehaviorSubject<string>('');
@@ -146,7 +146,7 @@ export class CvBuilderService {
     this._isUserHasCv.next(hasCv);
   }
 
-  setProfileVideo(profileVideo: string) {
+  setProfileVideo(profileVideo: {}) {
     this._profileVideoSubject.next(profileVideo);
   }
 
@@ -216,8 +216,8 @@ export class CvBuilderService {
       this.setIsProfilePublished(data.isProfilePublished);
     }
 
-    if(response.profileVideo){
-      this.setProfileVideo(response.profileVideo);
+    if(data.profileVideo){
+      this.setProfileVideo(data.profileVideo);
     }
 
     if(response.profileData){
@@ -323,6 +323,11 @@ export class CvBuilderService {
   updateProfileStatus (profileStatus) {
     const data = { publishProfile : profileStatus, userId :  this.getUserId() }
     return this.httpService.put('cv/updatePublish', data);
+  }
+
+  retriveSignedUrlVideo(videoKey) {
+    const data = { videoKey : videoKey, userId :  this.getUserId() }
+    return this.httpService.post('cv/getSignedUrl', data);
   }
 
 }

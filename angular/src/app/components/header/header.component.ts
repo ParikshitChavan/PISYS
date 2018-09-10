@@ -2,6 +2,8 @@ import { Component, OnInit, EventEmitter} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from "../../services/auth/auth.service";
 import {MaterializeAction} from 'angular2-materialize';
+declare let  $ : any;
+declare let Materialize: any;
 
 @Component({
   selector: 'app-header',
@@ -26,9 +28,6 @@ export class HeaderComponent implements OnInit {
       this.user = {name: headerData.name, DPUrl: headerData.DPUrl};
       this.userAccess = headerData.userAccess;
       this.userId = headerData.userId;
-      setTimeout(()=>{
-        this.dropdownActions.emit("dropdown");
-      });
     });
     if(this.authService.isLoggedIn()){
       this.authService.loadHeaderUserInfo();
