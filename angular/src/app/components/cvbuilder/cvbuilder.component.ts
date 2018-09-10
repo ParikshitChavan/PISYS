@@ -6,6 +6,7 @@ import { EventEmitter } from '@angular/core';
 
 import { CvBuilderService } from '../../services/cvbuilder/cvbuilder.service'
 import {AuthService} from "../../services/auth/auth.service";
+import * as moment from 'moment';
 
 interface FileReaderEventTarget extends EventTarget {
   result:string
@@ -38,8 +39,12 @@ export class CvBuilderComponent implements OnInit {
   public _actionProgress: string = 'action'; // form to add new entry into one of the subsection.  action to show a message like failed, invalid.
   userAccess : 0;
   userId : string = '';
-  loading: boolean = false;w
-
+  loading: boolean = false;
+  videoDetails = {
+    location : '',
+    key: '',
+    signExpiry: ''
+  }
   videoProfileUrl = '';
   personalDetails: {} = {};
   canEdit : boolean = false;
@@ -50,6 +55,8 @@ export class CvBuilderComponent implements OnInit {
   videoProfilePreviewUrl = '';
   disabledUpload: boolean = true;
 
+  retrivingVideoStatus: boolean = false;
+  linkRetrivalCount = 0;
   isProfilePublished : boolean = false;
   profileChangeMessage: string = '';
   fileStatusMsg = ['',
@@ -70,11 +77,30 @@ export class CvBuilderComponent implements OnInit {
       this.cvBuilderService.setUserId(this.userId);
       this.cvBuilderService.loadCv(this.userId);
       this.setUserAccess(this.authService.user.access)
-      this.cvBuilderService.profileVideo.subscribe(this.setUrl);
+      this.cvBuilderService.profileVideo.subscribe(this.setVideo);
       this.cvBuilderService.personalDetails.subscribe(this.setPersonalDetails);
       this.cvBuilderService.accessControl.subscribe(this.setAccesssControl);
       this.cvBuilderService.isProfilePublished.subscribe(this.setProfilePublished);
      })
+  }
+
+  onVideoError(event) {
+    if ( event.target.error.code > 1 && this.videoDetails.key && !this.retrivingVideoStatus && this.linkRetrivalCount < 3 ) {
+      this.retrivingVideoStatus = true;
+      this.cvBuilderService.retriveSignedUrlVideo(this.videoDetails.key).then(this.onVideoRetrivalSuccess).catch(this.postRetrival)
+    }
+  }
+
+  onVideoRetrivalSuccess = (resp)  =>{
+    if(resp.profileVideo){
+      this.cvBuilderService.setProfileVideo(resp.profileVideo);
+    }
+    this.postRetrival();
+  }
+
+  postRetrival () {
+    this.retrivingVideoStatus = false;
+    this.linkRetrivalCount += 1;
   }
 
   setProfilePublished = (isProfilePublished) => {
@@ -93,8 +119,10 @@ export class CvBuilderComponent implements OnInit {
       this.userAccess = accessCode;
   }
 
-  setUrl = (url )=>{
-    this.videoProfileUrl = url;
+  setVideo = (videoDetails)=>{
+    if(videoDetails && videoDetails.location){
+      this.videoDetails = videoDetails;
+    }
   }
 
   isValidFile (file: File) {
@@ -168,7 +196,7 @@ export class CvBuilderComponent implements OnInit {
   }
 
   onFileUploadSuccess = (resp) => {
-    this.cvBuilderService.setProfileVideo(resp.profileVideo.location);
+    this.cvBuilderService.setProfileVideo(resp.profileVideo);
     this.postUploadFile('Your video profile has been added succuessfully');
   }
 
@@ -225,7 +253,7 @@ export class CvBuilderComponent implements OnInit {
   }
 
   onProfileStatusChange () {
-    this.profileChangeMessage = this.isProfilePublished ? 'Once you publish the profile, recruiter can able to see your profile.' : 'Do you wish to unpublish your profile, recruiters will not be able to see your profile.'
+    this.profileChangeMessage = this.isProfilePublished ? 'After you publish, recruiter will be able to see your profile.' : 'After you unpublish, recruiters will not be able to see your profile.'
     this.showPofileChange();
   }
 
@@ -239,11 +267,11 @@ export class CvBuilderComponent implements OnInit {
   }
 
   onPublishChangeSuccess = (resp) => {
-    this.postApiCall('Profile status changed successfully.')
+    this.postApiCall('Profile status have been changed successfully.')
   }
 
   onPublishchangeFail = () => {
-    this.postApiCall('Failed to update profile the status');
+    this.postApiCall('Failed to update the profile status');
   }
 
 }
