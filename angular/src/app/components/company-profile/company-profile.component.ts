@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CompanyApiService } from '../../services/companyAPI/company-api.service';
 import { toast, MaterializeAction } from 'angular2-materialize';
 
-declare let Materialize:any;
+declare let  $ : any;
 
 @Component({
   selector: 'app-company-profile',
@@ -41,9 +41,17 @@ export class CompanyProfileComponent implements OnInit {
       this.cmpProfile = resp.recruitmentDetails;
       this.editRights = resp.editRights;
       this.editingCmpProfile.abtUs = this.cmpProfile.abtUs;
-      setTimeout(()=>{
-        Materialize.updateTextFields();
-      })
+    });
+  }
+
+  modalOpen(){
+    this.modalActions.emit({action:"modal", params:['open']});
+    setTimeout(()=>{
+      $('textarea').each(function () {
+        this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+      });
     });
   }
 
@@ -55,6 +63,7 @@ export class CompanyProfileComponent implements OnInit {
       }
       this.modalActions.emit({action:"modal", params:['close']});
       this.cmpProfile.abtUs = this.editingCmpProfile.abtUs;
+      toast('AboutUS updated successful.', 3000);
     });
   }
 

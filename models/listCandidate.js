@@ -69,15 +69,23 @@ module.exports.getSeasons = function(callback){
     ListCandidate.distinct(year, callback);
 }
 
-/*Function if update is made in the cvBuilder*/
-module.exports.updateEducation = function(candidateId, education, callback){
-    ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { education: education }}, callback);
+/*Functions to take care of updates in the cvBuilder*/
+module.exports.updateEducation = function(candidateId, education){
+    delete education._id;
+    delete education.isLatest;
+    ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { education: education }}, (err)=>{
+        if(err) throw err;
+    });
 }
 
-module.exports.updateSkills = function(candidateId, skills, callback){
-    ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { skls: skills }}, callback);
+module.exports.updateSkills = function(candidateId, skills){
+    ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { skls: skills }}, (err)=>{
+        if(err) throw err;
+    });
 }
 
-module.exports.updateSkypeID = function(candidateId, skypeId, callback){
-    ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { skypeId: skypeId }}, callback);
+module.exports.updateSkype = function(candidateId, skypeId){
+    ListCandidate.findOneAndUpdate({candidate: candidateId}, { $set: { skypeId: skypeId }}, (err)=>{
+        if(err) throw err;
+    });
 }

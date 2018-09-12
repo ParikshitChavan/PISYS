@@ -3,9 +3,9 @@ const express = require('express');
 const moment = require('moment');
 const router = express.Router();
 const aws = require('aws-sdk');
-var multer = require('multer')
-var multerS3 = require('multer-s3')
-const bodyParser = require('body-parser');
+var multer = require('multer');
+var multerS3 = require('multer-s3');
+const ListCandidate = require('../models/listCandidate');
 
 //models
 const User = require('../models/user');
@@ -107,7 +107,7 @@ const sendCvDetails = async (req, res) => {
             res.json({ success: true, canEdit: true, cvdetails: req.tempStore.cvdetails, profileData: user });
         });
     } else {
-        res.json({ success: true, canEdit: false, cvdetails: req.tempStore.cvdetails, });
+        res.json({ success: true, canEdit: false, cvdetails: req.tempStore.cvdetails });
     }
 }
 
@@ -123,11 +123,12 @@ const sendCvDetails = async (req, res) => {
 const updateAllEducations = (req, res, next) => {
     const education = req.body.education;
     if (!education) {
-        return util.sendError(res, 'Please provide all paramters', 400)
+        return util.sendError(res, 'Please provide all parameters', 400);
     }
     if(education.isLatest){
         cvBuilder.updateAllEducations(req.tempStore.cv, (err, cvdetails) => {
-            if (err) {  return util.sendError(res, err); }
+            if(err) return util.sendError(res, err);
+            ListCandidate.updateEducation(req.tempStore.userId, education);
             next();
         })
     }else{
@@ -144,7 +145,7 @@ const addEducation = (req, res) => {
         if (err) {  return util.sendError(res, err); }
         if (!cvdetails) return util.sendError(res, 'Cant add the education this time!.');
         res.json({ success: true, message: 'New Education has been added successfully', educations: cvdetails.educations });
-    })
+    });
 }
 
 const checkIfLatestExist = (educations = []) => {
@@ -172,8 +173,9 @@ const deleteEducation = (req, res) => {
             cvBuilder.updateEducation(req.tempStore.cv, lastEducation, (err, cvDetails) => {
                 if (err) {  return util.sendError(res, 'Please manually set atleast one of the education as latest'); }
                 if (!cvDetails) return util.sendError(res, 'Please manually set atleast one of the education as latest' );
+                ListCandidate.updateEducation(req.tempStore.userId, lastEducation);
                 res.json({ success: true, message: 'Education has been removed successfully', educations: cvDetails.educations });
-            })
+            });
         }else{
             res.json({ success: true, message: 'Education has been removed successfully', educations: cvdetails.educations });
         }
@@ -278,7 +280,7 @@ const addCertificate = (req, res) => {
 const deleteCertificate = (req, res) => {
     const certificateId = req.body.certificateId;
     if(!certificateId){
-               return util.sendError(res, 'Please provide all parameters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422);
     }
     cvBuilder.deleteCertificate(req.tempStore.cv, certificateId, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -290,7 +292,7 @@ const deleteCertificate = (req, res) => {
 const updateCertificate = (req, res) => {
     const certificate = req.body.certificate;
     if(!certificate){
-               return util.sendError(res, 'Please provide all parameters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422);
     }
     cvBuilder.updateCertificate(req.tempStore.cv, certificate, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -302,19 +304,20 @@ const updateCertificate = (req, res) => {
 const updateSkills = (req, res) => {
     const skills = req.body.skills;
     if(!skills){
-               return util.sendError(res, 'Please provide all parameters', 422)
+        return util.sendError(res, 'Please provide all parameters', 422);
     }
     cvBuilder.updateSkills(req.tempStore.cv, skills, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
         if (!cvdetails) return util.sendError(res, 'Can not update the skills');
         res.json({ success: true, message: 'Skills has been updated successfully', skills: cvdetails.skills });
+        ListCandidate.updateSkills(req.tempStore.userId, skills.techSkills);
     })
 }
 
 const updateInterests = (req, res) => {
     const interests = req.body.interests;
     if(!interests){
-               return util.sendError(res, 'Please provide all parameters', 422)
+               return util.sendError(res, 'Please provide all parameters', 422);
     }
     cvBuilder.updateInterests(req.tempStore.cv, interests, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -407,35 +410,35 @@ const getCandidates = async (req, res) => {
          }else{
             res.json({ success: true, candidates: users});
          }
-        })
+    });
 }
 
 router.use(util.authenticate);
-router.get('/cvdetails/:userId', getCv, getCvById, getSignedUrl, sendCvDetails)
+router.get('/cvdetails/:userId', getCv, getCvById, getSignedUrl, sendCvDetails);
 
-router.post('/addEducation', hasPermission, getCv, updateAllEducations, addEducation)
-router.delete('/deleteEducation', hasPermission, getCv, deleteEducation)
-router.put('/updateEducation', hasPermission, getCv, updateAllEducations, updateEducation)
+router.post('/addEducation', hasPermission, getCv, updateAllEducations, addEducation);
+router.delete('/deleteEducation', hasPermission, getCv, deleteEducation);
+router.put('/updateEducation', hasPermission, getCv, updateAllEducations, updateEducation);
 
-router.post('/addExperience', hasPermission, getCv, addExperience)
-router.put('/updateExperience', hasPermission, getCv, updateExperience)
-router.delete('/deleteExperience', hasPermission, getCv, deleteExperience)
+router.post('/addExperience', hasPermission, getCv, addExperience);
+router.put('/updateExperience', hasPermission, getCv, updateExperience);
+router.delete('/deleteExperience', hasPermission, getCv, deleteExperience);
 
-router.post('/addProjects', hasPermission, getCv, addProjects)
-router.put('/updateProject', hasPermission, getCv, updateProject)
-router.delete('/deleteProject', hasPermission, getCv, deleteProject)
+router.post('/addProjects', hasPermission, getCv, addProjects);
+router.put('/updateProject', hasPermission, getCv, updateProject);
+router.delete('/deleteProject', hasPermission, getCv, deleteProject);
 
-router.post('/addCertificate', hasPermission, getCv, addCertificate)
-router.put('/updateCertificate', hasPermission, getCv, updateCertificate)
-router.delete('/deleteCertificate', hasPermission, getCv, deleteCertificate)
+router.post('/addCertificate', hasPermission, getCv, addCertificate);
+router.put('/updateCertificate', hasPermission, getCv, updateCertificate);
+router.delete('/deleteCertificate', hasPermission, getCv, deleteCertificate);
 
-router.put('/updateSkills', hasPermission, getCv, updateSkills)
-router.put('/updateInterests', hasPermission, getCv, updateInterests)
-router.put('/updateRemarks', isSuperAdmin, getCv, updateRemarks)
+router.put('/updateSkills', hasPermission, getCv, updateSkills);
+router.put('/updateInterests', hasPermission, getCv, updateInterests);
+router.put('/updateRemarks', isSuperAdmin, getCv, updateRemarks);
 
-router.put('/updatePublish', hasPermission, getCv, updatePublish)
-router.post('/uploadVideo/:userId', getCv, getCvById, deleteOldIfExist, uploadProfileVideo, updateProfileVideo)
-router.post('/getSignedUrl', getCv, getCvById, updateProfileVideo )
-router.post('/pullCandidates', isSuperAdmin, getCandidates)
+router.put('/updatePublish', hasPermission, getCv, updatePublish);
+router.post('/uploadVideo/:userId', getCv, getCvById, deleteOldIfExist, uploadProfileVideo, updateProfileVideo);
+router.post('/getSignedUrl', getCv, getCvById, updateProfileVideo );
+router.post('/pullCandidates', isSuperAdmin, getCandidates);
 
 module.exports = router;

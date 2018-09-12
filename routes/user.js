@@ -8,6 +8,7 @@ const multerS3 = require('multer-s3');
 const User = require('../models/user');
 const CvBuilder = require('../models/cvbuilder');
 const Sitelink = require('../models/sitelink');
+const ListCandidate = require('../models/listCandidate');
 //config
 const config = require('../config/cfg');
 
@@ -121,7 +122,7 @@ router.post('/updateUserInfo', (req, res, next)=>{
         User.updateInfoById(decoded._id, userInfo, (err)=>{
             if(err) throw err;
             res.status(serverStatus).json({ success: true, message: "User info updated successfully" });
-            
+            ListCandidate.updateSkype(decoded._id, skypeId);
         });
     });
 });
@@ -260,20 +261,5 @@ router.get('/isWLMember', (req ,res, next)=>{
         res.json({ success: true, isWLMember: false });
     });
 });
-
-// router.use((req,res,next)=>{
-//     let token = req.headers['x-access-token'];
-//     User.validateToken(token, (err, serverStatus, decoded) => {
-//       if (err) {
-//         return res.status(serverStatus).json({ success: false, message: err });
-//       } else {
-//         next();
-//       }
-//     });
-// });
-
-// router.get('/getconfigfile',(req,res, next) => {
-//     res.json(data);
-// })
 
 module.exports = router;
