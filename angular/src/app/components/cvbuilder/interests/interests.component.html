@@ -39,7 +39,7 @@
   </div>
 
 
-<div id="modal" *ngIf="modalPurpose !== 'delete'" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
+<div id="modal" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
   [materializeActions]="modalActions">
 
   <div class="modal-content">
@@ -69,9 +69,7 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button (click)='saveInterest()' class="waves-effect waves-green btn btn-submit">{{ modalPurpose == 'add' ? 'Add' : 'Save'}}
-      <i class="material-icons right">send</i>
-    </button>
+    <button (click)='saveInterest()' class="waves-effect waves-green btn btn-submit">Save<i class="material-icons right">send</i></button>
     <button type="button" (click)='closeModal()' class="btn red">cancel</button>
   </div>
 </div>

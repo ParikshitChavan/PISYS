@@ -37,7 +37,7 @@ export class CvBuilderComponent implements OnInit {
 
 
   public _actionProgress: string = 'action'; // form to add new entry into one of the subsection.  action to show a message like failed, invalid.
-  userAccess : 0;
+  userAccess = 0;
   userId : string = '';
   loading: boolean = false;
   videoDetails = {

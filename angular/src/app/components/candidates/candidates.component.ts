@@ -14,18 +14,17 @@ export class CandidatesComponent implements OnInit {
   candidateEmail: string = '';
   candidatesPerPage: number = 10;
   
-  private bufferedCandidates: any[] = [];
- 
-    // pager object
-    pager: any = {
-      currentPage  : 1
-    };
-    totalCandidatesCount : 0;
-    // paged candidates
-    pagedCandidates: any[] = [];
-    nextPage = 1;
-    bufferedPage = 0;
-    loading = true;
+  bufferedCandidates: any[] = [];
+  // pager object
+  pager: any = {
+    currentPage  : 1
+  };
+  totalCandidatesCount : 0;
+  // paged candidates
+  pagedCandidates: any[] = [];
+  nextPage = 1;
+  bufferedPage = 0;
+  loading = true;
   constructor(public cvBuilderService:CvBuilderService,
     private route:ActivatedRoute) { }
 

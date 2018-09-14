@@ -21,9 +21,11 @@ export class SkillsComponent implements OnInit {
   languageSkillChipsActions = new EventEmitter<string|MaterializeAction>();
 
   canEdit: boolean = false;         // access control to allow or disallow user from adding/ deleting records
-  skills: {  techSkills?:any[],
-             otherStrengths?: String , 
-             languageSkills?: any[]  };
+  skills: {
+    techSkills?:any[],
+    otherStrengths?: String , 
+    languageSkills?: any[]  
+  };
  
   techSkills:any[] = [];
   otherStrengths: String = '';

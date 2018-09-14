@@ -15,6 +15,7 @@ export class CompanyComponent implements OnInit {
   editing: Boolean = false;
   editingAdmin : Boolean = false;
   companyDetails: {
+    _id : any,
     name: string,
     est : any,
     phNum: string,
@@ -23,7 +24,7 @@ export class CompanyComponent implements OnInit {
     address: string,
     logo: { key: string, url: string },
     empSize: string
-  } = { name: '', est: '', phNum: '', admins: [], address: '', website: '', logo: {key: '', url: ''}, empSize: ''};
+  } = { _id:'', name: '', est: '', phNum: '', admins: [], address: '', website: '', logo: {key: '', url: ''}, empSize: ''};
   newAdmin = { name:'', email:'' };
   companyInfoMsg: String;
   logoMsg: String;

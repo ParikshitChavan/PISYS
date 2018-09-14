@@ -25,7 +25,7 @@
 <div id="editAbtUsModal" class="modal modal-fixed-footer" materialize="modal" [materializeActions]="modalActions">
   <div class="modal-content">
     <h5>Update company about us</h5>
-    <form (ngSubmit)='updateAbtUs(form)' #form='ngForm'>
+    <form (ngSubmit)='updateAbtUs()' #form='ngForm'>
       <div class="input-field">
         <label for="abtUs">About Us</label>
         <textarea materialize class="materialize-textarea" id="abtUs" name='abtUs' [(ngModel)]="editingCmpProfile.abtUs"></textarea>
