@@ -132,4 +132,3 @@ export class AuthService {
   }
 
 }
-//http://localhost:3000/ for local testing

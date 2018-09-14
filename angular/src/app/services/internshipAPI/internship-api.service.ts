@@ -192,4 +192,3 @@ export class InternshipApiService {
     return this.http.get(this.apiUrl + 'user/isWLMember', {headers: headers}).map(res => res.json());
   }
 }
-// http://localhost:3000/ for local testing

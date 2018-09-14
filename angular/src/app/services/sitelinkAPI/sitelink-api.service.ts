@@ -37,4 +37,3 @@ export class SitelinkApiService {
     return this.http.post(this.appUrl + 'user/validateSitelink', data, {headers: headers}).map(res => res.json());
   }
 }
-//http://localhost:3000/ for local testing
