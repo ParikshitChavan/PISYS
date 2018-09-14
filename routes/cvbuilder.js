@@ -92,7 +92,7 @@ const getSignedUrl = async (req, res, next) => {
                     next();
                 });
             } catch (error) {
-                return util.sendError(res, 'Failed to get signed in url.');
+                return util.sendError(res, 'Failed to get signed in url');
             }
     } else {
         next();
@@ -171,8 +171,8 @@ const deleteEducation = (req, res) => {
             let lastEducation = cvdetails.educations[cvdetails.educations.length-1].toObject();
             lastEducation.isLatest = true
             cvBuilder.updateEducation(req.tempStore.cv, lastEducation, (err, cvDetails) => {
-                if (err) {  return util.sendError(res, 'Please manually set atleast one of the education as latest'); }
-                if (!cvDetails) return util.sendError(res, 'Please manually set atleast one of the education as latest' );
+                if (err) {  return util.sendError(res, 'Please manually set at least one of the education as latest'); }
+                if (!cvDetails) return util.sendError(res, 'Please manually set at least one of the education as latest' );
                 ListCandidate.updateEducation(req.tempStore.userId, lastEducation);
                 res.json({ success: true, message: 'Education has been removed successfully', educations: cvDetails.educations });
             });
@@ -292,7 +292,7 @@ const deleteCertificate = (req, res) => {
 const updateCertificate = (req, res) => {
     const certificate = req.body.certificate;
     if(!certificate){
-               return util.sendError(res, 'Please provide all parameters', 422);
+        return util.sendError(res, 'Please provide all parameters', 422);
     }
     cvBuilder.updateCertificate(req.tempStore.cv, certificate, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
@@ -332,21 +332,21 @@ const updateRemarks = (req, res) => {
         if (err) return util.sendError(res, err);
         if (!cvdetails) return util.sendError(res, 'Can not update the Remarks');
         res.json({ success: true, message: 'Remarks has been updated successfully', remarks: cvdetails.remarks });
-    })
+    });
 }
 
  const deleteOldIfExist = async (req, res, next) => {
-     const cvDetails = req.tempStore.cvdetails;
-     if (cvDetails.profileVideo && cvDetails.profileVideo.key) {
-         try {
-             await s3.deleteObject({ Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvDetails.profileVideo.key });
-             next()
-         } catch (error) {
-             return util.sendError(res, 'Please try later, failed to delete old video');
-         }
-     } else {
-         next();
-     }
+    const cvDetails = req.tempStore.cvdetails;
+    if (cvDetails.profileVideo && cvDetails.profileVideo.key) {
+        try {
+            await s3.deleteObject({ Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvDetails.profileVideo.key });
+            next()
+        } catch (error) {
+            return util.sendError(res, 'Please try later, failed to delete old video');
+        }
+    } else {
+        next();
+    }
 }
 const updateProfileVideo = async (req, res) => {
     try {
@@ -376,7 +376,7 @@ const uploadProfileVideo = multer({
         contentType: multerS3.AUTO_CONTENT_TYPE,
         metadata: function (req, file, cb) {
             cb(null, { 'Content-Type': 'video/mp4'});
-          },
+        },
         key: function (req, file, next) {
             next(null, file.fieldname + '/' + Date.now() + '.mp4');
         }
@@ -402,14 +402,14 @@ const getCandidates = async (req, res) => {
     }
     User.pullCandidates(query, CANDIDATE_PER_PAGE, pageNumber, (err, users) => {
         if (err) res.json({ candidates: [], err: "Error" });
-         if(pageNumber === 1){
+        if(pageNumber === 1){
             User.countDocuments(query, function (err, total) {
                 if (err) res.json({ candidates: [], err: "Error" });
                 res.json({ success: true, candidates: users, count: total });
-              });
-         }else{
+            });
+        }else{
             res.json({ success: true, candidates: users});
-         }
+        }
     });
 }
 

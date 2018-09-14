@@ -1,35 +1,8 @@
 <ul class="tabs z-depth-1 yrTabs" materialize="tabs">
-  <li *ngFor="let year of yearArr" class="tab"><a id="year" (click)="onYearTabClick(year)">PIITs {{year}}</a></li>
+  <li *ngFor="let year of seasons" class="tab"><a id="year" (click)="onYearTabClick(year)">PIITs {{year}}</a></li>
 </ul>
-<div *ngIf="internships.length" class="intershipsList">
-  <table class="highlight">
-    <thead>
-      <tr>
-        <th>
-          Sr. no.
-        </th>
-        <th>
-          Candidate Name
-        </th>
-        <th>
-          Company Name
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor ="let internship of internships; let i = index" (click)="onIntnshpClick(internship._id)">
-        <td>
-          {{i + 1}}
-        </td>
-        <td>
-          {{internship.candidate.name}}
-        </td>
-        <td>
-          {{internship.company.name}}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div *ngIf="candidates.length" class="candiList">
+  
 </div>
 
 <div class="fltBtnArea">
