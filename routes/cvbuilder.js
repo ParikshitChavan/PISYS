@@ -64,7 +64,7 @@ const getCv = (req, res, next) => {
     });
 }
 
-const getCvById = async (req, res, next) => {
+const getCvById = (req, res, next) => {
     cvBuilder.getCvById(req.tempStore.cv, (err, cvdetails) => {
         if (err) return util.sendError(res, err);
         if (!cvdetails) return util.sendError(res, 'Cv details are not available');
@@ -74,34 +74,30 @@ const getCvById = async (req, res, next) => {
 }
 
 
-const getSignedUrl = async (req, res, next) => {
+const getSignedUrl = (req, res, next) => {
     const cvdetails = req.tempStore.cvdetails;
     if (cvdetails.profileVideo.key && (moment() > moment(cvdetails.profileVideo.signExpiry))) {
-            try {
-                var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvdetails.profileVideo.key, Expires:  60 * 60 * 24  };
-                const newSignedUrl = await s3.getSignedUrl('getObject', params);
-                cvBuilder.updateProfileVideo(cvdetails.id, {
-                    key: cvdetails.profileVideo.key,
-                    location: newSignedUrl,
-                    signedOn: moment().toDate(),
-                    signExpiry: moment().add(24,'hours').toDate()
-                }, (err, result) => {
-                    if (err)
-                        return util.sendError('Error saving video details');
-                    req.tempStore.cvdetails = result.toObject();
-                    next();
-                });
-            } catch (error) {
-                return util.sendError(res, 'Failed to get signed in url');
-            }
+        var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvdetails.profileVideo.key, Expires:  60 * 60 * 24  };
+        s3.getSignedUrl('getObject', params, (err, newSignedUrl)=>{
+            if(err) return util.sendError(res, 'Failed to get Save the video.');
+            cvBuilder.updateProfileVideo(cvdetails.id, {
+                key: cvdetails.profileVideo.key,
+                location: newSignedUrl,
+                signedOn: moment().toDate(),
+                signExpiry: moment().add(24,'hours').toDate()
+            }, (err, result) => {
+                if (err) return util.sendError('Error saving video details');
+                req.tempStore.cvdetails = result.toObject();
+                next();
+            });
+        });
     } else {
         next();
     }
 }
 
-const sendCvDetails = async (req, res) => {
+const sendCvDetails = (req, res) => {
     if (isSuperAdminOrOwner(req.decoded, req.params.userId)) {
-        // const user = await getPesonalDetails(req.tempStore.userId);
         User.getUserInfoById(req.tempStore.userId, (err, user) => {
             if(err) return util.sendError('Error getting user details');
             res.json({ success: true, canEdit: true, cvdetails: req.tempStore.cvdetails, profileData: user });
@@ -335,24 +331,22 @@ const updateRemarks = (req, res) => {
     });
 }
 
- const deleteOldIfExist = async (req, res, next) => {
+ const deleteOldIfExist = (req, res, next) => {
     const cvDetails = req.tempStore.cvdetails;
     if (cvDetails.profileVideo && cvDetails.profileVideo.key) {
-        try {
-            await s3.deleteObject({ Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvDetails.profileVideo.key });
-            next()
-        } catch (error) {
-            return util.sendError(res, 'Please try later, failed to delete old video');
-        }
+        s3.deleteObject({ Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: cvDetails.profileVideo.key }, (err)=>{
+            if(err) return util.sendError(res, 'Please try later, failed to delete old video');
+            next();
+        });
     } else {
         next();
     }
 }
-const updateProfileVideo = async (req, res) => {
-    try {
-        let objectKey = req.file ? req.file.key : req.body.videoKey;
-        var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: objectKey, Expires: 60 * 60 * 24 };
-        const newSignedUrl = await s3.getSignedUrl('getObject', params);
+const updateProfileVideo = (req, res) => {
+    let objectKey = req.file ? req.file.key : req.body.videoKey;
+    var params = { Bucket: S3_BUCKET_OBJECT.s3BucketName, Key: objectKey, Expires: 60 * 60 * 24 };
+    s3.getSignedUrl('getObject', params, (err, newSignedUrl)=>{
+        if (err) return util.sendError(res, 'Please try later, failed to upload video');
         cvBuilder.updateProfileVideo(req.tempStore.cvdetails.id, {
             key: objectKey,
             location: newSignedUrl,
@@ -361,10 +355,8 @@ const updateProfileVideo = async (req, res) => {
         }, (err, result) => {
             if (err) return util.sendError(res, 'Failed to save video details');
             res.json({ success: true, profileVideo:  result.profileVideo})
-        })
-    } catch (error) {
-        return util.sendError(res, 'Please try later, failed to upload video');
-    }
+        });
+    });
 }
 
 //multer setup
@@ -393,7 +385,7 @@ const uploadProfileVideo = multer({
 }).single('displayVideo');
 
 
-const getCandidates = async (req, res) => {
+const getCandidates = (req, res) => {
     let { email, pageNumber } = req.body;
     let query = { access: 0 };
     if (email) {

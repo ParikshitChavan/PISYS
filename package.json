@@ -8,7 +8,7 @@
     "start": "node app"
   },
   "dependencies": {
-    "aws-sdk": "^2.313.0",
+    "aws-sdk": "^2.315.0",
     "bcryptjs": "*",
     "body-parser": "^1.18.3",
     "cors": "*",
