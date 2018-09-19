@@ -3,7 +3,7 @@
       <div class="section">
         <div class="educationDetail">
           <div class="row" *ngIf="interests.hobbies">
-              <div class="col s3">Hobbies :</div>
+              <div class="col s3">Hobbies and professional interests:</div>
             <div class="col s9  text-align preline">{{ interests.hobbies }}</div>
           </div>
 
@@ -38,7 +38,6 @@
     </div>
   </div>
 
-
 <div id="modal" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
   [materializeActions]="modalActions">
 
@@ -46,16 +45,14 @@
     <h4>Add/Edit Interests</h4>
     <br/>
     <form>
-
       <div class="input-field">
-        <label for="hobbies">Hoobies (min 100 chars & max 1000 chars) :</label>
+        <label for="hobbies">Hobbies and professional interests: (min 5 chars & max 1000 chars) :</label>
         <textarea id="hobbies" class="materialize-textarea" name="hobbies" [value]="newInterest.hobbies" (keyup)="onInputChange($event,'hobbies')"
           required></textarea>
         <div [hidden]="interestsValidObject.hobbies" class="red-text">
           Please input your hobbies(min 5 chars & max 1000 chars).
         </div>
       </div>
-
       <div class="input-field">
         <label for="motivation">Motivation to come to Japan (min 100 chars & max 1000 chars)  :</label>
         <textarea id="motivation" class="materialize-textarea" name="motivation" [value]="newInterest.motivation" (keyup)="onInputChange($event,'motivation')"
@@ -64,7 +61,6 @@
           Please input your motivation to come to Japan(min 100 chars & max 1000 chars).
         </div>
       </div>
-
       <br/>
     </form>
   </div>

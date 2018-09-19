@@ -35,16 +35,15 @@
         </div>
 
     </div>
-    <div  *ngIf="canEdit" class="row  z-depth-2 padding-container">
-        <div *ngIf="videoDetails.location || canEdit" class="col s12 l12 text-center imgArea">
+    <div class="row  z-depth-2 padding-container">
+        <h5 class="vidTitle">One minute profile video</h5>
+        <div></div>
+        <div *ngIf="videoDetails.location || canEdit" class="col s12 l12 text-center imgArea vidArea">
             <video (error)="onVideoError($event)" class="responsive-video" [src]="videoDetails.location | safe" controls #videoPlayer preload="metadata">
             </video>
-
-            <div *ngIf="canEdit" class="fltBtnArea">
-                <a *ngIf="canEdit" (click)="showFileUploadModal()" class="btn-floating btn-large waves-effect waves-light red">
-                    <i class="material-icons">edit</i>
-                </a>
-            </div>
+        </div>
+        <div *ngIf="canEdit" class="fltBtnArea">
+            <a id="vidEditBtn" (click)="showFileUploadModal()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
         </div>
     </div>
 </div>
@@ -95,13 +94,15 @@
             </div>
             <div class="row">
                 <div class="col s12 l12">
-                       <i> Note : You can upload your self introduction mp4 video which should not be greater than 1.15 Min in length and 150 MB in size.</i> 
+                    <i>
+                        Note : You can upload your self introduction mp4 video which should not be greater than 1.15 Min in length and 150 MB in size.<br><br>
+                        Psst... Keep it casual, Dont forget to smile,<br>chose a well lit area to quickly shoot the video on your phone and make yourself hirable.
+                    </i>
                 </div>
             </div>
             <div class="row">
                 <div class="col s12 l12 text-center">
-                    <video class="previewVideo" [src]="videoProfilePreviewUrl | safe"  controls #previewVideo preload="auto">
-                    </video>
+                    <video class="previewVideo" [src]="videoProfilePreviewUrl | safe"  controls #previewVideo preload="auto"></video>
                 </div>
             </div>
         </form>

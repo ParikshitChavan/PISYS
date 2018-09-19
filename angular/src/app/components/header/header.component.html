@@ -12,7 +12,7 @@
           <li *ngIf="authService.isLoggedIn() && userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]" i18n>Create CV</a></li>
           <li *ngIf="authService.isLoggedIn() && userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/findOpenings']">Openings</a></li>
           <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" i18n>Internships</a></li>
-          <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" i18n>Company</a></li>
+          <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" i18n>My company</a></li>
           <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" i18n>Companies</a></li>
           <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
   
@@ -33,7 +33,7 @@
             <li *ngIf="authService.isLoggedIn() && userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]" i18n>Create CV</a></li>
             <li *ngIf="authService.isLoggedIn() && userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/findOpenings']">Openings</a></li>
             <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/internships']" >Internships</a></li>
-            <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" >Company</a></li>
+            <li *ngIf="authService.isLoggedIn() && userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" >My company</a></li>
             <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" >Companies</a></li>
             <li *ngIf="authService.isLoggedIn() && userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
   
