@@ -39,7 +39,7 @@
         <h5 class="vidTitle">One minute profile video</h5>
         <div></div>
         <div *ngIf="videoDetails.location || canEdit" class="col s12 l12 text-center imgArea vidArea">
-            <video (error)="onVideoError($event)" class="responsive-video" [src]="videoDetails.location | safe" controls #videoPlayer preload="metadata">
+            <video (error)="onVideoError($event)" class="responsive-video profVid" [src]="videoDetails.location | safe" controls #videoPlayer preload="metadata">
             </video>
         </div>
         <div *ngIf="canEdit" class="fltBtnArea">
@@ -56,7 +56,7 @@
             <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['education']">education</a>
         </li>
         <li class="tab">
-            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['experience']">Experience</a>
+            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['experience']">Internships</a>
         </li>
         <li class="tab">
             <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['projects']">Projects</a>
@@ -73,7 +73,6 @@
         <li class="tab" *ngIf="userAccess == 2" >
             <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['remarks']">Remarks</a>
         </li>
-
     </ul>
 </div>
 <router-outlet></router-outlet>
