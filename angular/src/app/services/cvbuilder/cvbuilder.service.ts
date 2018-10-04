@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CoreHttpService }                                  from '../core-http.service';
+import { CoreHttpService } from '../core-http.service';
 import { BehaviorSubject } from 'rxjs';
 import { Education } from '../../model/education';
 import { Experience } from '../../model/experience';
@@ -249,7 +249,6 @@ export class CvBuilderService {
     return this.httpService.put('cv/updateEducation', data);
   }
 
-  
   addExperience (experience: Experience) {
     const data ={ experience : experience, userId :  this.getUserId() }
     return this.httpService.post('cv/addExperience', data);
@@ -264,8 +263,6 @@ export class CvBuilderService {
     const data = { experience : experience, userId :  this.getUserId() }
     return this.httpService.put('cv/updateExperience', data);
   }
-
-  
 
   addProject (project: Project) {
     const data ={ project : project, userId :  this.getUserId() }

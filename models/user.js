@@ -423,7 +423,6 @@ module.exports.pullCandidates = (query, perPage, pageNumber, callback) => {
             path: 'cv',
             match: { isProfilePublished: true },
             select: 'isProfilePublished -_id'
-        }).sort('-email').skip((pageNumber-1)*perPage).limit(perPage).
+        }).sort('-_id').skip((pageNumber-1)*perPage).limit(perPage).
         exec(callback);
-    // User.find(query, 'name email cv', callback).sort('-email').skip((pageNumber-1)*perPage).limit(perPage);;
 }
