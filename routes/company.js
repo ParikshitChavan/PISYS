@@ -68,7 +68,7 @@ router.post('/register', (req, res, next)=>{
                     if(err) throw err;
                     User.addCompany(admin._id, company._id, (err)=>{     //3. add company to the admin account
                         if(err) throw err;
-                        let recipient = {name: admin.name, email: admin.email};
+                        let recipient = {name: admin.name, email: admin.email, companyName: company.name};
                         mailer.sendActivationMail(recipient, link, (err)=>{
                             if(err) throw err;
                             return res.status(200).json({ success: true, message: "company added and activation mail is sent" });
@@ -145,7 +145,7 @@ router.post('/registerAdmin', (req, res, next) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.getCompany(decoded._id, (err, companyId) => {
+        User.getCompanyIdAndName(decoded._id, (err, companyId, cmpName) => {
             if (err) throw err;
             if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the requesting user" });
             Sitelink.createActivationLink(req.body.email, (err, link)=>{
@@ -159,9 +159,9 @@ router.post('/registerAdmin', (req, res, next) => {
                     DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
                     company: companyId
                 });
-                Company.addAdmin(companyId, newAdmin, (err, company) => {
+                Company.addAdmin(companyId, newAdmin, (err) => {
                     if (err) throw err;
-                    let recipient = {name: newAdmin.name, email: newAdmin.email};
+                    let recipient = {name: newAdmin.name, email: newAdmin.email, companyName: cmpName};
                     mailer.sendActivationMail(recipient, link, (err) => {
                         if(err) throw err;
                         return res.json({ success: true, message: "admin added and activation mail is sent" });

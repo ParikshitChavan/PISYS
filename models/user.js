@@ -89,6 +89,10 @@ module.exports.getUserInfoById = function(userId, callback){
     User.findById(userId,'name email phNum DP DOB skypeId', callback);
 }
 
+module.exports.getFullUser = function(userId, callback){
+    User.findById(userId, {lean: true}, callback);
+}
+
 module.exports.getUserPassById = function(userId, callback){
     User.findById(userId, 'password', callback);
 }
@@ -161,6 +165,16 @@ module.exports.getCompany = function(userId, callback){
     });
 }
 
+module.exports.getCompanyIdAndName = function(userId, callback){
+    User.findById(userId, {lean: true}).populate(
+        { path: 'company', select: 'name'}
+        ).exec((err, user)=>{
+        if (err) return callback(err, null);
+        if (!user.hasOwnProperty('company')) return callback(null, null);
+        callback(null, user.company._id, user.company.name);
+    });
+}
+
 module.exports.addCompany = function(userId, companyId, callback){
     User.findByIdAndUpdate(userId, { $set: { company: companyId }}, callback);
 }
@@ -189,13 +203,19 @@ module.exports.addInchargeOf = function(userId, internshipId, callback){
     User.findByIdAndUpdate(userId, { $push: { inchargeOf: internshipId }}, callback);
 }
 
-module.exports.deleteUserById = function(id, callback){
-    User.findByIdAndRemove(id,callback);
-    /*
-    User.update({_id: id}, set{isActive: false},(err)=>{
-    if (err) throw err;
-    })*/
-}
+/*module.exports.deleteUserById = function(id, callback){  //cb(err, msg)
+    User.findById(id, (err, user)=>{
+        if(err) return callback(err, null);
+        if(user.internships.count) callback(null, 'candidate with Interships can not be deleted');
+        /*deletion goes here
+            if(user.DP.key != ''){
+               aws sdk delete the DP here
+            }
+            
+        
+       
+    });
+}*/
 
 module.exports.comparePasswords = function(candidatePassword, hash, callback){
     bcrypt.compare(candidatePassword, hash, (err, isMatch)=>{

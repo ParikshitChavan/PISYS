@@ -3,22 +3,48 @@ const config = require('../config/cfg');
 
 module.exports.sendActivationMail = function(recipient, link, callback){
     if(!recipient || !link) return callback('Missing data');
+    
     let htmlBody = `
-        <p>Hi ${recipient.name},<br>
+        ${recipient.companyName}<br>
+        ${recipient.name}様<br>
         <br>
-        We would like to invite you to our newly developed PIITs Intership management platform.<br>
-        please use this link to setup your initial password and login to the platform.<br>
+        お世話になっております。<br>
+        WillingsのPIITsチームでございます。<br>
         <br>
-        <a href='${link}'>${link}</a><br>
+        表題の件でご連絡させていただきました。<br>
         <br>
-        After logging in Kindly fill the company details and your profile details<br>
-        We would like you to use this platform to fill out weekly reports, feedbacks and other details for the internships.<br>
-        Thank you.<br>    
+        PIITs2019の候補学生のご紹介に関しまして、<br>
+        専用のオンラインポーターにて詳細をご共有させていただきます。<br>
+        <br>
+        こちらのポーターからは、<br>
+        ・学生の1分間自己紹介動画<br>
+        ・過去のインターンシップ/経験プロジェクト<br>
+        ・使用可能言語<br>
+        上記3点をご確認いただけます。<br>
+        <br>
+        こちらのメールにて貴社のアドミン設定を行っていただけたらと思います。<br>
+        <br>
+        使用方法に関しましては下記まとめさせていただきましたので、ご確認くださいませ。<br>
+        <br>
+        ---アカウント設定→学生プロフィール確認方法---<br>
+        ① 下記リンクをクリック<br>
+        <a href='${link}'>${link}</a><br><br>
+        ② 自身のパスワードを設定<br>
+        ③ システムにログインした状態で、先程お送りさせていただきました「PIITs2019_StudentList」のPISYS列に記載されているリンクをクリック<br>
+        ④リンクから学生の詳細情報を確認することができます<br>
+        ※ログイン後、貴社内でご自由にアドミン設定していただくことも可能です<br>
+        <br>
+        ご使用いただく際にご不明点等ございましたら、<br>
+        お気軽にお申し付けくださいませ。<br>
+        <br>
+        引き続きどうぞよろしくお願いいたします。<br>
+        </p>
     `;  //es6 template String with back ticks
     let mailOptions = {
         from: '"PIITs Team" <piits@willings.co.jp>',
         to: recipient.email,
-        subject: 'Invitation to PIITs Intership management platform',
+        cc: '"members" <members@willings.co.jp>',
+        subject: '【Willings】PIITs2019ポータルサイトへのご案内',
         text: '',
         html: htmlBody
     };

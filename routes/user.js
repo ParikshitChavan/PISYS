@@ -127,16 +127,32 @@ router.post('/updateUserInfo', (req, res, next)=>{
     });
 });
 
-router.delete('/delete', (req, res, next)=>{
+/*router.delete('/delete', (req, res, next)=>{
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.deleteUserById(decoded._id, (err, user)=>{
-            if (err) throw err;
-            res.status(serverStatus).json({ success: true, message: "User deleted successfully" });
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        if(decoded.access != 2) return res.json({ success: false, error: 'unauthenticated' });
+        User.getFullUser(req.body.userId, (err, user) => {
+            if(err) throw err;
+            if(user.internships.count) return res.json({ success: true, message: 'User cant be deleted as there are Internships associated with the account' });
+            if(user.DP.key){              //if present, delete current DP from AWS S3 
+                s3.deleteObject({Bucket: 'piitscrm', Key:user.DP.key}, (err) => {
+                    if(err) {
+                        console.log(err);
+                        console.log('failed to delete ' + user.DP.key + ' from S3. Please delete it manually.');
+                    }
+                });
+            }
+            uploadDisplayPic(req, res, (err) => {
+                if(err) return res.json({success: false, error: err});
+                User.updateDisplayPic(decoded._id, req.file.key, req.file.location, (err) => {
+                    if(err) return res.json({success: false, error: err});
+                    res.json({success: true, newLink: req.file.location});
+                });
+            });
         });        
     });
-});
+});*/
 
 router.post('/requestPasswordReset', (req, res, next)=>{
     User.setupPasswordReset(req.body.email, (err)=>{
