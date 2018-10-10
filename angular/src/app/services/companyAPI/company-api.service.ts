@@ -50,11 +50,12 @@ export class CompanyApiService {
     return this.http.post(this.appUrl + 'company/updateLogo', uploadData, {headers: headers}).map(res => res.json());
   }
 
-  addAdmin(newAdmin){
+  addAdmin(newAdmin, cmpId){
     this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
+    newAdmin['companyId'] = cmpId;
     return this.http.post(this.appUrl + 'company/registerAdmin', newAdmin, {headers: headers}).map(res => res.json());
   }
 

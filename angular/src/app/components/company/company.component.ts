@@ -138,7 +138,7 @@ export class CompanyComponent implements OnInit {
   adminInfoSubmit(validForm: Boolean){
     if(!validForm) return false;
     this.editingAdmin = false;
-    this.companyAPIService.addAdmin(this.newAdmin).subscribe(resp =>{
+    this.companyAPIService.addAdmin(this.newAdmin, this.companyDetails._id).subscribe(resp =>{
       resp.success ? this.companyInfoMsg = "New admin added successfully." : this.companyInfoMsg = "Some error occurred, please try agin later.";
       toast(this.companyInfoMsg, 3000);
     });
@@ -147,6 +147,7 @@ export class CompanyComponent implements OnInit {
   onLogoUploadClick(){
     let formData:FormData = new FormData();
     let blob = this.convertToBlob( this.imgData.image);
+    formData.append('companyId', this.companyDetails._id);
     formData.append('companyLogo', blob);
     this.companyAPIService.updateLogo(formData).subscribe(resp =>{
       if (resp.success){

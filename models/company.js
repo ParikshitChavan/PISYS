@@ -45,6 +45,13 @@ module.exports.getCompanyNames = function (callback){
     Company.find({ isActive: true }, "name" , callback);
 }
 
+module.exports.getCompanyNameById = function (cmpId, callback){
+    Company.findById( cmpId, "name", {lean: true} , (err, cmp)=>{
+        if(err) return callback(err, null);
+        callback(null, cmp.name);
+    });
+}
+
 module.exports.updateCmpInfoById = function(id, cmpInfo, callback){
     Company.findByIdAndUpdate(id, { $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address, website: cmpInfo.website, empSize: cmpInfo.empSize }}, callback);
 }

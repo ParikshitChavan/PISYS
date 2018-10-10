@@ -117,58 +117,100 @@ router.get('/companyNames', (req, res, next) => {
     });    
 });
 
-router.post('/updateInfo', (req, res, next) => {
+router.post('/updateInfo', (req, res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.getCompany(decoded._id, (err, companyId)=>{
-            if (err) throw err;
-            if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
-            const companyData = {
-                name:req.body.name,
-                est:req.body.est,
-                phNum:req.body.phNum,
-                address:req.body.address,
-                website: req.body.website,
-                empSize: req.body.empSize
-            }
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        const companyData = {
+            name:req.body.name,
+            est:req.body.est,
+            phNum:req.body.phNum,
+            address:req.body.address,
+            website: req.body.website,
+            empSize: req.body.empSize
+        }
+        if(decoded.access == 2) {
+            const companyId = req.body._id;
+            if(!companyId) return res.status(500).json({ success: false, message: "No company id provided" });
             Company.updateCmpInfoById(companyId, companyData,  (err)=>{
                 if(err) throw err;
                 res.json({success: true , message: 'Company info updated successfully'});
             });
-        });
-    });    
+        }
+        else if(decoded.access == 1){
+            User.getCompany(decoded._id, (err, companyId)=>{
+                if (err) throw err;
+                if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
+                Company.updateCmpInfoById(companyId, companyData,  (err)=>{
+                    if(err) throw err;
+                    res.json({success: true , message: 'Company info updated successfully'});
+                });
+            });
+        }
+        else res.json({success: false, error: 'unauthorised'});
+    });
 });
 
-//admins adding their colleagues
+//admins adding their colleagues or WL members doing it for them
 router.post('/registerAdmin', (req, res, next) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.getCompanyIdAndName(decoded._id, (err, companyId, cmpName) => {
-            if (err) throw err;
-            if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the requesting user" });
-            Sitelink.createActivationLink(req.body.email, (err, link)=>{
-                if (err) throw err;
-                let newAdmin = new User({
-                    isActive: true,
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: link,  //save the link as the password until they use activation link to set password
-                    access: 1,
-                    DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
-                    company: companyId
-                });
-                Company.addAdmin(companyId, newAdmin, (err) => {
+        if(decoded.access == 2){
+            const companyId = req.body.companyId;
+            if(!companyId) return res.status(500).json({ success: false, message: "No company id provided" });
+            Company.getCompanyNameById(companyId,(err, cmpName)=>{
+                if(err) throw err;
+                Sitelink.createActivationLink(req.body.email, (err, link)=>{
                     if (err) throw err;
-                    let recipient = {name: newAdmin.name, email: newAdmin.email, companyName: cmpName};
-                    mailer.sendActivationMail(recipient, link, (err) => {
-                        if(err) throw err;
-                        return res.json({ success: true, message: "admin added and activation mail is sent" });
+                    let newAdmin = new User({
+                        isActive: true,
+                        name: req.body.name,
+                        email: req.body.email,
+                        password: link,  //save the link as the password until they use activation link to set password
+                        access: 1,
+                        DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
+                        company: companyId
+                    });
+                    Company.addAdmin(companyId, newAdmin, (err) => {
+                        if (err) throw err;
+                        let recipient = {name: newAdmin.name, email: newAdmin.email, companyName: cmpName};
+                        mailer.sendActivationMail(recipient, link, (err) => {
+                            if(err) throw err;
+                            return res.json({ success: true, message: "admin added and activation mail is sent" });
+                        });
                     });
                 });
-            });
-        });  
+            })
+
+        }
+        else if(decoded.access == 1){
+            User.getCompanyIdAndName(decoded._id, (err, companyId, cmpName) => {
+                if (err) throw err;
+                if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the requesting user" });
+                Sitelink.createActivationLink(req.body.email, (err, link)=>{
+                    if (err) throw err;
+                    let newAdmin = new User({
+                        isActive: true,
+                        name: req.body.name,
+                        email: req.body.email,
+                        password: link,  //save the link as the password until they use activation link to set password
+                        access: 1,
+                        DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
+                        company: companyId
+                    });
+                    Company.addAdmin(companyId, newAdmin, (err) => {
+                        if (err) throw err;
+                        let recipient = {name: newAdmin.name, email: newAdmin.email, companyName: cmpName};
+                        mailer.sendActivationMail(recipient, link, (err) => {
+                            if(err) throw err;
+                            return res.json({ success: true, message: "admin added and activation mail is sent" });
+                        });
+                    });
+                });
+            }); 
+        }
+        else res.json({success: false, error: 'unauthorised'});
     });
 });
 
@@ -176,25 +218,48 @@ router.post('/updateLogo', (req, res, next) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        User.getCompany(decoded._id, (err, companyId) => {
-            if(err) return res.json({success: false, message: err});
-            if(!companyId) return res.json({success: false, message: 'No company associated with the user'});
-            Company.getLogo(companyId, (err, logo) => {
-                if(err) return res.json({success: false, msg: err});
-                if(logo.key){        //if present, delete current logo from AWS s3 
-                    s3.deleteObject({Bucket: 'piitscrm', Key:logo.key}, (err) => {
-                        if(err) return res.json({success: false, message: err});
-                    });
-                }
-                uploadCompanyLogo(req, res, (err) => {
-                    if(err) return res.json({success: false, message: err});
+        if(decoded.access == 2){
+            uploadCompanyLogo(req, res, (err) => {
+                if(err) return res.json({success: false, message: err});
+                const companyId = req.body.companyId;
+                if(!companyId) return res.json({success: false, message: 'No company associated with the user'});
+                Company.getLogo(companyId, (err, logo) => {
+                    if(err) return res.json({success: false, msg: err});
+                    if(logo.key){        //if present, delete current logo from AWS s3 
+                        s3.deleteObject({Bucket: 'piitscrm', Key:logo.key}, (err) => {
+                            if(err) return res.json({success: false, message: err});
+                        });
+                    }
                     Company.updateLogo(companyId, req.file.key, req.file.location, (err) => {
                         if(err) return res.json({success: false, message: err});
                         res.json({success: true, newLink: req.file.location});
                     });
                 });
             });
-        });
+        }
+        else if(decoded.access == 1){
+            User.getCompany(decoded._id, (err, companyId) => {
+                if(err) return res.json({success: false, message: err});
+                if(!companyId) return res.json({success: false, message: 'No company associated with the user'});
+                Company.getLogo(companyId, (err, logo) => {
+                    if(err) return res.json({success: false, msg: err});
+                    if(logo.key){        //if present, delete current logo from AWS s3 
+                        s3.deleteObject({Bucket: 'piitscrm', Key:logo.key}, (err) => {
+                            if(err) return res.json({success: false, message: err});
+                        });
+                    }
+                    uploadCompanyLogo(req, res, (err) => {
+                        if(err) return res.json({success: false, message: err});
+                        Company.updateLogo(companyId, req.file.key, req.file.location, (err) => {
+                            if(err) return res.json({success: false, message: err});
+                            res.json({success: true, newLink: req.file.location});
+                        });
+                    });
+                });
+            });
+        }
+        else res.json({success: false, error: 'unauthorised'});
+        
     });
 });
 
