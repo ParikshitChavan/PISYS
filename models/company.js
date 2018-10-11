@@ -11,7 +11,7 @@ const companySchema = Schema({
     admins: [{type: Schema.Types.ObjectId, ref: 'User'}],
     internships: [{type: Schema.Types.ObjectId, ref: 'Internship'}],
     logo: { key: String, url: String },
-    phNum: { type: String, required: true },
+    phNum: String,
     website: String,
     abtUs: String,
     openings: [{
