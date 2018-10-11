@@ -166,7 +166,7 @@ module.exports.getCompany = function(userId, callback){
 }
 
 module.exports.getCompanyIdAndName = function(userId, callback){
-    User.findById(userId, {lean: true}).populate(
+    User.findById(userId, 'company', {lean: true}).populate(
         { path: 'company', select: 'name'}
         ).exec((err, user)=>{
         if (err) return callback(err, null);
