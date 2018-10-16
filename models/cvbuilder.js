@@ -58,6 +58,7 @@ const cvBuilderSchema = Schema({
 });
 
 const cvBuilder = module.exports = mongoose.model('CvBuilder', cvBuilderSchema);
+const CvBuilderArchive = mongoose.model( 'CvBuilderArchive', cvBuilderSchema);
 
 module.exports.getCvById = (id, callback) => {
     cvBuilder.findById(id,callback);
@@ -163,4 +164,14 @@ module.exports.updateProfileVideo = (id, fileDetails, callback) => {
 
 module.exports.updatePublish = function(id, publishProfile, callback){
     cvBuilder.findByIdAndUpdate({ _id: id }, { $set: { "isProfilePublished": publishProfile }}, callback);
+}
+
+module.exports.archiveCVByID = function(id, callback){
+    cvBuilder.findById(id, (err, cv)=>{
+        if(err) return callback(err);
+        let newArchive = new CvBuilderArchive(cv);
+        newArchive.save();
+        cv.delete();
+        callback(null);
+    });
 }

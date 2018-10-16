@@ -180,9 +180,9 @@ module.exports.addCompany = function(userId, companyId, callback){
 }
 
 module.exports.getInternships = function(userId, callback){
-    User.findById(id, 'internships', (err, user)=>{
+    User.findById(userId, 'internships', (err, user)=>{
         if (err) return callback(err, null);
-        if (!user.internships || user.internships.length) return callback(null, null);
+        if (!user.internships || user.internships.length == 0 ) return callback(null, null);
         callback(null, user.internships);
     });
 }
@@ -202,20 +202,6 @@ module.exports.getInchargeOf = function(userId, callback){
 module.exports.addInchargeOf = function(userId, internshipId, callback){
     User.findByIdAndUpdate(userId, { $push: { inchargeOf: internshipId }}, callback);
 }
-
-/*module.exports.deleteUserById = function(id, callback){  //cb(err, msg)
-    User.findById(id, (err, user)=>{
-        if(err) return callback(err, null);
-        if(user.internships.count) callback(null, 'candidate with Interships can not be deleted');
-        /*deletion goes here
-            if(user.DP.key != ''){
-               aws sdk delete the DP here
-            }
-            
-        
-       
-    });
-}*/
 
 module.exports.comparePasswords = function(candidatePassword, hash, callback){
     bcrypt.compare(candidatePassword, hash, (err, isMatch)=>{
@@ -445,4 +431,14 @@ module.exports.pullCandidates = (query, perPage, pageNumber, callback) => {
             select: 'isProfilePublished -_id'
         }).sort('-_id').skip((pageNumber-1)*perPage).limit(perPage).
         exec(callback);
+}
+
+module.exports.archiveUserByID = function(id, callback){
+    User.findById(id, (err, user)=>{
+        if(err) return callback(err);
+        let newArchive = new CvBuilderArchive(user);
+        newArchive.save();
+        user.delete();
+        callback(null);
+    });
 }

@@ -19,9 +19,9 @@
     outline: none !important;
 }
 
-.linkRow:hover{
+/*.linkRow:hover{
     cursor: pointer;
-}
+}*/
 
 .name{
     text-decoration: underline !important;

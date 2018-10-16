@@ -33,12 +33,15 @@
               <th>
                 Publish Status
               </th>
+              <th>
+                Options
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let candidate of pagedCandidates" [routerLink]="['/cvbuilder/' + candidate._id ]" class="linkRow">
+            <tr *ngFor="let candidate of pagedCandidates" class="linkRow">
               <td class="name">
-                <a i18n>
+                <a [routerLink]="['/cvbuilder/' + candidate._id ]">
                   {{ candidate.name}}
                 </a>
               </td>
@@ -46,6 +49,10 @@
               <td >
                   <input id="isProfilePublished" *ngIf="candidate.cv.length" type="checkbox" name='isProfilePublished' (change)="onProfileStatusChange()" [checked]="candidate.cv.length ? candidate.cv[0].isProfilePublished : false">
                   <label for="isProfilePublished" *ngIf="candidate.cv.length"></label>
+              </td>
+              <td>
+                <!--<a class="waves-effect waves-light btn small"><i class="material-icons right">archive</i>archive</a>-->
+                <a class="waves-effect waves-light btn small" (click)='deleteClicked(candidate._id)'><i class="material-icons right small">delete_forever</i>delete</a>
               </td>
             </tr>
           </tbody>
@@ -76,4 +83,26 @@
 <div class="loaderParent"  [hidden]="!loading" [ngClass]="{'activeModal':loading}">
     <div class="loader"></div>
     <div class="loading-msg">Please wait...!</div>
+</div>
+
+<div id="delModal" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"
+  [materializeActions]="delModalActions">
+  <div class="modal-content">
+    <p>CAUTION, you are about to permanently delete this candidate! This action is irreversible adn the candidate data will be lost permanently.
+      To confirm this action please type in the email address of the candidate you want to delete adn press the confirm button.
+    </p>
+    <form (ngSubmit)="onCnfDelEmail(delCnfForm)" #delCnfForm="ngForm">
+      <div class="input-field col s12">
+        <label for="cnfEmail">Email</label>
+        <input id="cnfEmail" type="email" name="cnfEmail" [(ngModel)]='cnfEmailVal' #cnfEmail="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+        <div [hidden]= "cnfEmail.valid || (cnfEmail.pristine && !delCnfForm.submitted)" class="red-text">
+          Please input a valid Email address for the candidate you pressed delete.
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="waves-effect waves-green btn-flat" (click)="delCnfForm.ngSubmit.emit()">Confirm</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" >Close</button>
+  </div>
 </div>

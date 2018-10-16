@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params }                 from '@angular/router';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { CvBuilderService } from '../../services/cvbuilder/cvbuilder.service';
-import { toast } from 'angular2-materialize';
+import { AuthService } from '../../services/auth/auth.service';
+import { toast, MaterializeAction } from 'angular2-materialize';
 
 @Component({
   selector: 'app-candidates',
@@ -13,7 +13,12 @@ export class CandidatesComponent implements OnInit {
   candidates : any[] = [];
   candidateEmail: string = '';
   candidatesPerPage: number = 10;
-  
+  deletinCandi = {
+    _id: '',
+    email: ''
+  };
+  cnfEmailVal = '';
+  delModalActions = new EventEmitter<string|MaterializeAction>();
   bufferedCandidates: any[] = [];
   // pager object
   pager: any = {
@@ -25,8 +30,7 @@ export class CandidatesComponent implements OnInit {
   nextPage = 1;
   bufferedPage = 0;
   loading = true;
-  constructor(public cvBuilderService:CvBuilderService,
-    private route:ActivatedRoute) { }
+  constructor(public cvBuilderService:CvBuilderService, private authService: AuthService) { }
 
   ngOnInit() {
     this.getCandidates();
@@ -148,5 +152,26 @@ export class CandidatesComponent implements OnInit {
     return {  totalCandidates, currentPage, pageSize, totalPages, startPage, endPage, startIndex, endIndex, pages  };
   }
 
+  deleteClicked(candiId){
+    this.delModalActions.emit({action:"modal", params:['open']});
+    for(let i=0; i < this.candidatesPerPage; i++){
+      if(this.pagedCandidates[i]._id == candiId){
+        this.deletinCandi = this.pagedCandidates[i];
+        break;
+      }
+    }
+  }
 
+  onCnfDelEmail(form){
+    if(!form.valid) return toast('Please type in the correct email address.', 4000);
+    if(form.controls.cnfEmail.value == this.deletinCandi.email){
+      this.authService.deleteUser(this.deletinCandi._id).subscribe(resp =>{
+        if(!resp.success) return toast(resp.message, 4000);
+        this.delModalActions.emit({action:"modal", params:['close']});
+        toast('candidate deleted successfully.', 4000);
+      });
+    }
+    else return toast('Please type in the correct email address.', 4000);
+  }
+  
 }

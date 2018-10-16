@@ -127,32 +127,71 @@ router.post('/updateUserInfo', (req, res, next)=>{
     });
 });
 
-/*router.delete('/delete', (req, res, next)=>{
+router.post('/delete', (req, res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, error: err });
         if(decoded.access != 2) return res.json({ success: false, error: 'unauthenticated' });
-        User.getFullUser(req.body.userId, (err, user) => {
+        User.getInternships(req.body.userId, (err, internships)=>{
             if(err) throw err;
-            if(user.internships.count) return res.json({ success: true, message: 'User cant be deleted as there are Internships associated with the account' });
-            if(user.DP.key){              //if present, delete current DP from AWS S3 
-                s3.deleteObject({Bucket: 'piitscrm', Key:user.DP.key}, (err) => {
+            if(internships){
+                return res.json({ success: false, message: 'User cant be deleted as there are Internships associated with the account' });
+            }
+            User.findByIdAndDelete(req.body.userId, (err, user) => {
+                if(err) throw err;
+                if(user.DP.key){              //if present, delete current DP from AWS S3 
+                    s3.deleteObject({Bucket: 'piitscrm', Key:user.DP.key}, (err) => {
+                        if(err) {
+                            console.log(err);
+                            console.log('failed to delete ' + user.DP.key + ' from S3. Please delete it manually.');
+                        }
+                    });
+                }
+                Sitelink.deleteMany({sentTo: user.email}, (err)=>{
                     if(err) {
                         console.log(err);
-                        console.log('failed to delete ' + user.DP.key + ' from S3. Please delete it manually.');
+                        console.log('sitelink deleting failed for '+ user.email +'. please delete them manually.');
                     }
                 });
-            }
-            uploadDisplayPic(req, res, (err) => {
-                if(err) return res.json({success: false, error: err});
-                User.updateDisplayPic(decoded._id, req.file.key, req.file.location, (err) => {
-                    if(err) return res.json({success: false, error: err});
-                    res.json({success: true, newLink: req.file.location});
+                CvBuilder.findByIdAndDelete(user.cv[0]._id, (err, cv)=>{
+                    if(err) {
+                        console.log(err);
+                        console.log('failed to CV with ID ' + user.cv[0]._id + ' from database. Please delete it manually.');
+                    }
+                    if(cv.profileVideo){
+                        s3.deleteObject({Bucket: 'piitscrm', Key:cv.profileVideo.key}, (err) => {
+                            if(err) {
+                                console.log(err);
+                                console.log('failed to delete ' + user.DP.key + ' from S3. Please delete it manually.');
+                            }
+                        });
+                    }
                 });
+                res.json({success: true, message: 'user deleted successfully.'});
             });
         });        
     });
-});*/
+});
+
+router.post('/archive', (req, res) => {
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded)=>{
+        if(err) return res.status(serverStatus).json({ success: false, error: err });
+        if(decoded.access != 2) return res.json({ success: false, error: 'unauthenticated' });
+        User.archiveUserById(req.body.userId, (err, cvId) => {
+            if(err) throw err;
+            CvBuilder.archiveCVByID(cvId, (err)=>{
+                if(err) throw err;
+            });
+            Sitelink.deleteMany({sentTo: user.email}, (err)=>{
+                if(err) {
+                    console.log(err);
+                    console.log('sitelink deleting failed for '+ user.email +'. please delete them manually.');
+                }
+            });
+        });        
+    });
+});
 
 router.post('/requestPasswordReset', (req, res, next)=>{
     User.setupPasswordReset(req.body.email, (err)=>{

@@ -6,7 +6,6 @@ import { JwtHelper } from 'angular2-jwt';
 import "rxjs/add/operator/map";
 
 import { environment } from "../../../environments/environment";
-import { debug } from 'util';
 
 @Injectable()
 export class AuthService {
@@ -129,6 +128,15 @@ export class AuthService {
     headers.append('Content-Type', "application/json");
     headers.append('x-access-token', this.authToken);
     return this.http.post(this.apiUrl + 'user/updatePassword', data, {headers: headers}).map(res => res.json());
+  }
+
+  deleteUser(userId){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    const data = {userId: userId};
+    return this.http.post(this.apiUrl + 'user/delete', data, {headers: headers}).map(res => res.json());
   }
 
 }
