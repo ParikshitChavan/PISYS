@@ -169,6 +169,7 @@ export class CandidatesComponent implements OnInit {
         if(!resp.success) return toast(resp.message, 4000);
         this.delModalActions.emit({action:"modal", params:['close']});
         toast('candidate deleted successfully.', 4000);
+        this.clearSearch();
       });
     }
     else return toast('Please type in the correct email address.', 4000);
