@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http }  from '@angular/http';
-import { AuthService }  from './auth/auth.service';
 import { environment }  from '../../environments/environment';
 
 @Injectable()
 export class CoreHttpService {
 
-  appUrl: string = environment.appUrl; //'localhost:3000';
+  appUrl: string = environment.appUrl;
   
   constructor(
-    protected http: Http,
-    private AuthService: AuthService
+    protected http: Http
   ){}
 
   private getToken(){

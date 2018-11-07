@@ -39,6 +39,9 @@ import { EducationComponent } from './components/cvbuilder/education/education.c
 import { ExperienceComponent } from './components/cvbuilder/experience/experience.component';
 import { ProjectsComponent } from './components/cvbuilder/projects/projects.component';
 import { OpeningListingComponent } from './components/opening-listing/opening-listing.component';
+import { InterestsComponent } from './components/cvbuilder/interests/interests.component';
+import { RemarksComponent } from './components/cvbuilder/remarks/remarks.component';
+import { CandidatesComponent } from './components/candidates/candidates.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
@@ -61,9 +64,6 @@ import { CandidateMasterListComponent } from './components/candidate-master-list
 import { SkillsComponent } from './components/cvbuilder/skills/skills.component';
 import { CertificationComponent } from './components/cvbuilder/certification/certification.component';
 import { SafePipe } from './pipe/safe.pipe';
-import { InterestsComponent } from './components/cvbuilder/interests/interests.component';
-import { RemarksComponent } from './components/cvbuilder/remarks/remarks.component';
-import { CandidatesComponent } from './components/candidates/candidates.component';
 
 
 const appRoutes: Routes =[
