@@ -3,12 +3,13 @@ const Schema = mongoose.Schema;
 
 const companySchema = Schema({
     isActive: Boolean,
-    name: { type: String, required: true, unique: true, dropDups: true },
+    name: { type: String, required: true, index: true, unique: true, dropDups: true },
     est: {
         type: Date
     },
     address: String,
     admins: [{type: Schema.Types.ObjectId, ref: 'User'}],
+    adminsArcv: [{type: Schema.Types.ObjectId, ref: 'User'}],
     internships: [{type: Schema.Types.ObjectId, ref: 'Internship'}],
     logo: { key: String, url: String },
     phNum: String,
@@ -29,20 +30,15 @@ const companySchema = Schema({
 
 const Company = module.exports = mongoose.model('Company', companySchema);
 
-function validateEmail(email) {
-    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
-
-
-                                /*=====API Functions=====*/
-
 module.exports.getCompanyInfoById = function(id, callback){
-    Company.findById(id, "name est address admins logo phNum website empSize", { lean: true }).populate('admins', 'name email').exec(callback);
+    Company.findById(id, "name est address admins adminsArcv logo phNum website empSize", { lean: true })
+        .populate('admins', 'name email')
+        .populate('adminsArcv', 'name email')
+        .exec(callback);
 }
 
 module.exports.getCompanyNames = function (callback){
-    Company.find({ isActive: true }, "name" , callback);
+    Company.find({ isActive: true, name: { $ne: 'Willings, Inc.' } }, "name" , callback);
 }
 
 module.exports.getCompanyNameById = function (cmpId, callback){
@@ -52,8 +48,20 @@ module.exports.getCompanyNameById = function (cmpId, callback){
     });
 }
 
-module.exports.updateCmpInfoById = function(id, cmpInfo, callback){
-    Company.findByIdAndUpdate(id, { $set: { name: cmpInfo.name, est: cmpInfo.est, phNum: cmpInfo.phNum, address: cmpInfo.address, website: cmpInfo.website, empSize: cmpInfo.empSize }}, callback);
+module.exports.updateCmpInfoById = function(cmpId, decodedToken, cmpInfo, callback){
+    Company.findById(cmpId, (err, company) =>{
+        if(err) return callback(err);
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
+            company.name = cmpInfo.name;
+            company.est = cmpInfo.est;
+            company.phNum = cmpInfo.phNum;
+            company.address = cmpInfo.address;
+            company.website = cmpInfo.website;
+            company.empSize = cmpInfo.empSize;
+            company.save(callback);
+        }
+        else return callback('not authorised', null);
+    });
 }
 
 module.exports.addAdmin = function(companyId, newAdmin, callback){
@@ -94,7 +102,7 @@ module.exports.updateLogo = function(companyId, awsKey, awsUrl, callback){
 }
 
 module.exports.getSuggestions = function(searchTerm, callback){
-    let query = {name: { $regex : '.*' + searchTerm + '.*', $options: 'i' }};
+    let query = { name: { $regex : '.*' + searchTerm + '.*', $options: 'i' }};
     Company.find(query).select('name logo').limit(10).lean().exec((err, companies)=>{
         if(err) return callback(err, null);
         data = {};
@@ -231,5 +239,43 @@ module.exports.updateAboutUs = function(cmpId, decodedToken, abtUs, callback){  
             company.save(callback);
         }
         else return callback('not authorised');
+    });
+}
+
+module.exports.archiveAdmin = function(cmpId, decodedToken, adminId, callback){             //callback(err, cmpInfo)
+    Company.findById(cmpId, 'name est address admins adminsArcv logo phNum website empSize', (err, company) =>{
+        if(err) return callback(err);
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
+            if(company.admins.indexOf(adminId)!= -1){
+                company.adminsArcv.push(adminId);
+                company.admins.remove(adminId);
+                company.save(err => {
+                    if(err) return callback(err, null);
+                    const populateOpts = [{ path:'admins', select: 'name email' }, { path:'adminsArcv', select: 'name email' }]
+                    Company.populate(company, populateOpts, callback);
+                });
+            }
+            else return callback('no such admin present', null);
+        }
+        else return callback('not authorised', null);
+    });
+}
+
+module.exports.restoreAdmin = function(cmpId, decodedToken, adminId, callback){            //callback(err, cmpInfo)
+    Company.findById(cmpId, 'name est address admins adminsArcv logo phNum website empSize', (err, company) =>{
+        if(err) return callback(err);
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
+            if(company.adminsArcv.indexOf(adminId)!= -1){
+                company.admins.push(adminId);
+                company.adminsArcv.remove(adminId);
+                company.save(err => {
+                    if(err) return callback(err, null);
+                    const populateOpts = [{ path:'admins', select: 'name email' }, { path:'adminsArcv', select: 'name email' }]
+                    Company.populate(company, populateOpts, callback);
+                });
+            }
+            else return callback('no such admin present', null);
+        }
+        else return callback('not authorised', null);
     });
 }

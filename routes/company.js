@@ -121,6 +121,7 @@ router.post('/updateInfo', (req, res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, error: err });
+        const cmpId = req.body._id;
         const companyData = {
             name:req.body.name,
             est:req.body.est,
@@ -129,62 +130,23 @@ router.post('/updateInfo', (req, res) => {
             website: req.body.website,
             empSize: req.body.empSize
         }
-        if(decoded.access == 2) {
-            const companyId = req.body._id;
-            if(!companyId) return res.status(500).json({ success: false, message: "No company id provided" });
-            Company.updateCmpInfoById(companyId, companyData,  (err)=>{
-                if(err) throw err;
-                res.json({success: true , message: 'Company info updated successfully'});
-            });
-        }
-        else if(decoded.access == 1){
-            User.getCompany(decoded._id, (err, companyId)=>{
-                if (err) throw err;
-                if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the given user" });
-                Company.updateCmpInfoById(companyId, companyData,  (err)=>{
-                    if(err) throw err;
-                    res.json({success: true , message: 'Company info updated successfully'});
-                });
-            });
-        }
-        else res.json({success: false, error: 'unauthorised'});
+        Company.updateCmpInfoById(cmpId, decoded, companyData, (err) => {
+            if(err) throw err;
+            res.json({success: true , message: 'Company info updated successfully'});
+        });        
     });
 });
 
 //admins adding their colleagues or WL members doing it for them
-router.post('/registerAdmin', (req, res, next) => {
+router.post('/registerAdmin', (req, res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
-        if(decoded.access == 2){
-            const companyId = req.body.companyId;
-            if(!companyId) return res.status(500).json({ success: false, message: "No company id provided" });
-            Company.getCompanyNameById(companyId,(err, cmpName)=>{
-                if(err) throw err;
-                Sitelink.createActivationLink(req.body.email, (err, link)=>{
-                    if (err) throw err;
-                    let newAdmin = new User({
-                        isActive: true,
-                        name: req.body.name,
-                        email: req.body.email,
-                        password: link,  //save the link as the password until they use activation link to set password
-                        access: 1,
-                        DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
-                        company: companyId
-                    });
-                    Company.addAdmin(companyId, newAdmin, (err) => {
-                        if (err) throw err;
-                        let recipient = {name: newAdmin.name, email: newAdmin.email, companyName: cmpName};
-                        mailer.sendActivationMail(recipient, link, (err) => {
-                            if(err) throw err;
-                            return res.json({ success: true, message: "admin added and activation mail is sent" });
-                        });
-                    });
-                });
-            })
-
-        }
-        else if(decoded.access == 1){
+        const companyId = req.body.companyId;
+        if(!companyId) return res.status(500).json({ success: false, message: "No company id provided" });
+        if(companyId == 'myCompany'){
+            let newUserAccess = 1;
+            if(decoded.access == 2) newUserAccess = 2;             //request coming from willings 'my Company' page
             User.getCompanyIdAndName(decoded._id, (err, companyId, cmpName) => {
                 if (err) throw err;
                 if(!companyId) return res.status(500).json({ success: false, message: "No company associated with the requesting user" });
@@ -195,6 +157,33 @@ router.post('/registerAdmin', (req, res, next) => {
                         name: req.body.name,
                         email: req.body.email,
                         password: link,  //save the link as the password until they use activation link to set password
+                        access: newUserAccess,
+                        DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
+                        company: companyId
+                    });
+                    Company.addAdmin(companyId, newAdmin, (err) => {
+                        if (err) throw err;
+                        let recipient = {name: newAdmin.name, email: newAdmin.email, companyName: cmpName};
+                        mailer.sendActivationMail(recipient, link, (err) => {
+                            if(err) throw err;
+                            return res.json({ success: true, message: "admin added and activation mail is sent" });
+                        });
+                    });
+                });
+            });
+        }
+        else{
+            if(decoded.access != 2) return res.json({ success: false, message: "not authorised" });
+            Company.getCompanyNameById(companyId, (err, cmpName)=>{
+                if(err) throw err;
+                if(!cmpName) return res.status(500).json({ success: false, message: "No such company in our database" });
+                Sitelink.createActivationLink(req.body.email, (err, link)=>{
+                    if (err) throw err;
+                    let newAdmin = new User({
+                        isActive: true,
+                        name: req.body.name,
+                        email: req.body.email,
+                        password: link,  //save the link as the password until they use activation link to set password
                         access: 1,
                         DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
                         company: companyId
@@ -208,9 +197,8 @@ router.post('/registerAdmin', (req, res, next) => {
                         });
                     });
                 });
-            }); 
+            });
         }
-        else res.json({success: false, error: 'unauthorised'});
     });
 });
 
@@ -387,6 +375,38 @@ router.post('/updateAboutUs', (req, res, next)=>{
         Company.updateAboutUs(companyId, decoded, abtUs, (err) => {
             if(err) return res.json({success: false, error:err});
             res.json({success:true, message: 'about us updated successfully'});
+        });
+    });
+});
+
+router.post('/deactivateAdmin', (req, res) => {
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        const companyId = req.body.companyId;
+        const adminId = req.body.adminId;
+        Company.archiveAdmin(companyId, decoded, adminId, (err, cmpData) => {
+            if(err) return res.json({ success: false, error: err });
+            User.archiveUser(adminId, err => {
+                if(err) throw err;
+                res.json({ success:true, companyData: cmpData });
+            });
+        });
+    });
+});
+
+router.post('/restoreAdmin', (req, res) => {
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        const companyId = req.body.companyId;
+        const adminId = req.body.adminId;
+        Company.restoreAdmin(companyId, decoded, adminId, (err, cmpData) => {
+            if(err) return res.json({ success: false, error: err });
+            User.restoreUser(adminId, err => {
+                if(err) throw err;
+                res.json({ success:true, companyData: cmpData });
+            });
         });
     });
 });

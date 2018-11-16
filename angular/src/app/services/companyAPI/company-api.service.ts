@@ -155,4 +155,28 @@ export class CompanyApiService {
     return this.http.post(this.appUrl + 'company/updateAboutUs', data, {headers: headers}).map(res => res.json());
   }
 
+  deactivateAdmin(cmpId, adminId){
+    this.loadToken();
+    let data = {
+      companyId: cmpId,
+      adminId: adminId
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/deactivateAdmin', data, {headers: headers}).map(res => res.json());
+  }
+
+  restoreAdmin(cmpId, adminId){
+    this.loadToken();
+    let data = {
+      companyId: cmpId,
+      adminId: adminId
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/restoreAdmin', data, {headers: headers}).map(res => res.json());
+  }
+
 }

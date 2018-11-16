@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter, ViewChild, ElementRef } from '@angular
 import { Router, ActivatedRoute } from '@angular/router';
 import { InternshipApiService } from '../../services/internshipAPI/internship-api.service';
 import { toast, MaterializeAction } from 'angular2-materialize';
-import  { JwtHelper } from 'angular2-jwt'
+import  { JwtHelper } from 'angular2-jwt';
 
 declare let Materialize:any;
 

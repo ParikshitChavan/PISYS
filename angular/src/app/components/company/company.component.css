@@ -25,7 +25,7 @@
     transform: translateY(-50%) translateX(-50%);
 }
 
-H3{
+h3, h4{
     text-align: center;
 }
 
@@ -58,4 +58,8 @@ H3{
 .rcPageBtn{
     margin: 10% 0; 
     text-align: center;
+}
+
+.deactivatedAdmins{
+    margin-top: 65px;
 }

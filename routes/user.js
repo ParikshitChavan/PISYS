@@ -84,6 +84,7 @@ router.post('/authenticate', (req, res, next)=>{
     User.getUserByEmail(email, (err, user)=>{
         if(err) throw err;
         if(!user) return res.json({success: false, message:'email address is not registered with us'});
+        if(user.disabledAdmin) return res.json({success: false, message: 'Your account access has been disabled. please contact your company admins.'});
         User.comparePasswords(password, user.password, (err, isMatch)=>{
             if(err) throw err;
             if(!isMatch) return res.json({success:false, message:'Wrong password'});

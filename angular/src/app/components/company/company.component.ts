@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CompanyApiService } from "../../services/companyAPI/company-api.service";
-import { toast } from 'angular2-materialize';
+import { toast, MaterializeAction } from 'angular2-materialize';
 import { ImageCropperComponent, CropperSettings, Bounds } from "ngx-img-cropper";
 
-declare let Materialize:any;
+declare let Materialize: any;
 
 @Component({
   selector: 'app-company',
@@ -14,6 +14,8 @@ declare let Materialize:any;
 export class CompanyComponent implements OnInit {
   editing: Boolean = false;
   editingAdmin : Boolean = false;
+  urlCmpId = '';
+  localUser: any;
   companyDetails: {
     _id : any,
     name: string,
@@ -21,14 +23,20 @@ export class CompanyComponent implements OnInit {
     phNum: string,
     website: String,
     admins: any[],
+    adminsArcv: any[],
     address: string,
     logo: { key: string, url: string },
     empSize: string
-  } = { _id:'', name: '', est: '', phNum: '', admins: [], address: '', website: '', logo: {key: '', url: ''}, empSize: ''};
+  } = { _id:'', name: '', est: '', phNum: '', admins: [], adminsArcv: [], address: '', website: '', logo: {key: '', url: ''}, empSize: ''};
   newAdmin = { name:'', email:'' };
   companyInfoMsg: String;
   logoMsg: String;
   adminManageMsg: String;
+  adminToDeactivate = '';
+  adminToRestore = '';
+  deactivateModalActions = new EventEmitter<string|MaterializeAction>();
+  restoreModalActions = new EventEmitter<string|MaterializeAction>();
+
   imgName: String;
   imgData: any;
   cropperSettings :CropperSettings;
@@ -40,7 +48,8 @@ export class CompanyComponent implements OnInit {
   constructor(
       private companyAPIService: CompanyApiService,
       private route: ActivatedRoute
-    ) { 
+    ) {
+    this.localUser = JSON.parse(localStorage.getItem('user')); 
     this.cropperSettings = new CropperSettings();
     this.cropperSettings.width = 200;
     this.cropperSettings.height = 200;
@@ -71,9 +80,16 @@ export class CompanyComponent implements OnInit {
   }
 
   ngOnInit() {
-    const cmpId = this.route.snapshot.paramMap.get('id');
-    this.companyAPIService.getCmpInfo(cmpId).subscribe(resp => {
+    this.urlCmpId = this.route.snapshot.paramMap.get('id');
+    this.loadPageDetails(this.urlCmpId);
+  }
+
+  loadPageDetails(urlId){
+    this.companyAPIService.getCmpInfo(urlId).subscribe(resp => {
       if(!resp.success) return false;
+      if(!resp.companyData.adminsArcv){
+        resp.companyData.adminsArcv = [];
+      }
       let dateObj = new Date(resp.companyData.est);
       let options = { year: 'numeric', month: 'long', day:'numeric' };
       resp.companyData.est = dateObj.toLocaleDateString('EN-US', options);
@@ -138,7 +154,7 @@ export class CompanyComponent implements OnInit {
   adminInfoSubmit(validForm: Boolean){
     if(!validForm) return false;
     this.editingAdmin = false;
-    this.companyAPIService.addAdmin(this.newAdmin, this.companyDetails._id).subscribe(resp =>{
+    this.companyAPIService.addAdmin(this.newAdmin, this.urlCmpId).subscribe(resp =>{
       resp.success ? this.companyInfoMsg = "New admin added successfully." : this.companyInfoMsg = "Some error occurred, please try agin later.";
       toast(this.companyInfoMsg, 3000);
     });
@@ -158,6 +174,51 @@ export class CompanyComponent implements OnInit {
         this.logoMsg = "Some error occurred, please try agin later."
       }
       toast(this.logoMsg, 3000);
+    });
+  }
+
+  onDeactivateAdminClick(adminId){
+    this.adminToDeactivate = adminId;
+    this.deactivateModalActions.emit({ action:'modal', params:['open'] });
+  }
+
+  onRestoreAdminClick(adminId){
+    this.adminToRestore = adminId;
+    this.restoreModalActions.emit({ action:'modal', params:['open'] });
+  }
+
+  deactivateAdmin(){
+    this.companyAPIService.deactivateAdmin(this.companyDetails._id, this.adminToDeactivate).subscribe( resp => {
+      if(!resp.success) {
+        console.log(resp.error);
+        return toast('Deactivating admin failed, please check the console for more details', 3000); 
+      }
+      toast('Admin deactivated successfully', 3000);
+      if(!resp.companyData.adminsArcv){
+        resp.companyData.adminsArcv = [];
+      }
+      let dateObj = new Date(resp.companyData.est);
+      let options = { year: 'numeric', month: 'long', day:'numeric' };
+      resp.companyData.est = dateObj.toLocaleDateString('EN-US', options);
+      this.companyDetails = resp.companyData;
+      
+    });
+  }
+
+  restoreAdmin(){
+    this.companyAPIService.restoreAdmin(this.companyDetails._id, this.adminToRestore).subscribe( resp => {
+      if(!resp.success) {
+        console.log(resp.error);
+        return toast('Restoring admin failed, please check the console for more details', 3000); 
+      }
+      toast('Admin restored successfully', 3000);
+      if(!resp.companyData.adminsArcv){
+        resp.companyData.adminsArcv = [];
+      }
+      let dateObj = new Date(resp.companyData.est);
+      let options = { year: 'numeric', month: 'long', day:'numeric' };
+      resp.companyData.est = dateObj.toLocaleDateString('EN-US', options);
+      this.companyDetails = resp.companyData;
     });
   }
 }

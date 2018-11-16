@@ -10,6 +10,7 @@ const Sitelink = require ('../models/sitelink');
 
 const userSchema = Schema({
     isActive: Boolean,
+    disabledAdmin: {type: Boolean, default: false},
     name: {
         type: String,
         required: true
@@ -56,13 +57,6 @@ const userSchema = Schema({
 
 const User = module.exports = mongoose.model('User', userSchema);
 
-                                    /*====== Functions ======*/
-
-function validateEmail(email) {
-    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
-
 //jwt Validation function
 module.exports.validateToken = function(token, callback){         
     if(!token){                                                     
@@ -98,8 +92,8 @@ module.exports.getUserPassById = function(userId, callback){
 }
 
 module.exports.getUserByEmail = function(email, callback){
-    const query = {email: email};
-    User.findOne(query, 'name email DP access password', callback);
+    const query = { email: email };
+    User.findOne(query, 'name email DP access password disabledAdmin', callback);
 }
 
 module.exports.getUserIdByEmail = function(userId, callback){ //callback(err, id)
@@ -433,12 +427,10 @@ module.exports.pullCandidates = (query, perPage, pageNumber, callback) => {
         exec(callback);
 }
 
-module.exports.archiveUserByID = function(id, callback){
-    User.findById(id, (err, user)=>{
-        if(err) return callback(err);
-        let newArchive = new CvBuilderArchive(user);
-        newArchive.save();
-        user.delete();
-        callback(null);
-    });
+module.exports.archiveUser = function(id, callback){
+    User.findByIdAndUpdate(id, {$set: { disabledAdmin: true }}, callback);
+}
+
+module.exports.restoreUser = function(id, callback){
+    User.findByIdAndUpdate(id, {$set: { disabledAdmin: false }}, callback);
 }

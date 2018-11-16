@@ -93,14 +93,16 @@
   </div>
 </div>
 <div class="col s12" id="adminManagement">
-    <h3>Admins management</h3>
     <div class="container">
+      <h3>Admins management</h3>
+      <h4>Active Admins</h4>
       <table class="striped centered">
         <thead>
           <tr>
             <th>Index</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -108,6 +110,9 @@
             <td>{{i+1}}</td>
             <td>{{admin.name}}</td>
             <td>{{admin.email}}</td>
+            <td>
+              <a *ngIf='admin.email != localUser.email' class="waves-effect waves-light btn small" (click)='onDeactivateAdminClick(admin._id)'>deactivate</a>
+            </td>
           </tr>
         </tbody>      
       </table>
@@ -138,6 +143,29 @@
           </form>
         </div>
       </div>
+      <div *ngIf='companyDetails.adminsArcv.length' class="deactivatedAdmins">
+        <h4>Deactivated admins</h4>
+        <table class="striped centered">
+          <thead>
+            <tr>
+              <th>Index</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let admin of companyDetails.adminsArcv; let i = index">
+              <td>{{i+1}}</td>
+              <td>{{admin.name}}</td>
+              <td>{{admin.email}}</td>
+              <td>
+                <a class="waves-effect waves-light btn small" (click)='onRestoreAdminClick(admin._id)'>Restore admin</a>
+              </td>
+            </tr>
+          </tbody>      
+        </table>
+      </div>
     </div>
 </div>
 
@@ -148,5 +176,27 @@
   <div class="modal-footer">
     <a (click)="onLogoUploadClick()" class="modal-action modal-close waves-effect waves-green btn-flat">Save</a>
     <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+  </div>
+</div>
+
+<div id="modalArchive" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"
+  [materializeActions]="deactivateModalActions">
+  <div class="modal-content">
+    <p>Are you sure, you want to deactivate this admin ?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="closeModal()">Close</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="deactivateAdmin()">Agree</button>
+  </div>
+</div>
+
+<div id="modalRestore" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"
+  [materializeActions]="restoreModalActions">
+  <div class="modal-content">
+    <p>Are you sure, you want to restore this admin ?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="closeModal()">Close</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="restoreAdmin()">Agree</button>
   </div>
 </div>
