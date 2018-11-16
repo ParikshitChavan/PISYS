@@ -1,4 +1,4 @@
 export const environment = {
-  appUrl: 'https://pisys.willings.co.jp/',
+  appUrl: 'https://onetro.willings.co.jp/',
   production: true
 };
