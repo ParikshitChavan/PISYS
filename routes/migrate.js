@@ -7,6 +7,7 @@ const router = express.Router();
 
 //models
 const User = require('../models/user');
+const Company = require('../models/company');
 const cvBuilder = require('../models/cvbuilder');
 
 const util = require('../helpers/common');
@@ -35,5 +36,16 @@ const getUsers = (req, res, next) => {
 }
 
 router.get('/migrateUserCv', util.authenticate, getUsers )
+
+router.get('/migrateCompanyAdminArchive', util.authenticate, (req, res) => {
+    Company.find( {}, (err, companies) => {
+        if(err) throw err;
+        companies.forEach( cmp =>{
+            if(!cmp.adminsArcv) cmp.adminsArcv = [];
+            cmp.save();
+        });
+        res.json('all companies updated');
+    });
+});
 
 module.exports = router;
