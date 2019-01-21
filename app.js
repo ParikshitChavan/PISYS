@@ -8,10 +8,8 @@ const config = require('./config/cfg');
 //Routes
 const user = require('./routes/user');
 const company = require('./routes/company');
-const internship = require('./routes/internship');
 const cvbuilder = require('./routes/cvbuilder');
 const listCandidate = require('./routes/listCandidate');
-const migrate = require('./routes/migrate');
 
 //connect to database and checking connection
 mongoose.set('useFindAndModify', false);
@@ -48,10 +46,8 @@ app.use(function(req, res, next) {
 //subdirectory requests sent to routes
 app.use('/user', user);
 app.use('/company', company);
-app.use('/internship', internship);
 app.use('/cv', cvbuilder);
 app.use('/listCandidate', listCandidate);
-app.use('/migrate', migrate);
 
 //invalid route fallback to index.js for angular path based routing strategy 
 app.get('*', function(req, res){

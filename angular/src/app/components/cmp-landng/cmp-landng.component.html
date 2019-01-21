@@ -1,0 +1,91 @@
+<a class="waves-effect waves-light btn" (click)='onLoginOpen()'>Login</a>
+<a class="waves-effect waves-light btn" (click)='onRegisterOpen()'>Sign up</a>
+<a target="_blank" [routerLink]="['/candidateLanding']" >for candidates</a>
+<div id="regCmpModal" class="modal" materialize="modal" [materializeActions]="regModalAction">
+    <div class="modal-content">
+        <div class="container">
+            <h3>Create a company</h3>
+            <form (submit)="onRegisterClicked(regForm)" #regForm=ngForm>
+                <div class="row">
+                    <div class="input-field">
+                        <input id="name" name="name" [(ngModel)]="newCmp.name" type="text" #name="ngModel" required>
+                        <label for="name" class="active">Company name</label>
+                        <div [hidden]="name.valid || (name.pristine && !regForm.submitted)" class="red-text">
+                            Please input a valid company name.
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">
+                        <label for="adminName" class="active">Your name</label>
+                        <input type="text" [(ngModel)]="newCmp.admin.adminName" name="adminName" id="adminName"
+                            #adminName="ngModel" required>
+                        <div [hidden]="adminName.valid || (adminName.pristine && !regForm.submitted)" class="red-text">
+                            Please input a valid admin name.
+                        </div>
+                    </div>
+                    <div class="input-field col s6">
+                        <label for="adminEmail" class="active">Your email address</label>
+                        <input type="email" [(ngModel)]="newCmp.admin.adminEmail" name="adminEmail" id="adminEmail"
+                            #adminEmail="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+                        <div [hidden]="adminEmail.valid || (adminEmail.pristine && !regForm.submitted)" class="red-text">
+                            Please input a valid email address.
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <p class="col s12">
+                        <input type="checkbox" name='tandc' id="tanc" [(ngModel)]='newCmp.tandc' required #tandc="ngModel">
+                        <label for="tanc">I agree to <a target="_blank" [routerLink]="['/tandc']">term and conditions</a></label>
+                        <span [hidden]= "tandc.valid || (tandc.pristine && !regForm.submitted)" class="col s12 red-text">
+                        Please accept our terms and conditions.
+                        </span>
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="input-field">
+                        <label for="phNum" class="active">Phone Number</label>
+                        <input type="text" [(ngModel)]="newCmp.phNum" name="phNum" id="phNum">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-submit">Register<i class="material-icons right">send</i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="loginModal" class="modal" materialize="modal" [materializeActions]="loginModalAction">
+    <div class="modal-content">
+        <div class="container">
+            <h3>Login</h3>
+            <form (submit)="onLoginClicked(loginForm.valid)" #loginForm=ngForm>
+                <div class="row">
+                    <div class="input-field">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" name="email" [(ngModel)]="loginAdmin.email" #email="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+                        <div [hidden]= "email.valid || (email.pristine && !loginForm.submitted)" class="red-text">
+                            Please input a valid Email address.
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field">
+                        <label for="password">Password</label>
+                        <input id="password" name="password" [(ngModel)]="loginAdmin.password" type="password" #password="ngModel" required>
+                        <div [hidden]= "password.valid || (password.pristine && !loginForm.submitted)" class="red-text">
+                            Please input a Password.
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <button class="btn waves-effect waves-light" type="submit">Login
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <a class="frgtPass" [routerLink]="['/forgotPassword']">forgot password?</a>
+        </div>
+    </div>
+</div>

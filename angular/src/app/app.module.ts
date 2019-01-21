@@ -13,22 +13,11 @@ import { MentionModule } from 'angular-mentions/mention';
 //components
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { HomeComponent } from './components/home/home.component';
-import { InternshipsComponent } from './components/internships/internships.component';
-import { InternshipComponent } from './components/internship/internship.component';
 import { CompaniesComponent } from './components/companies/companies.component';
 import { CompanyComponent } from './components/company/company.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { PaymentsComponent } from './components/payments/payments.component';
-import { WifiComponent } from './components/wifi/wifi.component';
-import { AccommodationComponent } from './components/accommodation/accommodation.component';
-import { FeedbackComponent } from './components/feedback/feedback.component';
-import { JobOfferComponent } from './components/job-offer/job-offer.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
-import { SuicaComponent } from './components/suica/suica.component';
-import { WeeklyReportsComponent } from './components/weekly-reports/weekly-reports.component';
 import { InitAccountComponent } from './components/init-account/init-account.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { CompanyProfileComponent } from './components/company-profile/company-profile.component';
@@ -40,18 +29,18 @@ import { ExperienceComponent } from './components/cvbuilder/experience/experienc
 import { ProjectsComponent } from './components/cvbuilder/projects/projects.component';
 import { OpeningListingComponent } from './components/opening-listing/opening-listing.component';
 import { InterestsComponent } from './components/cvbuilder/interests/interests.component';
-import { RemarksComponent } from './components/cvbuilder/remarks/remarks.component';
 import { CandidatesComponent } from './components/candidates/candidates.component';
+import { TAndCComponent } from './components/t-and-c/t-and-c.component';
+import { CandiLandngComponent } from './components/candi-landng/candi-landng.component';
+import { CmpLandngComponent } from './components/cmp-landng/cmp-landng.component';
+import { CnadiShrtlstComponent } from './components/cnadi-shrtlst/cnadi-shrtlst.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
 import { AuthService } from './services/auth/auth.service';
 import { SitelinkApiService } from './services/sitelinkAPI/sitelink-api.service';
 import { CompanyApiService } from './services/companyAPI/company-api.service';
-import { InternshipApiService } from './services/internshipAPI/internship-api.service';
 import { AutocompleteApiService } from './services/autocompleteAPI/autocomplete-api.service';
-
-import { CvBuilderService } from './services/cvbuilder/cvbuilder.service';
 import { CoreHttpService } from './services/core-http.service';
 
 //guards
@@ -60,25 +49,25 @@ import { AuthGuard } from "./guards/auth.guard"
 //custom directives
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
 import { TexttransformPipe } from './pipe/texttransform.pipe';
-import { CandidateMasterListComponent } from './components/candidate-master-list/candidate-master-list.component';
 import { SkillsComponent } from './components/cvbuilder/skills/skills.component';
 import { CertificationComponent } from './components/cvbuilder/certification/certification.component';
 import { SafePipe } from './pipe/safe.pipe';
 
-
 const appRoutes: Routes =[
-  { path: '', component: HomeComponent, pathMatch: 'full'},
+  { path: '', redirectTo: 'candidateLanding', pathMatch: 'full'},
+  { path: 'candidateLanding', component: CandiLandngComponent, pathMatch: 'full'},
+  { path: 'companyLanding', component: CmpLandngComponent, pathMatch: 'full'},
   { path: 'initAccount/:token', component: InitAccountComponent},
   { path: 'forgotPassword', component: ForgotPasswordComponent},
+  { path: 'tandc', component: TAndCComponent},
   { path: 'resetPassword/:token', component: ResetPasswordComponent},
   { path: 'verifyEmail/:token', component: VerifyEmailComponent},
-  { path: 'internships', component: InternshipsComponent, pathMatch: 'full', canActivate: [AuthGuard]},
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   { path: 'company/:id', component: CompanyComponent, canActivate: [AuthGuard]},
   { path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
   { path: 'findOpenings', component: OpeningListingComponent, canActivate: [AuthGuard]},
   { path: 'candidates', component: CandidatesComponent, canActivate: [AuthGuard]},
+  { path: 'shortlist', component: CnadiShrtlstComponent, canActivate: [AuthGuard]},
   { 
     path: 'companyProfile/:cmpId',
     component: CompanyProfileComponent,
@@ -100,25 +89,8 @@ const appRoutes: Routes =[
      { path: 'projects', component: ProjectsComponent },
      { path: 'skills', component: SkillsComponent},
      { path: 'cert', component: CertificationComponent},
-     { path: 'interests', component: InterestsComponent},
-     { path: 'remarks', component: RemarksComponent}
+     { path: 'interests', component: InterestsComponent}
    ]
-  },
-  {
-    path: 'internship/:id',
-    component: InternshipComponent,
-    canActivate: [AuthGuard],
-    //canActivateChild: [AuthGuard],
-    children: [
-      { path: '', redirectTo: 'accommodation', pathMatch: 'full' },
-      { path: 'wifi', component: WifiComponent},
-      { path: 'accommodation', component: AccommodationComponent},
-      { path: 'suica', component: SuicaComponent},
-      { path: 'stipend', component: PaymentsComponent},
-      { path: 'feedback', component: FeedbackComponent},
-      { path: 'jobOffer', component: JobOfferComponent},
-      { path: 'weeklyReports', component: WeeklyReportsComponent}
-    ]
   }
 ];
 
@@ -127,22 +99,11 @@ const appRoutes: Routes =[
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    HomeComponent,
-    InternshipsComponent,
-    InternshipComponent,
     CompaniesComponent,
     CompanyComponent,
-    DashboardComponent,
     ProfileComponent,
-    PaymentsComponent,
-    WifiComponent,
-    AccommodationComponent,
-    FeedbackComponent,
-    JobOfferComponent,
     ResetPasswordComponent,
     VerifyEmailComponent,
-    SuicaComponent,
-    WeeklyReportsComponent,
     EqualValidatorDirective,
     InitAccountComponent,
     ForgotPasswordComponent,
@@ -155,13 +116,15 @@ const appRoutes: Routes =[
     ProjectsComponent,
     TexttransformPipe,
     OpeningListingComponent,
-    CandidateMasterListComponent,
     SkillsComponent,
     CertificationComponent,
     SafePipe,
     InterestsComponent,
-    RemarksComponent,
-    CandidatesComponent
+    CandidatesComponent,
+    TAndCComponent,
+    CandiLandngComponent,
+    CmpLandngComponent,
+    CnadiShrtlstComponent
   ],
   imports: [
     BrowserModule,
@@ -179,7 +142,6 @@ const appRoutes: Routes =[
     AuthGuard,
     SitelinkApiService,
     CompanyApiService,
-    InternshipApiService,
     AutocompleteApiService,
     CoreHttpService  // a service for http calls. all http calls should use this
   ],

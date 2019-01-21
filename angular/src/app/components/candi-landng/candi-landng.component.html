@@ -1,0 +1,196 @@
+<div class="imgBack1">
+  <div class="topBar">
+    <div class="left topLogo">
+      <img src="../../assets/images/clrLogo.png" alt="logo">
+    </div>
+    <div class="valign-wrapper right topLnkCmp">
+      <a class="" target="_blank" [routerLink]="['/candidateLanding']">For companies ></a>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="row container10p">
+    <div class="col s6 offset-s6 center">
+      <h3 class="bak1Head">Find Most suited interships overseas</h3>
+      <div class="btnArea">
+        <a class="waves-effect waves-light btn" (click)='onLoginOpen()'>Login</a>
+        <a class="waves-effect waves-light btn" (click)='onRegisterOpen()'>Sign up</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="imgBack2">
+  <div class="row container10p">
+    <div class="col s6 center transBk">
+      <h3>Get internship offers from top IT companies in Japan</h3>
+      <p class="greyTxt">
+        You read that right! Just create your CV and upload an introduction video yo get started on getting
+        on getting recognised by companies. Explore your most suited options, get invited for an interview and get
+        selected.
+      </p>
+    </div>
+  </div>
+</div>
+<!--
+<div class="imgBack3">
+  <div class="row container10p">
+    <h5>Why choose Us?</h5>
+    <div class="row">
+      <div class="col s4 iconInfo"></div>
+      <div class="col s4 iconInfo"></div>
+      <div class="col s4 iconInfo"></div>
+      <div class="col s4 iconInfo"></div>
+    </div>
+  </div>
+</div>
+-->
+<div class="botBar">
+  <div class="left botLogo">
+    <img src="../../assets/images/clrLogo.png" alt="logo">
+    <a class="botCmpLnk" target="_blank" [routerLink]="['/candidateLanding']">For companies ></a>
+  </div>
+  <div class="botBtnArea valign-wrapper right">
+    <a class="waves-effect waves-light btn" (click)='onLoginOpen()'>Login</a>
+    <a class="waves-effect waves-light btn" (click)='onRegisterOpen()'>Sign up</a>
+  </div>
+  <div class="clear"></div>
+</div>
+
+<div id="regUserModal" class="modal" materialize="modal" [materializeActions]="regModalAction">
+  <div class="modal-content">
+    <div class="container">
+      <h3>Register</h3>
+      <div class="red-text">
+        {{regMessage}}
+      </div>
+      <form class="col s12" (submit)="onRegisterUser(regForm)" #regForm="ngForm">
+        <div class="form-group">
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="name" name="name" [(ngModel)]="registerUser.name" type="text" #name="ngModel" required>
+              <label for="name">Name</label>
+              <div [hidden]="name.valid || (name.pristine && !regForm.submitted)" class="red-text">
+                Please input a Name.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <label for="email">Email</label>
+              <input id="email" type="email" name="email" [(ngModel)]="registerUser.email" #email="ngModel" required
+                pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+              <div [hidden]="email.valid || (email.pristine && !regForm.submitted)" class="red-text">
+                Please input a valid Email address.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="DOB" type="text" name="DOB" [(ngModel)]="registerUser.DOB" class="datepicker" materialize="pickadate"
+                [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok'}]"
+                #DOB="ngModel">
+              <label for="DOB">Birth Date</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input type="text" [(ngModel)]="registerUser.phNum" name="phNum" id="phNum" #phNum="ngModel">
+              <label for="phNum">Phone Number</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <label for="password">Password</label>
+              <input id="password" name="password" [(ngModel)]="registerUser.password" type="password" #password="ngModel"
+                required validateEqual="cnfPass" reverse="true">
+              <div [hidden]="password.valid || (password.pristine && !regForm.submitted)" class="red-text">
+                Please input a Password.
+              </div>
+            </div>
+            <div class="input-field col s6">
+              <label for="cnfPass">Confirm Password</label>
+              <input id="cnfPass" name="cnfPass" [(ngModel)]="registerUser.cnfPass" type="password" #cnfPass="ngModel"
+                required validateEqual="password" reverse="false">
+              <div [hidden]="cnfPass.valid || (cnfPass.pristine && !regForm.submitted)" class="red-text">
+                Passwords do not match.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <p class="col s12">
+              <input type="checkbox" name='tandc' id="tanc" [(ngModel)]='registerUser.tandc' required #tandc="ngModel">
+              <label for="tanc">I agree to <a [routerLink]="['/tandc']" target="_blank">term and conditions</a></label>
+              <span [hidden]="tandc.valid || (tandc.pristine && !regForm.submitted)" class="col s12 red-text">
+                Please accept our terms and conditions.
+              </span>
+            </p>
+          </div>
+          <div class="row">
+            <div class="col s12">
+              <button class="btn waves-effect waves-light" type="submit">Submit
+                <i class="material-icons right">send</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="loginModal" class="modal" materialize="modal" [materializeActions]="loginModalAction">
+  <div class="modal-content">
+    <div class="container">
+      <h3>Login</h3>
+      <div [hidden]="!loginSubmitted">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div [hidden]="loginSubmitted">
+        <div class="red-text">
+          {{loginMessage}}
+        </div>
+        <form class="col s12" (submit)="onLoginUser(loginForm.valid)" #loginForm="ngForm">
+          <div class="row">
+            <div class="input-field col s12">
+              <label for="loginEmail">Email</label>
+              <input id="loginEmail" type="email" name="loginEmail" [(ngModel)]="loginUser.loginEmail" #loginEmail="ngModel"
+                required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+              <div [hidden]="loginEmail.valid || (loginEmail.pristine && !loginForm.submitted)" class="red-text">
+                Please input a valid Email address.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" name="loginPassword" [(ngModel)]="loginUser.loginPassword" type="password"
+                #loginPassword="ngModel" required>
+              <div [hidden]="loginPassword.valid || (loginPassword.pristine && !loginForm.submitted)" class="red-text">
+                Please input a Password.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12">
+              <button class="btn waves-effect waves-light" type="submit">Submit
+                <i class="material-icons right">send</i>
+              </button>
+            </div>
+          </div>
+        </form>
+        <a class="frgtPass" [routerLink]="['/forgotPassword']">forgot password?</a>
+      </div>
+    </div>
+  </div>
+</div>

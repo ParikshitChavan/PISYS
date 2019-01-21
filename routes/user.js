@@ -20,7 +20,7 @@ const s3 = new aws.S3();
 const uploadDisplayPic = multer({
     storage: multerS3({
         s3: s3,
-        bucket: 'piitscrm',
+        bucket: 'onetro',
         acl: 'public-read',
         key: function (req, file, cb) {
           cb(null, file.fieldname + Date.now());
@@ -38,7 +38,7 @@ const uploadDisplayPic = multer({
 }).single('displayPicture');
 
 //API routes for User
-router.post('/register', (req, res, next)=>{
+router.post('/register', (req, res) => {
     let newUser = new User({
         isActive: true,
         name: req.body.name,
@@ -77,14 +77,12 @@ router.post('/register', (req, res, next)=>{
     });
 });
 
-router.post('/authenticate', (req, res, next)=>{
+router.post('/authenticateCandidate', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
-
-    User.getUserByEmail(email, (err, user)=>{
+    User.authCandidateByEmail(email, (err, user)=>{
         if(err) throw err;
         if(!user) return res.json({success: false, message:'email address is not registered with us'});
-        if(user.disabledAdmin) return res.json({success: false, message: 'Your account access has been disabled. please contact your company admins.'});
         User.comparePasswords(password, user.password, (err, isMatch)=>{
             if(err) throw err;
             if(!isMatch) return res.json({success:false, message:'Wrong password'});
@@ -95,11 +93,39 @@ router.post('/authenticate', (req, res, next)=>{
                 token: token,
                 userData: userData
             });
-        })
-    })
+        });
+    });
 });
 
-router.get('/userInfo', (req, res, next)=>{
+router.post('/authenticateAdmin', (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    User.authAdminByEmail(email, (err, user)=>{
+        if(err) throw err;
+        if(!user) return res.json({success: false, message:'email address is not registered with us'});
+        if(user.disabledAdmin) return res.json({success: false, message: 'Your account access has been disabled. please contact your company admins.'});
+        User.comparePasswords(password, user.password, (err, isMatch)=>{
+            if(err) throw err;
+            if(!isMatch) return res.json({success:false, message:'Wrong password'});
+            const userData = { 
+                _id: user._id,
+                name: user.name,
+                access: user.access,
+                email: user.email,
+                DPUrl: user.DP.url,
+                company: user.company
+            };
+            const token = jwt.sign(userData, config.secret, {expiresIn: 604800});   //create token with 1 week validity
+            res.json({
+                success: true,
+                token: token,
+                userData: userData
+            });
+        });
+    });
+});
+
+router.get('/userInfo', (req, res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, message: err });
@@ -110,7 +136,7 @@ router.get('/userInfo', (req, res, next)=>{
     });
 });
 
-router.post('/updateUserInfo', (req, res, next)=>{
+router.post('/updateUserInfo', (req, res) => {
     let userInfo ={
         name: req.body.name,
         DOB: req.body.DOB,
@@ -141,7 +167,7 @@ router.post('/delete', (req, res) => {
             User.findByIdAndDelete(req.body.userId, (err, user) => {
                 if(err) throw err;
                 if(user.DP.key){              //if present, delete current DP from AWS S3 
-                    s3.deleteObject({Bucket: 'piitscrm', Key:user.DP.key}, (err) => {
+                    s3.deleteObject({Bucket: 'onetro', Key:user.DP.key}, (err) => {
                         if(err) {
                             console.log(err);
                             console.log('failed to delete ' + user.DP.key + ' from S3. Please delete it manually.');
@@ -160,7 +186,7 @@ router.post('/delete', (req, res) => {
                         console.log('failed to CV with ID ' + user.cv[0]._id + ' from database. Please delete it manually.');
                     }
                     if(cv.profileVideo){
-                        s3.deleteObject({Bucket: 'piitscrm', Key:cv.profileVideo.key}, (err) => {
+                        s3.deleteObject({Bucket: 'onetro', Key:cv.profileVideo.key}, (err) => {
                             if(err) {
                                 console.log(err);
                                 console.log('failed to delete ' + user.DP.key + ' from S3. Please delete it manually.');
@@ -194,7 +220,7 @@ router.post('/archive', (req, res) => {
     });
 });
 
-router.post('/requestPasswordReset', (req, res, next)=>{
+router.post('/requestPasswordReset', (req, res) => {
     User.setupPasswordReset(req.body.email, (err)=>{
         if(err) return res.json({success: false, error: err});
         return res.json({success: true, message: 'Password reset emil sent'});
@@ -202,14 +228,14 @@ router.post('/requestPasswordReset', (req, res, next)=>{
 });
 
 //on page load validate the site link and its expiry 
-router.post('/validateSitelink', (req, res, next)=>{
+router.post('/validateSitelink', (req, res) => {
     User.validateSitelink(req.body.id, (err, userId)=>{
         if(err) return res.json({success: false, userId: userId, msg: err});
         res.json({success:true, userId: userId, msg: 'verified link'});
     });
 });
 
-router.post('/resetPassword', (req, res, next)=>{
+router.post('/resetPassword', (req, res) => {
     User.getUserInfoById(req.body.userId, (err, user)=>{
         if(err) throw err;
         Sitelink.deleteSitelinks(user.email, 'passwordReset', (err)=>{
@@ -228,7 +254,7 @@ router.post('/resetPassword', (req, res, next)=>{
     });
 });
 
-router.post('/updatePassword', (req, res, next)=>{
+router.post('/updatePassword', (req, res) => {
     const currPass = req.body.currentPassword;
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
@@ -247,7 +273,7 @@ router.post('/updatePassword', (req, res, next)=>{
     });
 });
 
-router.post('/initPassword', (req, res, next)=>{
+router.post('/initPassword', (req, res) => {
     User.setPassword(req.body.uId, req.body.newPass, (err, user)=>{
         if(err) return res.json({success: false, message: "Failed to change the Password"});
         User.markEmailVerified(user.email, ()=>{        //verified because they came from email invitation
@@ -265,14 +291,14 @@ router.post('/initPassword', (req, res, next)=>{
     });
 });
 
-router.post('/updateDisplayPic', (req, res, next)=>{
+router.post('/updateDisplayPic', (req, res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded)=>{
         if(err) return res.status(serverStatus).json({ success: false, error: err });
         User.getDP(decoded._id, (err, DP) => {
             if(err) return res.json({success: false, error: err});
             if(DP.key){              //if present, delete current DP from AWS S3 
-                s3.deleteObject({Bucket: 'piitscrm', Key:DP.key}, (err) => {
+                s3.deleteObject({Bucket: 'onetro', Key:DP.key}, (err) => {
                     if(err) return res.json({success: false, error: err});
                     uploadDisplayPic(req, res, (err) => {
                         if(err) return res.json({success: false, error: err});
@@ -296,7 +322,7 @@ router.post('/updateDisplayPic', (req, res, next)=>{
     });
 });
 
-router.post('/suggestions', (req, res, next)=>{
+router.post('/suggestions', (req, res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });
@@ -309,7 +335,7 @@ router.post('/suggestions', (req, res, next)=>{
     });
 });
 
-router.get('/isWLMember', (req ,res, next)=>{
+router.get('/isWLMember', (req ,res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, message: err });

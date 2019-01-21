@@ -24,7 +24,7 @@ module.exports.createActivationLink = function(email, callback){
     })
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "https://pisys.willings.co.jp/initAccount/" + newSitelink._id;
+        let link = "https://onetro.willings.co.jp/initAccount/" + newSitelink._id;
         callback(null, link);
     });
 }
@@ -41,7 +41,7 @@ module.exports.createPasswordResetLink = function(email, callback){
     })
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "https://pisys.willings.co.jp/resetPassword/" + newSitelink._id;
+        let link = "https://onetro.willings.co.jp/resetPassword/" + newSitelink._id;
         callback(null, link);
         //delete token after on successful change
     });
@@ -58,7 +58,7 @@ module.exports.createEmailVerificationLink = function(email, callback){
     /*future scope check if already activated if not check if already token is preset*/
     newSitelink.save((err)=>{
         if(err) return callback(err, null);
-        let link = "https://pisys.willings.co.jp/verifyEmail/" + newSitelink._id;
+        let link = "https://onetro.willings.co.jp/verifyEmail/" + newSitelink._id;
         callback(null, link);
     });
 }

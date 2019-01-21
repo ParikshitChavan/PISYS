@@ -1,0 +1,34 @@
+<div class="container">
+  <div class="row">
+    <div class="col s12 tablecontainer">
+      <table class="table striped table-bordered highlight">
+        <thead>
+          <tr>
+            <th>
+              Name
+            </th>
+            <th>
+              Email
+            </th>
+            <th>
+              Options
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let candidate of candidates" class="linkRow">
+            <td class="name">
+              <a target="_blank" [routerLink]="['/cvbuilder/' + candidate._id ]">
+                {{ candidate.name }}
+              </a>
+            </td>
+            <td><a>{{ candidate.email }}</a></td>
+            <td>
+              <div class="chip" *ngIf='candidates.includes(candidate._id)'>Contacted</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

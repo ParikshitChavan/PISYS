@@ -1,105 +1,107 @@
-<div class="row">
-  <div class="col s12 l6" id="basicInfo">
-    <h3>Basic Details</h3>
-    <div class="formArea" [hidden]="!editing">
-      <form (submit)="userInfoSubmit(form.valid)" #form=ngForm>
-        <div class="row">
-          <div class="input-field">
-            <input id="name" name="name" [(ngModel)]="userDetails.name" type="text" #name="ngModel" required>
-            <label for="name" class="active">Name</label>
-            <div [hidden]= "name.valid || (name.pristine && !form.submitted)" class="red-text">
-              Please input a Name.
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field">
-            <input id="DOB" type="text" name="DOB" [(ngModel)]="userDetails.DOB" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]">
-            <label for="DOB" class="active">Birth Date</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field">
-            <label for="phNum" class="active">Phone Number</label>
-            <input type="text" [(ngModel)]="userDetails.phNum" name="phNum" id="phNum">
-          </div>
-        </div>
-        <div class="row">
+<div class="container">
+  <div class="row">
+    <div class="col s12 l6" id="basicInfo">
+      <h3>Basic Details</h3>
+      <div class="formArea" [hidden]="!editing">
+        <form (submit)="userInfoSubmit(form.valid)" #form=ngForm>
+          <div class="row">
             <div class="input-field">
-              <label for="skypeId" class="active">Skype Id</label>
-              <input type="text" [(ngModel)]="userDetails.skypeId" name="skypeId" id="skypeId">
+              <input id="name" name="name" [(ngModel)]="userDetails.name" type="text" #name="ngModel" required>
+              <label for="name" class="active">Name</label>
+              <div [hidden]= "name.valid || (name.pristine && !form.submitted)" class="red-text">
+                Please input a Name.
+              </div>
             </div>
-        </div>
-
-        <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
-        <button type="button" (click)='cancelInfoEditClick()' class="btn red">cancel</button>
-      </form>
-    </div>
-    <div class="rawInfo" [hidden]="editing">
-      <div class="row">
-        <div class="col s5">Name:</div>
-        <div class="col s7">{{userDetails.name}}</div>
-      </div>
-      <div class="row">
-        <div class="col s5">Date of birth</div>
-        <div class="col s7">{{userDetails.DOB | date:'longDate'}}</div>
-      </div>
-      <div class="row">
-        <div class="col s5">Phone:</div>
-        <div class="col s7">{{userDetails.phNum}}</div>
-      </div>
-      <div class="row">
-        <div class="col s5">Skype Id:</div>
-        <div class="col s7">{{userDetails?.skypeId}}</div>
-      </div>
-      <a id="infoEditBtn" (click)="editInfoClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
-    </div>
-  </div>
-  <div class="col s12 l6" id="displayPic">
-    <h3>Display Picture</h3>
-    <div class="imgArea">
-      <img [src]="userDetails.DP.url" class="responsive-img circle" alt="User display picture">
-      <a href="#DPUploadModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
-    </div>
-  </div>
-</div>
-<div class="row" id="passwordChangeArea">
-  <div class="col s12">
-    <div class="container">
-      <h3>Change password</h3>
-      <form (submit)="passwordChangeSubmit(form2.valid)" #form2=ngForm>
-        <div class="input-field col s12">
-          <label for="currPass"> Current password</label>
-          <input id="currPass" name="currPass" [(ngModel)]="passwords.currPass" type="password" #currPass="ngModel"  required>
-          <div [hidden]= "currPass.valid || (currPass.pristine && !form2.submitted)" class="red-text">
-            Please input current password.
           </div>
-        </div>
-        <div class="input-field col s12">
-          <label for="newPass"> New password</label>
-          <input id="newPass" name="newPass" [(ngModel)]="passwords.newPass" type="password" #newPass="ngModel" required validateEqual="cnfPass" reverse="true">
-          <div [hidden]= "newPass.valid || (newPass.pristine && !form2.submitted)" class="red-text">
-            Please input new Password.
+          <div class="row">
+            <div class="input-field">
+              <input id="DOB" type="text" name="DOB" [(ngModel)]="userDetails.DOB" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]">
+              <label for="DOB" class="active">Birth Date</label>
+            </div>
           </div>
-        </div>
-        <div class="input-field col s12">
-          <label for="cnfPass">Confirm Password</label>
-          <input id="cnfPass" name="cnfPass" [(ngModel)]="passwords.cnfPass" type="password" #cnfPass="ngModel" required validateEqual="newPass" reverse="false">
-          <div [hidden]= "cnfPass.valid || (cnfPass.pristine && !form2.submitted)" class="red-text">
-            Passwords do not match.
+          <div class="row">
+            <div class="input-field">
+              <label for="phNum" class="active">Phone Number</label>
+              <input type="text" [(ngModel)]="userDetails.phNum" name="phNum" id="phNum">
+            </div>
           </div>
+          <div class="row">
+              <div class="input-field">
+                <label for="skypeId" class="active">Skype Id</label>
+                <input type="text" [(ngModel)]="userDetails.skypeId" name="skypeId" id="skypeId">
+              </div>
+          </div>
+  
+          <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+          <button type="button" (click)='cancelInfoEditClick()' class="btn red">cancel</button>
+        </form>
+      </div>
+      <div class="rawInfo" [hidden]="editing">
+        <div class="row">
+          <div class="col s5">Name:</div>
+          <div class="col s7">{{userDetails.name}}</div>
         </div>
-        <button type="submit" class="btn btn-submit">Update password<i class="material-icons right">send</i></button>
-      </form>
+        <div class="row">
+          <div class="col s5">Date of birth</div>
+          <div class="col s7">{{userDetails.DOB | date:'longDate'}}</div>
+        </div>
+        <div class="row">
+          <div class="col s5">Phone:</div>
+          <div class="col s7">{{userDetails.phNum}}</div>
+        </div>
+        <div class="row">
+          <div class="col s5">Skype Id:</div>
+          <div class="col s7">{{userDetails?.skypeId}}</div>
+        </div>
+        <a id="infoEditBtn" (click)="editInfoClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
+      </div>
+    </div>
+    <div class="col s12 l6" id="displayPic">
+      <h3>Display Picture</h3>
+      <div class="imgArea">
+        <img [src]="userDetails.DP.url" class="responsive-img circle" alt="User display picture">
+        <a href="#DPUploadModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
+      </div>
     </div>
   </div>
-</div>
-<div id="DPUploadModal" class="modal modal-fixed-footer" materialize="modal">
-  <div class="modal-content">
-    <img-cropper [image]="imgData" [settings]="cropperSettings" (onCrop)="cropped($event)"></img-cropper>
+  <div class="row" id="passwordChangeArea">
+    <div class="col s12">
+      <div class="container">
+        <h3>Change password</h3>
+        <form (submit)="passwordChangeSubmit(form2.valid)" #form2=ngForm>
+          <div class="input-field col s12">
+            <label for="currPass"> Current password</label>
+            <input id="currPass" name="currPass" [(ngModel)]="passwords.currPass" type="password" #currPass="ngModel"  required>
+            <div [hidden]= "currPass.valid || (currPass.pristine && !form2.submitted)" class="red-text">
+              Please input current password.
+            </div>
+          </div>
+          <div class="input-field col s12">
+            <label for="newPass"> New password</label>
+            <input id="newPass" name="newPass" [(ngModel)]="passwords.newPass" type="password" #newPass="ngModel" required validateEqual="cnfPass" reverse="true">
+            <div [hidden]= "newPass.valid || (newPass.pristine && !form2.submitted)" class="red-text">
+              Please input new Password.
+            </div>
+          </div>
+          <div class="input-field col s12">
+            <label for="cnfPass">Confirm Password</label>
+            <input id="cnfPass" name="cnfPass" [(ngModel)]="passwords.cnfPass" type="password" #cnfPass="ngModel" required validateEqual="newPass" reverse="false">
+            <div [hidden]= "cnfPass.valid || (cnfPass.pristine && !form2.submitted)" class="red-text">
+              Passwords do not match.
+            </div>
+          </div>
+          <button type="submit" class="btn btn-submit">Update password<i class="material-icons right">send</i></button>
+        </form>
+      </div>
+    </div>
   </div>
-  <div class="modal-footer">
-    <a (click)="onDPUploadClick()" class="modal-action modal-close waves-effect waves-green btn-flat ">Save</a>
-    <a class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
-  </div>
+  <div id="DPUploadModal" class="modal modal-fixed-footer" materialize="modal">
+    <div class="modal-content">
+      <img-cropper [image]="imgData" [settings]="cropperSettings" (onCrop)="cropped($event)"></img-cropper>
+    </div>
+    <div class="modal-footer">
+      <a (click)="onDPUploadClick()" class="modal-action modal-close waves-effect waves-green btn-flat ">Save</a>
+      <a class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
+    </div>
+  </div>  
 </div>

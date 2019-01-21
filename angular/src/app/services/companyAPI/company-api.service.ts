@@ -60,10 +60,8 @@ export class CompanyApiService {
   }
 
   createCompany(newCmp){
-    this.loadToken();
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    headers.append('x-access-token', this.authToken);
     return this.http.post(this.appUrl + 'company/register', newCmp, {headers: headers}).map(res => res.json());
   }
 
@@ -179,4 +177,51 @@ export class CompanyApiService {
     return this.http.post(this.appUrl + 'company/restoreAdmin', data, {headers: headers}).map(res => res.json());
   }
 
+  addShortlisted(companyId, candidateId){
+    this.loadToken();
+    let data = {
+      companyId: companyId,
+      candidateId: candidateId
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/addShortlisted', data, {headers: headers}).map(res => res.json());
+  }
+
+  removeShortlisted(companyId, candidateId){
+    this.loadToken();
+    let data = {
+      companyId: companyId,
+      candidateId: candidateId
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/removeShortlisted', data, {headers: headers}).map(res => res.json());
+  }
+
+  getShortlistedCandi(companyId){
+    this.loadToken();
+    let data = {
+      companyId: companyId
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/getShortlist', data, {headers: headers}).map(res => res.json());
+  }
+
+  contactCandidate(companyId, candidateId){
+    this.loadToken();
+    let data = {
+      companyId: companyId,
+      candidateId: candidateId
+    }
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.appUrl + 'company/contactCandidate', data, {headers: headers}).map(res => res.json());
+  }
+  
 }

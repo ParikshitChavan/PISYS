@@ -34,10 +34,17 @@ export class AuthService {
       return res.json()});
   }
 
-  login(user){
+  userLogin(user){
     let headers = new Headers;
     headers.append('Content-Type', "application/json");
-    const url = this.apiUrl + 'user/authenticate'
+    const url = this.apiUrl + 'user/authenticateCandidate';
+    return this.http.post(url, user, {headers: headers}).map(res => res.json());
+  }
+
+  adminLogin(user){
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    const url = this.apiUrl + 'user/authenticateAdmin';
     return this.http.post(url, user, {headers: headers}).map(res => res.json());
   }
 

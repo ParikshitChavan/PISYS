@@ -10,7 +10,8 @@ const companySchema = Schema({
     address: String,
     admins: [{type: Schema.Types.ObjectId, ref: 'User'}],
     adminsArcv: [{type: Schema.Types.ObjectId, ref: 'User'}],
-    internships: [{type: Schema.Types.ObjectId, ref: 'Internship'}],
+    shrtlstd: [{type: Schema.Types.ObjectId, ref: 'User'}],             //shortlisted candidates list 
+    cntacd: [{type: Schema.Types.ObjectId, ref: 'User'}],               // contacted candidates list
     logo: { key: String, url: String },
     phNum: String,
     website: String,
@@ -197,6 +198,13 @@ module.exports.addOpeningLiker = function(companyId, openingId, userId, callback
     });
 }
 
+module.exports.getShortlisted = function(companyId, callback){
+    Company.findById(companyId, 'shrtlstd', (err, company) =>{
+        if(err) return callback(err, null);
+        callback(null, company.shrtlstd);
+    });
+}
+
 module.exports.removeOpeningLiker = function(companyId, openingId, userId, callback){
     Company.findById(companyId, 'openings', (err, company) => {
         if(err) return callback(err);
@@ -278,4 +286,59 @@ module.exports.restoreAdmin = function(cmpId, decodedToken, adminId, callback){ 
         }
         else return callback('not authorised', null);
     });
+}
+
+module.exports.addShortlisted = function(companyId, decodedToken, candidateId, callback){
+    Company.findById(companyId, 'admins shrtlstd', (err, company) => {
+        if(err) return callback(err);
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
+            if(company.shrtlstd.indexOf(candidateId) == -1){
+                company.shrtlstd.push(candidateId);
+                company.save(callback);
+            }
+            else return callback('candidate already shortlisted');
+        }
+        else return callback('not authorised');
+    });
+}
+
+module.exports.removeShortlisted = function(companyId, decodedToken, candidateId, callback){
+    Company.findById(companyId, 'admins shrtlstd', (err, company) => {
+        if(err) return callback(err);
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
+            const index = company.shrtlstd.indexOf(candidateId);
+            if(index > -1){
+                company.shrtlstd.splice(index, 1);
+                company.save(callback);
+            }
+            else return callback('Candidate does not exist in shortlist');
+        }
+        else return callback('not authorised');
+    });
+}
+
+module.exports.getShortlist = function(companyId, decodedToken, callback){          //cb(err, shortlist)
+    Company.findById(companyId, 'admins', {lean: true})
+    .populate({ path: 'shrtlstd', select: '_id name email'})
+    .exec((err, company) => {
+        if(err) return callback(err);
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
+            return callback(null, company.shrtlstd);
+        }
+        else return callback('not authorised', null);
+    });
+}
+
+module.exports.getContactCandiDetails = function(companyId, decodedToken, callback){
+    Company.findById(companyId, 'admins name cntacd', {lean: true}, (err, company) => {
+        if(err) return callback(err, null);
+        if(decodedToken.access == 2 || company.admins.indexOf(decodedToken._id)!= -1){
+            callback(null, company);
+        }
+        else return callback('not authorised', null);
+    });
+}
+
+module.exports.addContacted = function(companyId, candidateId, callback){
+    Company.findByIdAndUpdate(companyId, { $push:{ cntacd: candidateId} }, callback);
 }

@@ -20,7 +20,7 @@ const s3 = new aws.S3();
 const uploadCompanyLogo = multer({
     storage: multerS3({
         s3: s3,
-        bucket: 'piitscrm',
+        bucket: 'onetro',
         acl: 'public-read',
         key: function (req, file, cb) {
           cb(null, file.fieldname + Date.now());
@@ -37,47 +37,42 @@ const uploadCompanyLogo = multer({
     }
 }).single('companyLogo');
 
-router.post('/register', (req, res, next)=>{
-    let token = req.headers['x-access-token'];
-    User.validateToken(token, (err, serverStatus, decoded)=>{
-        if(err) return res.status(serverStatus).json({ success: false, message: err });
-        if(decoded.access != 2) return res.status(403).json({ success: false, message: "Not authorised" });
-        Sitelink.createActivationLink(req.body.admin.adminEmail, (err, link)=>{
+router.post('/register', (req, res) => {
+    Sitelink.createActivationLink(req.body.admin.adminEmail, (err, link)=>{
+        if(err) throw err;
+        let newAdmin = new User({
+            isActive: true,
+            access: 1,
+            name: req.body.admin.adminName,
+            email: req.body.admin.adminEmail,
+            password: link,                 //save the link as the password until they use activation link to set password
+            phNum: '',
+            DP: {key:"", url:"https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png"}
+        });
+        newAdmin.save((err, admin)=>{                               //1.save admin
             if(err) throw err;
-            let newAdmin = new User({
+            let newCompany = new Company({
                 isActive: true,
-                access: 1,
-                name: req.body.admin.adminName,
-                email: req.body.admin.adminEmail,
-                password: link,                 //save the link as the password until they use activation link to set password
-                phNum: req.body.phNum,
-                DP: {key:"", url:"https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png"}
+                name: req.body.name,
+                est: Date.now(),
+                address: '',
+                admins: [admin._id],
+                logo: {key: '', url: ''},
+                phNum: req.body.phNum
             });
-            newAdmin.save((err, admin)=>{                               //1.save admin
+            newCompany.save((err, company)=>{                       //2. save company with admin
                 if(err) throw err;
-                let newCompany = new Company({
-                    isActive: true,
-                    name: req.body.name,
-                    est: req.body.est,
-                    address: req.body.address,
-                    admins: [admin._id],
-                    logo: {key: '', url: ''},
-                    phNum: req.body.phNum
-                });
-                newCompany.save((err, company)=>{                       //2. save company with admin
+                User.addCompany(admin._id, company._id, (err)=>{     //3. add company to the admin account
                     if(err) throw err;
-                    User.addCompany(admin._id, company._id, (err)=>{     //3. add company to the admin account
+                    let recipient = {name: admin.name, email: admin.email, companyName: company.name};
+                    mailer.sendActivationMail(recipient, link, (err)=>{
                         if(err) throw err;
-                        let recipient = {name: admin.name, email: admin.email, companyName: company.name};
-                        mailer.sendActivationMail(recipient, link, (err)=>{
-                            if(err) throw err;
-                            return res.status(200).json({ success: true, message: "company added and activation mail is sent" });
-                        });
-                   });
+                        return res.status(200).json({ success: true, message: "company added and activation mail is sent." });
+                    });
                 });
             });
         });
-    });    
+    });   
 });
 
 router.post('/info', (req, res, next) => {
@@ -214,7 +209,7 @@ router.post('/updateLogo', (req, res, next) => {
                 Company.getLogo(companyId, (err, logo) => {
                     if(err) return res.json({success: false, msg: err});
                     if(logo.key){        //if present, delete current logo from AWS s3 
-                        s3.deleteObject({Bucket: 'piitscrm', Key:logo.key}, (err) => {
+                        s3.deleteObject({Bucket: 'onetro', Key:logo.key}, (err) => {
                             if(err) return res.json({success: false, message: err});
                         });
                     }
@@ -232,7 +227,7 @@ router.post('/updateLogo', (req, res, next) => {
                 Company.getLogo(companyId, (err, logo) => {
                     if(err) return res.json({success: false, msg: err});
                     if(logo.key){        //if present, delete current logo from AWS s3 
-                        s3.deleteObject({Bucket: 'piitscrm', Key:logo.key}, (err) => {
+                        s3.deleteObject({Bucket: 'onetro', Key:logo.key}, (err) => {
                             if(err) return res.json({success: false, message: err});
                         });
                     }
@@ -406,6 +401,72 @@ router.post('/restoreAdmin', (req, res) => {
             User.restoreUser(adminId, err => {
                 if(err) throw err;
                 res.json({ success:true, companyData: cmpData });
+            });
+        });
+    });
+});
+
+router.post('/addShortlisted', (req, res) => {
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        const companyId = req.body.companyId;
+        const candidateId = req.body.candidateId;
+        User.isCandidate(candidateId, err =>{
+            if(err) return res.json({ success: false, error: err });
+            Company.addShortlisted(companyId, decoded, candidateId, (err) => {
+                if(err) return res.json({ success: false, error: err });
+                res.json({ success: true, message: 'Candidate shortlisted successfully.' });
+            });
+        });
+    });
+});
+
+router.post('/removeShortlisted', (req, res) => {
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        const companyId = req.body.companyId;
+        const candidateId = req.body.candidateId;
+        Company.removeShortlisted(companyId, decoded, candidateId, (err) => {
+            if(err) return res.json({ success: false, error: err });
+            res.json({ success: true, message: 'Candidate removed from shortlist successfully.' });
+        });
+    });
+});
+
+router.post('/getShortlist', (req, res) => {
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        const companyId = req.body.companyId;
+        Company.getShortlist(companyId, decoded, (err, shortlist) => {
+            if(err) return res.json({ success: false, error: err });
+            res.json({ success: true, shortlist: shortlist });
+        });
+    });
+});
+
+router.post('/contactCandidate', (req, res) => {
+    let token = req.headers['x-access-token'];
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        const companyId = req.body.companyId;
+        const candidateId = req.body.candidateId;
+        Company.getContactCandiDetails(companyId, decoded, (err, company) => {
+            if(err) return res.json({ success: false, error: err });
+            if(company.cntacd.indexOf(candidateId) > -1){
+                return res.json({ success: false, error: 'candidate already contacted' });
+            }
+            User.getUserInfoById(candidateId,(err, candidate) => {
+                if(err) return res.json({ success: false, error: err });
+                mailer.contactCandidate(company, candidate, (err) => {
+                    if(err) return res.json({ success: false, error: err });
+                    Company.addContacted(companyId, candidateId, (err) => {
+                        if(err) return res.json({ success: false, error: err });
+                        res.json({ success: true, message: 'candidate contacted successfully.' });
+                    });
+                });
             });
         });
     });

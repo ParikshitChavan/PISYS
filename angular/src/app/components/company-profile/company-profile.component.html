@@ -1,39 +1,43 @@
-<div class="z-depth-2">
-  <div class="container10p">
-    <div class="row basicInfo">
-      <div [hidden]="!editRights" class="col s12">
-        <img class="left cmpLogo" [src]="cmpProfile.logo.url" alt="Company Logo">
-        <div class="left">
-          <p>{{cmpProfile.name}}</p>
-          <p>{{cmpProfile.address}}</p>
-          <a [href]="cmpProfile.website">{{cmpProfile.website}}</a>
-          <p> Established: {{cmpProfile.est | date:'longDate'}}</p>
+<div class="container">
+  <div class="container">
+  <div class="z-depth-2">
+    <div class="container10p">
+      <div class="row basicInfo">
+        <div [hidden]="!editRights" class="col s12">
+          <img class="left cmpLogo" [src]="cmpProfile.logo.url" alt="Company Logo">
+          <div class="left">
+            <p>{{cmpProfile.name}}</p>
+            <p>{{cmpProfile.address}}</p>
+            <a [href]="cmpProfile.website">{{cmpProfile.website}}</a>
+            <p> Established: {{cmpProfile.est | date:'longDate'}}</p>
+          </div>
+        </div>
+        <div class="col s12">
+          <h5>About Us:</h5>
+          <pre>{{cmpProfile.abtUs}}</pre>
         </div>
       </div>
-      <div class="col s12">
-        <h5>About Us:</h5>
-        <pre>{{cmpProfile.abtUs}}</pre>
+      <div [hidden]="!editRights" class="fabArea">
+        <a id="abtUsFAB" class="btn-floating btn-large waves-effect waves-light red" (click)="modalOpen()" ><i class="material-icons">edit</i></a>
       </div>
     </div>
-    <div [hidden]="!editRights" class="fabArea">
-      <a id="abtUsFAB" class="btn-floating btn-large waves-effect waves-light red" (click)="modalOpen()" ><i class="material-icons">edit</i></a>
-    </div>
   </div>
+  <router-outlet></router-outlet>
 </div>
-<router-outlet></router-outlet>
-
-<div id="editAbtUsModal" class="modal modal-fixed-footer" materialize="modal" [materializeActions]="modalActions">
-  <div class="modal-content">
-    <h5>Update company about us</h5>
-    <form (ngSubmit)='updateAbtUs()' #form='ngForm'>
-      <div class="input-field">
-        <label for="abtUs">About Us</label>
-        <textarea materialize class="materialize-textarea" id="abtUs" name='abtUs' [(ngModel)]="editingCmpProfile.abtUs"></textarea>
-      </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <a (click)="form.ngSubmit.emit()" class="waves-effect waves-green btn-flat">Update</a>
-    <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+  
+  <div id="editAbtUsModal" class="modal modal-fixed-footer" materialize="modal" [materializeActions]="modalActions">
+    <div class="modal-content">
+      <h5>Update company about us</h5>
+      <form (ngSubmit)='updateAbtUs()' #form='ngForm'>
+        <div class="input-field">
+          <label for="abtUs">About Us</label>
+          <textarea materialize class="materialize-textarea" id="abtUs" name='abtUs' [(ngModel)]="editingCmpProfile.abtUs"></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a (click)="form.ngSubmit.emit()" class="waves-effect waves-green btn-flat">Update</a>
+      <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </div>
   </div>
 </div>

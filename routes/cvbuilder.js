@@ -5,11 +5,12 @@ const router = express.Router();
 const aws = require('aws-sdk');
 var multer = require('multer');
 var multerS3 = require('multer-s3');
-const ListCandidate = require('../models/listCandidate');
 
 //models
 const User = require('../models/user');
 const cvBuilder = require('../models/cvbuilder');
+const ListCandidate = require('../models/listCandidate');
+const Company = require('../models/company');
 
 const util = require('../helpers/common');
 //config
@@ -23,7 +24,7 @@ const s3 = new aws.S3();
 const S3_BUCKET_OBJECT = {
     acl: 'authenticated-read',
     region: 'ap-northeast-1',
-    s3BucketName: 'piitscrm',
+    s3BucketName: 'onetro',
     keyPrefix: 'profileVideos'
 }
 
@@ -41,6 +42,10 @@ const hasPermission = (req, res, next) => {
 
 const isSuperAdmin = (req, res, next) =>{
     req.decoded.access == 2 ? next() : util.sendError(res, 'Not authorised for this operation');
+}
+
+const isNotCandi =(req, res, next) =>{
+    req.decoded.access == 0 ? util.sendError(res, 'Not authorised for this operation') : next();
 }
 
 const updatePublish = (req, res) => {
@@ -393,15 +398,21 @@ const getCandidates = (req, res) => {
         query.email =  regex;
     }
     User.pullCandidates(query, CANDIDATE_PER_PAGE, pageNumber, (err, users) => {
-        if (err) res.json({ candidates: [], err: "Error" });
-        if(pageNumber === 1){
-            User.countDocuments(query, function (err, total) {
-                if (err) res.json({ candidates: [], err: "Error" });
-                res.json({ success: true, candidates: users, count: total });
+        if(err) return res.json({ candidates: [], err: "Error" });
+        User.getCompany(req.decoded._id, (err, cmpId)=>{
+            if(err) return res.json({ candidates: [], err: "Error" });
+            Company.getShortlisted(cmpId, (err, shortlist)=>{
+                if(err) return res.json({ candidates: [], err: "Error" });
+                if(pageNumber === 1){
+                    User.countDocuments(query, function (err, total) {
+                        if (err) res.json({ candidates: [], err: "Error" });
+                        res.json({ success: true, candidates: users, count: total, shortlistedCandidates: shortlist });
+                    });
+                }else{
+                    res.json({ success: true, candidates: users, shortlistedCandidates: shortlist});
+                }
             });
-        }else{
-            res.json({ success: true, candidates: users});
-        }
+        });
     });
 }
 
@@ -431,6 +442,6 @@ router.put('/updateRemarks', isSuperAdmin, getCv, updateRemarks);
 router.put('/updatePublish', hasPermission, getCv, updatePublish);
 router.post('/uploadVideo/:userId', getCv, getCvById, deleteOldIfExist, uploadProfileVideo, updateProfileVideo);
 router.post('/getSignedUrl', getCv, getCvById, updateProfileVideo );
-router.post('/pullCandidates', isSuperAdmin, getCandidates);
+router.post('/pullCandidates', isNotCandi, getCandidates);
 
 module.exports = router;

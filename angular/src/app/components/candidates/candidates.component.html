@@ -1,88 +1,82 @@
-<div [hidden]="loading" class="row z-depth-2">
-  <div class="col s12 l12">
-    <div class="row">
-      <div class="col s12 l12">
-        <form class="search-form" (submit)="searchCandidates()">
-          <div class="input-field">
-              <i class="material-icons prefix">search</i>
-              <input id="icon_prefix" type="search" class="validate" placeholder="Search by email" [(ngModel)]="candidateEmail" [ngModelOptions]="{standalone: true}">
-              <i class="material-icons postfix" *ngIf="candidateEmail.trim().length" (click)="clearSearch()">cancel</i>
-          </div>
-          <button type="submit" class="btn btn-submit">Search<i class="material-icons right">search</i></button>
-        </form>
+<div class="container">
+  <div [hidden]="loading" class="row z-depth-2">
+    <div class="col s12 l12">
+      <div class="row">
+        <div class="col s12 l12">
+          <form class="search-form" (submit)="searchCandidates()">
+            <div class="input-field">
+                <i class="material-icons prefix">search</i>
+                <input id="icon_prefix" type="search" class="validate" placeholder="Search by email" [(ngModel)]="candidateEmail" [ngModelOptions]="{standalone: true}">
+                <i class="material-icons postfix" *ngIf="candidateEmail.trim().length" (click)="clearSearch()">cancel</i>
+            </div>
+            <button type="submit" class="btn btn-submit">Search<i class="material-icons right">search</i></button>
+          </form>
+        </div>
       </div>
-    </div>
-
-    <div class="row" *ngIf="!pagedCandidates.length">
-      <div class="col s12 text-center no-data-cls">
-        <h4>No Candidates Found!</h4>
+  
+      <div class="row" *ngIf="!pagedCandidates.length">
+        <div class="col s12 text-center no-data-cls">
+          <h4>No Candidates Found!</h4>
+        </div>
       </div>
-    </div>
-
-    <div class="row" *ngIf="pagedCandidates.length">
-      <div class="col s12 tablecontainer">
-        <table class="table striped table-bordered highlight">
-          <thead>
-            <tr>
-              <th>
-                Name
-              </th>
-              <th>
-                Email
-              </th>
-              <th>
-                Publish Status
-              </th>
-              <th>
-                Options
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let candidate of pagedCandidates" class="linkRow">
-              <td class="name">
-                <a [routerLink]="['/cvbuilder/' + candidate._id ]">
-                  {{ candidate.name}}
-                </a>
-              </td>
-              <td><a>{{ candidate.email}}</a></td>
-              <td >
-                  <input id="isProfilePublished" *ngIf="candidate.cv.length" type="checkbox" name='isProfilePublished' (change)="onProfileStatusChange()" [checked]="candidate.cv.length ? candidate.cv[0].isProfilePublished : false">
-                  <label for="isProfilePublished" *ngIf="candidate.cv.length"></label>
-              </td>
-              <td>
-                <!--<a class="waves-effect waves-light btn small"><i class="material-icons right">archive</i>archive</a>-->
-                <a class="waves-effect waves-light btn small" (click)='deleteClicked(candidate._id)'><i class="material-icons right small">delete_forever</i>delete</a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  
+      <div class="row" *ngIf="pagedCandidates.length">
+        <div class="col s12 tablecontainer">
+          <table class="table striped table-bordered highlight">
+            <thead>
+              <tr>
+                <th>
+                  Name
+                </th>
+                <th>
+                  Email
+                </th>
+                <th>
+                  Options
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let candidate of pagedCandidates" class="linkRow">
+                <td class="name">
+                  <a target="_blank" [routerLink]="['/cvbuilder/' + candidate._id ]">
+                    {{ candidate.name }}
+                  </a>
+                </td>
+                <td><a>{{ candidate.email }}</a></td>
+                <td>
+                  <a class="waves-effect waves-light btn small" [ngClass]="{ 'disabled': myCmp.shrtlstd.includes(candidate._id)}" (click)='shortlistClicked(candidate._id)'>shortlist</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-
-    <div class="row" *ngIf="bufferedCandidates.length >= candidatesPerPage">
-      <div class="col s12 text-center">
-        <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
-          <li [ngClass]="{disabled:pager.currentPage === 1}">
-            <a (click)="setPage(1)">First</a>
-          </li>
-          <li [ngClass]="{disabled:pager.currentPage === 1}">
-            <a (click)="setPage(pager.currentPage - 1)">Previous</a>
-          </li>
-          <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
-            <a (click)="setPage(page)">{{page}}</a>
-          </li>
-          <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-            <a (click)="setPage(pager.currentPage + 1)">Next</a>
-          </li>
-        </ul>
+  
+      <div class="row" *ngIf="bufferedCandidates.length >= candidatesPerPage">
+        <div class="col s12 text-center">
+          <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+            <li [ngClass]="{disabled:pager.currentPage === 1}">
+              <a (click)="setPage(1)">First</a>
+            </li>
+            <li [ngClass]="{disabled:pager.currentPage === 1}">
+              <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+            </li>
+            <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+              <a (click)="setPage(page)">{{page}}</a>
+            </li>
+            <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+              <a (click)="setPage(pager.currentPage + 1)">Next</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div class="loaderParent"  [hidden]="!loading" [ngClass]="{'activeModal':loading}">
-    <div class="loader"></div>
-    <div class="loading-msg">Please wait...!</div>
+  <div class="loaderParent"  [hidden]="!loading" [ngClass]="{'activeModal':loading}">
+      <div class="loader"></div>
+      <div class="loading-msg">Please wait...!</div>
+  </div>
 </div>
 
 <div id="delModal" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"

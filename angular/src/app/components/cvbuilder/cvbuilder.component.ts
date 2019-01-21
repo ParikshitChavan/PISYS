@@ -1,12 +1,15 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params }                 from '@angular/router';
-
-import {MaterializeAction, toast} from 'angular2-materialize';
 import { EventEmitter } from '@angular/core';
 
+import {MaterializeAction, toast} from 'angular2-materialize';
+
 import { CvBuilderService } from '../../services/cvbuilder/cvbuilder.service'
-import {AuthService} from "../../services/auth/auth.service";
+import { AuthService } from "../../services/auth/auth.service";
+import { CompanyApiService } from '../../services/companyAPI/company-api.service';
+
 import * as moment from 'moment';
+
 
 interface FileReaderEventTarget extends EventTarget {
   result:string
@@ -63,20 +66,29 @@ export class CvBuilderComponent implements OnInit {
    'Please select a file.', 
    'Only mp4 files are allowed.', 
    'File size should be smaller than 150 MB.', 
-   'Video length should be max to 1.30 mins.']
+   'Video length should be max to 1.30 mins.'];
 
-   allowedFileType = [ 'video/mp4']
+  allowedFileType = [ 'video/mp4'];
+  myCmp = {
+    _id: '',
+    name: '',
+    shrtlstd: [],
+    cntacd: []
+  };
+
   constructor(private cvBuilderService: CvBuilderService,
-    private route:ActivatedRoute,
-    public authService: AuthService
+    private route: ActivatedRoute,
+    public authService: AuthService,
+    private companyService: CompanyApiService 
   ) { }
 
   ngOnInit() {
+    this.myCmp = JSON.parse(localStorage.getItem('user')).company;
     this.route.params.subscribe( (params:Params)=>{
       this.userId = params['id'];
       this.cvBuilderService.setUserId(this.userId);
       this.cvBuilderService.loadCv(this.userId);
-      this.setUserAccess(this.authService.user.access)
+      this.setUserAccess(this.authService.user.access);
       this.cvBuilderService.profileVideo.subscribe(this.setVideo);
       this.cvBuilderService.personalDetails.subscribe(this.setPersonalDetails);
       this.cvBuilderService.accessControl.subscribe(this.setAccesssControl);
@@ -272,6 +284,34 @@ export class CvBuilderComponent implements OnInit {
 
   onPublishchangeFail = () => {
     this.postApiCall('Failed to update the profile status');
+  }
+
+  shortlistClicked(){
+    this.companyService.addShortlisted(this.myCmp._id, this.userId).subscribe( resp =>{
+      if(!resp.success){
+        console.log(resp.error);
+        return toast('some error occurred, please check the console for more details.', 3000);
+      }
+      let userData = JSON.parse(localStorage.getItem('user'));
+      userData.company.shrtlstd.push(this.userId);
+      this.authService.saveHeaderUserInfo(userData);
+      this.myCmp = userData.company.shrtlstd;
+      toast('User shortlisted successfully', 3000);
+    });
+  }
+
+  contactClicked(){
+    this.companyService.contactCandidate(this.myCmp._id, this.userId).subscribe( resp =>{
+      if(!resp.success){
+        console.log(resp.error);
+        return toast('some error occurred, please check the console for more details.', 3000);
+      }
+      let userData = JSON.parse(localStorage.getItem('user'));
+      userData.company.cntacd.push(this.userId);
+      this.authService.saveHeaderUserInfo(userData);
+      this.myCmp = userData.company.cntacd;
+      toast('User contacted successfully', 3000);
+    });
   }
 
 }

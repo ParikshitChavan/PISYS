@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { CvBuilderService } from '../../services/cvbuilder/cvbuilder.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { toast, MaterializeAction } from 'angular2-materialize';
+import { CompanyApiService } from '../../services/companyAPI/company-api.service'
 
 @Component({
   selector: 'app-candidates',
@@ -30,13 +31,24 @@ export class CandidatesComponent implements OnInit {
   nextPage = 1;
   bufferedPage = 0;
   loading = true;
-  constructor(public cvBuilderService:CvBuilderService, private authService: AuthService) { }
+  myCmp = {
+    _id: '',
+    name: '',
+    shrtlstd: [],
+    cntacd: []
+  };
+
+  constructor(
+    public cvBuilderService:CvBuilderService,
+    private authService: AuthService,
+    private companyService: CompanyApiService ) { }
 
   ngOnInit() {
+    this.myCmp = JSON.parse(localStorage.getItem('user')).company;
     this.getCandidates();
-    this.cvBuilderService.candidateList.subscribe( educations => {
-      this.setCandidates(educations);
-     });
+    this.cvBuilderService.candidateList.subscribe( candidates => {
+      this.setCandidates(candidates);
+    });
   }
 
   setCandidates = (candidates) => {
@@ -86,6 +98,7 @@ export class CandidatesComponent implements OnInit {
          this.totalCandidatesCount = response.count;
       }
       this.cvBuilderService.setCandidateList(response.candidates);
+      //this.shortlistedCandi = response.shortlistedCandidates;
     }
     this.loading = false;
   }
@@ -152,16 +165,6 @@ export class CandidatesComponent implements OnInit {
     return {  totalCandidates, currentPage, pageSize, totalPages, startPage, endPage, startIndex, endIndex, pages  };
   }
 
-  deleteClicked(candiId){
-    this.delModalActions.emit({action:"modal", params:['open']});
-    for(let i=0; i < this.candidatesPerPage; i++){
-      if(this.pagedCandidates[i]._id == candiId){
-        this.deletinCandi = this.pagedCandidates[i];
-        break;
-      }
-    }
-  }
-
   onCnfDelEmail(form){
     if(!form.valid) return toast('Please type in the correct email address.', 4000);
     if(form.controls.cnfEmail.value == this.deletinCandi.email){
@@ -175,4 +178,17 @@ export class CandidatesComponent implements OnInit {
     else return toast('Please type in the correct email address.', 4000);
   }
   
+  shortlistClicked(candidateId){
+    this.companyService.addShortlisted(this.myCmp._id, candidateId).subscribe( resp =>{
+      if(!resp.success){
+        console.log(resp.error);
+        return toast('some error occurred, please check the console for more details.', 3000);
+      }
+      let userData = JSON.parse(localStorage.getItem('user'));
+      userData.company.shrtlstd.push(candidateId);
+      this.authService.saveHeaderUserInfo(userData);
+      this.myCmp = userData.company.shrtlstd;
+      toast('User shortlisted successfully', 3000);
+    });
+  }
 }

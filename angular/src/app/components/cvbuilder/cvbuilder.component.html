@@ -1,127 +1,128 @@
-
-  <div *ngIf="canEdit"  class="chkBxDiv col s12 l12">
+<div class="container">
+    <div *ngIf="canEdit"  class="chkBxDiv col s12 l12">
         <input id="isProfilePublished" type="checkbox" name='isProfilePublished' (change)="onProfileStatusChange()" [(ngModel)]="isProfilePublished">
         <label for="isProfilePublished">Publish your profile</label>
     </div>
-<div class="">
-    <div  *ngIf="canEdit"  class="row  z-depth-2 padding-container">
-        <div class="col s12 l6">
-            <div class="row" *ngIf="personalDetails.name">
-                <div class="col s5">Name:</div>
-                <div class="col s7">{{personalDetails.name}}</div>
-            </div>
-            <div class="row" *ngIf="personalDetails.DOB">
-                <div class="col s5">Date of birth</div>
-                <div class="col s7">{{personalDetails.DOB | date:'longDate'}}</div>
-            </div>
-            <div class="row" *ngIf="personalDetails.email">
-                <div class="col s5">Email:</div>
-                <div class="col s7 truncate">{{personalDetails.email}}</div>
-            </div>
-            <div class="row" *ngIf="personalDetails.phNum">
-                <div class="col s5">Phone:</div>
-                <div class="col s7">{{personalDetails.phNum}}</div>
-            </div>
-
-            <div class="row" *ngIf="personalDetails.skypeId">
-                <div class="col s5">Skype Id:</div>
-                <div class="col s7">{{personalDetails.skypeId}}</div>
-            </div>
-        </div>
-        <div class="col s12 l6 center-align" *ngIf="canEdit && personalDetails && personalDetails.DP">
-            <div class="center-align">
-                <img [src]="personalDetails.DP.url" class="imagePlace responsive-img circle" alt="User display picture">
-            </div>
-        </div>
-
-    </div>
-    <div class="row  z-depth-2 padding-container">
-        <h5 class="vidTitle">One minute profile video</h5>
-        <div></div>
-        <div *ngIf="videoDetails.location || canEdit" class="col s12 l12 text-center imgArea vidArea">
-            <video (error)="onVideoError($event)" class="responsive-video profVid" [src]="videoDetails.location | safe" controls #videoPlayer preload="metadata">
-            </video>
-        </div>
-        <div *ngIf="canEdit" class="fltBtnArea">
-            <a id="vidEditBtn" (click)="showFileUploadModal()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
-        </div>
-    </div>
-</div>
-<div class="personalInfo"> </div>
-   
-<div id="tabsArea" class="row col s12 z-depth-1">
-
-    <ul class="tabs" materialize="tabs">
-        <li class="tab" >
-            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['education']">education</a>
-        </li>
-        <li class="tab">
-            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['experience']">Internships</a>
-        </li>
-        <li class="tab">
-            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['projects']">Projects</a>
-        </li>
-        <li class="tab">
-            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['skills']">Skills</a>
-        </li>
-        <li class="tab">
-            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['cert']">Certifications</a>
-        </li>
-        <li class="tab">
-            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['interests']">Interests</a>
-        </li>
-        <li class="tab" *ngIf="userAccess == 2" >
-            <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['remarks']">Remarks</a>
-        </li>
-    </ul>
-</div>
-<router-outlet></router-outlet>
-
-<div id="videoProfileModal" class="modal modal-fixed-footer" materialize="modal" [materializeActions]="modalActions"  [materializeParams]="[{dismissible: false}]">
-        <form action="#">
-            <div class="file-field input-field">
-                <div class="btn">
-                    <span>File</span>
-                    <input type="file" #fileUploader  (change)="onFileSelect($event)" accept="video/mp4">
+    <div>
+        <div *ngIf="canEdit" class="row  z-depth-2 padding-container">
+            <div class="col s12 l6">
+                <div class="row" *ngIf="personalDetails.name">
+                    <div class="col s5">Name:</div>
+                    <div class="col s7">{{personalDetails.name}}</div>
                 </div>
-                <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text">
-                    <div *ngIf="fileStatus" class="red-text">
-                            {{ fileStatusMsg[fileStatus] }}
+                <div class="row" *ngIf="personalDetails.DOB">
+                    <div class="col s5">Date of birth</div>
+                    <div class="col s7">{{personalDetails.DOB | date:'longDate'}}</div>
+                </div>
+                <div class="row" *ngIf="personalDetails.email">
+                    <div class="col s5">Email:</div>
+                    <div class="col s7 truncate">{{personalDetails.email}}</div>
+                </div>
+                <div class="row" *ngIf="personalDetails.phNum">
+                    <div class="col s5">Phone:</div>
+                    <div class="col s7">{{personalDetails.phNum}}</div>
+                </div>
+    
+                <div class="row" *ngIf="personalDetails.skypeId">
+                    <div class="col s5">Skype Id:</div>
+                    <div class="col s7">{{personalDetails.skypeId}}</div>
+                </div>
+            </div>
+            <div class="col s8 l4 center-align" *ngIf="personalDetails && personalDetails.DP">
+                <div class="center-align">
+                    <img [src]="personalDetails.DP.url" class="imagePlace responsive-img circle" alt="User display picture">
+                </div>
+            </div>
+            <div class="col s4 l2 center-align" *ngIf='userAccess != 0'>
+                <a class="waves-effect waves-light btn small" [ngClass]="{ 'disabled': myCmp.shrtlstd.includes(userId) }" (click)='shortlistClicked()'>Shortlist</a>
+                <br>
+                <a class="waves-effect waves-light btn small" [ngClass]="{ 'disabled': myCmp.cntacd.includes(userId) }" (click)='contactClicked()'>Request_Interview</a>
+            </div>
+        </div>
+        <div class="row  z-depth-2 padding-container">
+            <h5 class="vidTitle">One minute profile video</h5>
+            <div></div>
+            <div *ngIf="videoDetails.location || canEdit" class="col s12 l12 text-center imgArea vidArea">
+                <video (error)="onVideoError($event)" class="responsive-video profVid" [src]="videoDetails.location | safe" controls #videoPlayer preload="metadata">
+                </video>
+            </div>
+            <div *ngIf="canEdit" class="fltBtnArea">
+                <a id="vidEditBtn" (click)="showFileUploadModal()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
+            </div>
+        </div>
+    </div>
+       
+    <div id="tabsArea" class="row col s12 z-depth-1">
+    
+        <ul class="tabs" materialize="tabs">
+            <li class="tab" >
+                <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['education']">education</a>
+            </li>
+            <li class="tab">
+                <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['experience']">Experience</a>
+            </li>
+            <li class="tab">
+                <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['projects']">Projects</a>
+            </li>
+            <li class="tab">
+                <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['skills']">Skills</a>
+            </li>
+            <li class="tab">
+                <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['cert']">Certifications</a>
+            </li>
+            <li class="tab">
+                <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['interests']">Interests</a>
+            </li>
+        </ul>
+    </div>
+    <router-outlet></router-outlet>
+    
+    <div id="videoProfileModal" class="modal modal-fixed-footer" materialize="modal" [materializeActions]="modalActions"  [materializeParams]="[{dismissible: false}]">
+            <form action="#">
+                <div class="file-field input-field">
+                    <div class="btn">
+                        <span>File</span>
+                        <input type="file" #fileUploader  (change)="onFileSelect($event)" accept="video/mp4">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                        <div *ngIf="fileStatus" class="red-text">
+                                {{ fileStatusMsg[fileStatus] }}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col s12 l12">
-                    <i>
-                        Note : You can upload your self introduction mp4 video which should not be greater than 1.15 Min in length and 150 MB in size.<br><br>
-                        Psst... Keep it casual, Dont forget to smile,<br>chose a well lit area to quickly shoot the video on your phone and make yourself hirable.
-                    </i>
+                <div class="row">
+                    <div class="col s12 l12">
+                        <i>
+                            Note : You can upload your self introduction mp4 video which should not be greater than 1.15 Min in length and 150 MB in size.<br><br>
+                            Psst... Keep it casual, Dont forget to smile,<br>chose a well lit area to quickly shoot the video on your phone and make yourself hirable.
+                        </i>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col s12 l12 text-center">
-                    <video class="previewVideo" [src]="videoProfilePreviewUrl | safe"  controls #previewVideo preload="auto"></video>
+                <div class="row">
+                    <div class="col s12 l12 text-center">
+                        <video class="previewVideo" [src]="videoProfilePreviewUrl | safe"  controls #previewVideo preload="auto"></video>
+                    </div>
                 </div>
-            </div>
-        </form>
-        <div class="modal-footer">
-                <button type="button" [disabled]="disabledUpload" (click)='uploadVideo()' class="btn btn-submit">Save<i class="material-icons right">send</i></button>
-                <button type="button" (click)='closeFileUploadModal()' class="btn red">Cancel</button>
-           </div>
-</div>
-
-<div class="modal modal-fixed-footer" [ngClass]="{'loaderModal': showFileUpload }"  materialize="modal" [materializeActions]="preLoadModalActions"  [materializeParams]="[{dismissible: false}]">
-    <div class="loader"></div>
-    <div>Please wait, video is being uploaded!</div>
-</div>
-
-<div class="modal middle-sheet" materialize="modal" [materializeActions]="confirmProfileChange" [materializeParams]="[{dismissible: false}]">
-    <div class="modal-content">
-        <p> {{  profileChangeMessage }} </p>
+            </form>
+            <div class="modal-footer">
+                    <button type="button" [disabled]="disabledUpload" (click)='uploadVideo()' class="btn btn-submit">Save<i class="material-icons right">send</i></button>
+                    <button type="button" (click)='closeFileUploadModal()' class="btn red">Cancel</button>
+               </div>
     </div>
-    <div class="modal-footer">
-        <button class="waves-effect waves-green btn-flat" (click)="cancelProfileChange()">Close</button>
-        <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="updatePublishStatue()">Agree</button>
+    
+    <div class="modal modal-fixed-footer" [ngClass]="{'loaderModal': showFileUpload }"  materialize="modal" [materializeActions]="preLoadModalActions"  [materializeParams]="[{dismissible: false}]">
+        <div class="loader"></div>
+        <div>Please wait, video is being uploaded!</div>
+    </div>
+    
+    <div class="modal middle-sheet" materialize="modal" [materializeActions]="confirmProfileChange" [materializeParams]="[{dismissible: false}]">
+        <div class="modal-content">
+            <p> {{  profileChangeMessage }} </p>
+        </div>
+        <div class="modal-footer">
+            <button class="waves-effect waves-green btn-flat" (click)="cancelProfileChange()">Close</button>
+            <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="updatePublishStatue()">Agree</button>
+        </div>
     </div>
 </div>

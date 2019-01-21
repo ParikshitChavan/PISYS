@@ -44,7 +44,7 @@ export class InitAccountComponent implements OnInit {
         return null;
       }
       this.authService.loginSuccess(resp);
-      this.router.navigate(['dashboard']);
+      this.router.navigate(['profile']);
     });
   }
   

@@ -32,7 +32,7 @@ export class EducationComponent implements OnInit {
   modalPurpose : string = 'add'; // add - adding a new entry, edit - editing new entry. delete - confirmation message
   isUserHasCv: boolean = false;
 
-  isRecentEducationfound : boolean = false;;
+  isRecentEducationfound : boolean = false;
 
   constructor(public cvBuilderService:CvBuilderService,
     private route:ActivatedRoute
@@ -64,12 +64,6 @@ export class EducationComponent implements OnInit {
     this.educations = educations;
   }
 
-
-  // findRecentEducation (educations) {
-  //   if(educations instanceof Array){
-  //     this.isRecentEducationfound = educations.find( education => education.isLatest );
-  //   }
-  // }
 
   /**
    * @memberof EducationComponent
