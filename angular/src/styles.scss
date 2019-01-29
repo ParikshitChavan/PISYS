@@ -1,0 +1,44 @@
+@import '~materialize-css/sass/components/_color.scss';
+$roboto-font-path: "~materialize-css/dist/fonts/roboto/";
+
+$primary-color: #26a69a;
+$primary-color-light: lighten($primary-color, 15%);
+$primary-color-dark: darken($primary-color, 15%);
+$secondary-color: #E72A10;
+
+@import "~materialize-css/sass/materialize.scss";
+
+html{
+  font-family: 'Avenir', 'Roboto', 'sans-sherif';
+}
+
+main {
+  min-height: calc(100vh - 337px);
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+.no-data-cls {
+  color: gray;
+  text-transform: uppercase;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section:last-child .divider{
+  display: none;
+}
+
+.preline{
+  white-space: pre-line;    
+}

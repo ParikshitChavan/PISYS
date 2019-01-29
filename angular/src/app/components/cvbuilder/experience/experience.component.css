@@ -1,12 +1,12 @@
 
     
-  .container10p{
-    width: 100%;
-    padding: 0 10%;
-  }
-  
-  
-  .input-field{
+.container5p{
+  width: 100%;
+  padding: 0 5%;
+}
+
+
+.input-field{
   margin-bottom: 3rem !important;
 }
   
@@ -14,9 +14,16 @@ textarea.materialize-textarea{
   padding: 1em 0 0 0;
 }
 
+.jobTitle{
+  margin-top: 0;
+}
+
+.icnNextTxt{
+  vertical-align: bottom;
+}
 
 input:not([type]), input[type=text]:not(.browser-default), input[type=password]:not(.browser-default), input[type=email]:not(.browser-default), input[type=url]:not(.browser-default), input[type=time]:not(.browser-default), input[type=date]:not(.browser-default), input[type=datetime]:not(.browser-default), input[type=datetime-local]:not(.browser-default), input[type=tel]:not(.browser-default), input[type=number]:not(.browser-default), input[type=search]:not(.browser-default), textarea.materialize-textarea {
-      margin: 0 0 0px 0;
+  margin: 0 0 0px 0;
 }
 
 .float-right{
@@ -33,7 +40,7 @@ input:not([type]), input[type=text]:not(.browser-default), input[type=password]:
 
 .educationDetail{
   text-transform: capitalize;
-    word-break: break-word;
+  word-break: break-word;
 }
 
 
@@ -105,4 +112,8 @@ input:not([type]), input[type=text]:not(.browser-default), input[type=password]:
 
 .fltBtnArea{
   position: relative;
+}
+
+.greyText{
+  color: #8d8d8d;
 }

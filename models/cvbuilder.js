@@ -39,10 +39,13 @@ const cvBuilderSchema = Schema({
     experience: [{
         _id: String,
         title: String,
+        company: String,
+        location: String,
         description: String,
         usedSkills: [],
         startDate: Date,
         endDate: Date,
+        isCurr: Boolean,
         active: Boolean
     }],
     certificates :[{

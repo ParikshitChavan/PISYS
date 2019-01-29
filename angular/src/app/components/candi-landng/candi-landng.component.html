@@ -4,53 +4,73 @@
       <img src="../../assets/images/clrLogo.png" alt="logo">
     </div>
     <div class="valign-wrapper right topLnkCmp">
-      <a class="" target="_blank" [routerLink]="['/candidateLanding']">For companies ></a>
+      <a class="" target="_blank" [routerLink]="['/companyLanding']">For companies ></a>
     </div>
     <div class="clear"></div>
   </div>
   <div class="row container10p">
-    <div class="col s6 offset-s6 center">
-      <h3 class="bak1Head">Find Most suited interships overseas</h3>
+    <div class="col s12 m6 center">
+      <h3 class="bak1Head pgTitle">Find your most suited job overseas<span class="asterisk">*</span></h3>
       <div class="btnArea">
-        <a class="waves-effect waves-light btn" (click)='onLoginOpen()'>Login</a>
-        <a class="waves-effect waves-light btn" (click)='onRegisterOpen()'>Sign up</a>
+        <a class="waves-effect waves-light btn-large" (click)='onLoginOpen()'>Log in</a>
+        <a class="waves-effect waves-light btn-large" (click)='onRegisterOpen()'>Sign up</a>
       </div>
     </div>
   </div>
 </div>
 <div class="imgBack2">
   <div class="row container10p">
-    <div class="col s6 center transBk">
-      <h3>Get internship offers from top IT companies in Japan</h3>
+    <div class="col s12 m4 offset-m8 center transBk">
+      <h3 class="pgTitle">Get job offers from top IT companies in Japan</h3>
       <p class="greyTxt">
-        You read that right! Just create your CV and upload an introduction video yo get started on getting
+        You read that right! Just create your CV and upload an introduction video you get started 
         on getting recognised by companies. Explore your most suited options, get invited for an interview and get
         selected.
       </p>
     </div>
   </div>
 </div>
-<!--
+
 <div class="imgBack3">
-  <div class="row container10p">
-    <h5>Why choose Us?</h5>
+  <div class="container center">
+    <h3 class="pgTitle">Why choose us?</h3>
     <div class="row">
-      <div class="col s4 iconInfo"></div>
-      <div class="col s4 iconInfo"></div>
-      <div class="col s4 iconInfo"></div>
-      <div class="col s4 iconInfo"></div>
+      <div class="col s12 m3 iconInfo" id="iconInfo1">
+        <div>
+          <span class="circle"><i class="material-icons">star</i></span>
+          <p>Collect stars by Registering yourself and your friends to get cash in return<span class="asterisk">*</span></p>
+        </div>
+      </div>
+      <div class="col s12 m3 iconInfo" id="iconInfo2">
+        <div>
+          <span class="circle"><i class="material-icons">favorite</i></span>
+          <p>Get insights on which part of your profile attracts companies the most</p>
+        </div>
+      </div>
+      <div class="col s12 m3 iconInfo" id="iconInfo3">
+        <div>
+          <span class="circle"><i class="material-icons">play_arrow</i></span>
+          <p>Get insights and interview tips based on your profile video</p>
+        </div>
+      </div>
+      <div class="col s12 m3 iconInfo" id="iconInfo4">
+        <div>
+          <span class="circle"><i class="material-icons">send</i></span>
+          <p>Directly receive request for interviews from companies</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
--->
-<div class="botBar">
-  <div class="left botLogo">
+
+<div class="botBar row">
+  <div class="left botLogo col s12 m6">
     <img src="../../assets/images/clrLogo.png" alt="logo">
-    <a class="botCmpLnk" target="_blank" [routerLink]="['/candidateLanding']">For companies ></a>
+    <a class="botCmpLnk" target="_blank" [routerLink]="['/companyLanding']">For companies ></a>
   </div>
-  <div class="botBtnArea valign-wrapper right">
-    <a class="waves-effect waves-light btn" (click)='onLoginOpen()'>Login</a>
-    <a class="waves-effect waves-light btn" (click)='onRegisterOpen()'>Sign up</a>
+  <div class="botBtnArea right col s12 m6 right-align">
+    <a class="waves-effect waves-light btn-large" (click)='onLoginOpen()'> Login </a>
+    <a class="waves-effect waves-light btn-large" (click)='onRegisterOpen()'> Sign up </a>
   </div>
   <div class="clear"></div>
 </div>

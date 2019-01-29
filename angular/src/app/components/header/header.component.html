@@ -1,9 +1,11 @@
-<nav *ngIf="authService.isLoggedIn()">
-  <div class="container">
+<nav *ngIf="authService.isLoggedIn()" class="z-depth-2">
+  <div class="container3p">
     <div class="nav-wrapper">
-      <a href=""  class="brand-logo"><img src="../../assets/images/onetroLogoWhite.png" alt="Logo"></a>
+      <a href=""  class="brand-logo"><img src="../../assets/images/clrLogo.png" alt="Logo"></a>
+      
       <a data-activates="mobile-demo" class="button-collapse" materialize="sideNav"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
+
+      <ul class="right hide-on-med-and-down pcNav">
         <!-- userAccess ==2 -> visible to only admins *** userAccess == 0 -> candidate -->
         <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]" i18n>Create CV</a></li>
         <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" i18n>My company</a></li>
@@ -15,30 +17,30 @@
           <img [src]="user.DPUrl" alt="Profile Pic" id="headerDP" class="left circle responsive-img"><span>{{user.name}}</span><i class="material-icons right">arrow_drop_down</i>
         </a>
         <ul id="dropdown1" [ngClass]="{ 'dropdown-content' : true}">
-            <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile']">Profile</a></li>
-            <li class="divider"></li>
-            <li><a href="#" (click)="logout()">Logout</a></li>
-          </ul>
+          <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile']">Profile</a></li>
+          <li class="divider"></li>
+          <li><a href="#" (click)="logout()">Logout</a></li>
+        </ul>
       </li>
       </ul>
 
       <ul class="side-nav" id="mobile-demo">
-          <!-- userAccess ==2 -> visible to only admins *** userAccess == 0 -> candidate --> 
-          <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]" i18n>Create CV</a></li>
-          <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" >My company</a></li>
-          <li *ngIf="userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" >Companies</a></li>
-          <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
-          <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/shortlist']" i18n>Shortlist</a></li>
-          <li><a class="dropdown-button" data-activates="dropdown2" 
-            materialize="dropdown" [materializeParams]="dropdownParams" [materializeActions]="dropdownActions">
-            <img [src]="user.DPUrl" alt="Profile Pic" id="headerDP" class="left circle responsive-img"><span>{{user.name}}</span><i class="material-icons right">arrow_drop_down</i>
-          </a>
-          <ul id="dropdown2" [ngClass]="{ 'dropdown-content' : true}">
-              <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile']">Profile</a></li>
-              <li class="divider"></li>
-              <li><a href="#" (click)="logout()">Logout</a></li>
-            </ul>
-          </li>
+        <!-- userAccess ==2 -> visible to only admins *** userAccess == 0 -> candidate --> 
+        <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]" i18n>Create CV</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" >My company</a></li>
+        <li *ngIf="userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" >Companies</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/shortlist']" i18n>Shortlist</a></li>
+        <li><a class="dropdown-button" data-activates="dropdown2" 
+          materialize="dropdown" [materializeParams]="dropdownParams" [materializeActions]="dropdownActions">
+          <img [src]="user.DPUrl" alt="Profile Pic" id="headerDP" class="left circle responsive-img"><span>{{user.name}}</span><i class="material-icons right">arrow_drop_down</i>
+        </a>
+        <ul id="dropdown2" [ngClass]="{ 'dropdown-content' : true}">
+          <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile']">Profile</a></li>
+          <li class="divider"></li>
+          <li><a href="#" (click)="logout()">Logout</a></li>
+        </ul>
+        </li>
       </ul>
     </div>
   </div>

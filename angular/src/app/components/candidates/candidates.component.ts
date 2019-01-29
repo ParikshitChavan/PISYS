@@ -186,7 +186,7 @@ export class CandidatesComponent implements OnInit {
       }
       let userData = JSON.parse(localStorage.getItem('user'));
       userData.company.shrtlstd.push(candidateId);
-      this.authService.saveHeaderUserInfo(userData);
+      this.authService.saveUserInfo(userData);
       this.myCmp = userData.company.shrtlstd;
       toast('User shortlisted successfully', 3000);
     });

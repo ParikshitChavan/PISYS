@@ -4,7 +4,7 @@
       <div class="educationDetail">
         
         <div class="row" *ngIf="skills.techSkills.length">
-          <div class="col s3">Computing Skills :</div>
+          <div class="col s3">Computing languages :</div>
           <div class="col s9"> 
               <ul class="list-style">
                   <li *ngFor='let skill of skills.techSkills'> {{ skill.tag }} </li>
@@ -13,7 +13,7 @@
         </div>
 
         <div class="row" *ngIf="skills.otherStrengths">
-            <div class="col s3">Other Strenghts :</div>
+            <div class="col s3">Industry knowledge/expertise :</div>
           <div class="col s9">
             <ul class="list-style">
               <li *ngFor='let skill of skills.otherStrengths | texttransform:skills'> {{ skill }} </li>
@@ -22,7 +22,7 @@
         </div>
        
         <div class="row" *ngIf="skills.languageSkills.length">
-            <div class="col s3">Language Skills :</div>
+            <div class="col s3">Languages spoken :</div>
          <div class="col s9">
              <ul class="list-style">
                 <li *ngFor='let skill of skills.languageSkills'> {{ skill.tag }} </li>
@@ -43,18 +43,18 @@
 </div>
 
 <div class="section" *ngIf="!( skills.techSkills.length || skills.otherStrengths || skills.languageSkills.length )">
-    <div>
-      <div class="col s12 center-align no-data-cls">
-        <h5> {{ canEdit ? 'Please add your skills.' : 'Candidate have not entered any skills.' }} </h5>
-      </div>
-    </div>
-  
-    <div *ngIf="canEdit" class="fltBtnArea right-align">
-      <a id="reptCreateBtn" (click)="editSkills()" class="btn-floating  btn-large  waves-effect waves-light red">
-        <i class="material-icons">add</i>
-      </a>
+  <div>
+    <div class="col s12 center-align no-data-cls">
+      <h5> {{ canEdit ? 'Please add your skills.' : 'Candidate have not entered any skills.' }} </h5>
     </div>
   </div>
+
+  <div *ngIf="canEdit" class="fltBtnArea right-align">
+    <a id="reptCreateBtn" (click)="editSkills()" class="btn-floating  btn-large  waves-effect waves-light red">
+      <i class="material-icons">add</i>
+    </a>
+  </div>
+</div>
 
 <div id="modal" *ngIf="modalPurpose !== 'delete'" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
   [materializeActions]="modalActions">
@@ -73,7 +73,7 @@
         </div>
 
       <div class="input-field">
-        <label for="otherStrengths">Other Strengths(Enter each skill in new line.)</label>
+        <label for="otherStrengths">Industry knowledge/expertise(Enter each skill in new line.)</label>
         <textarea id="otherStrengths" class="materialize-textarea" name="otherStrengths" [(ngModel)]="otherStrengths"
           (keyup)="onInputChange($event,'otherStrengths')" required></textarea>
       </div>

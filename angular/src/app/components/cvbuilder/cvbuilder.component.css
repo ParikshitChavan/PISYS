@@ -21,12 +21,8 @@
     opacity:0.5;
 }
 
-H3{
+h3{
     text-align: center;
-}
-
-.imagePlace{
-    max-width: 200px;
 }
 
 .personalInfo{
@@ -103,7 +99,6 @@ form{
     position: absolute;
     right: 2%;
     bottom: 0%;
-    transform: translateY(+65%);
 }
 
 .chkBxDiv{
@@ -116,7 +111,7 @@ form{
 }
 
 .vidTitle{
-padding: 0 0 1% 3%;
+    padding: 0 0 1% 3%;
 }
 
 .vidArea{
@@ -125,4 +120,43 @@ padding: 0 0 1% 3%;
 
 .profVid{
     max-height: 600px;
+}
+
+.container10p{
+    width: 100%;
+    padding: 0 10%;
+}
+
+.greyBorder{
+    border: 2px solid #ebebeb;
+    border-radius: 4px;
+}
+
+.vidContainer{
+    padding: 7px;
+}
+
+.btn{
+    background-color: #0093A4; 
+}
+
+.candiName{
+    text-align: left;
+}
+
+.dspTbl{
+    position: relative;
+}
+
+.profileActions{
+    padding: 0 10%;
+}
+
+.profileActions a{
+    width: 100%
+}
+
+.profileActions a:first-child{
+    margin-bottom: 10px;
+    /*display: block;*/
 }

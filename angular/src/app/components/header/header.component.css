@@ -9,7 +9,17 @@ nav .nav-wrapper .brand-logo img {
     vertical-align: middle;
 }
 
-nav{
-    background-color: #C23E3D;
+nav {
+    background-color: white;
     margin-bottom: 70px;
+}
+
+.pcNav li a{
+    color: #26a69a;
+    font-size: 18px;
+}
+
+.container3p{
+    width: 100%;
+    padding: 0 3%;
 }

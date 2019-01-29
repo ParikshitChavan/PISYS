@@ -38,6 +38,7 @@ const userSchema = Schema({
         required: true              
     },
     DOB: Date,
+    location: String,
     phNum: String,
     skypeId: String,
     DP: { key: String, url: String },                 //display picture

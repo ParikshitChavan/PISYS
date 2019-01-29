@@ -314,10 +314,6 @@ export class ExperienceComponent implements OnInit {
     }
 
     if (!moment(experience.endDate).isValid()) {
-      this.isValidCurrentExperience.endDate = false;
-      formValid = false;
-      this.inValidDateMsg = 'Please input end date.';
-    } else {
       this.isValidCurrentExperience.endDate = true;
       const endDate = moment(experience.endDate);
       const startDate = moment(experience.startDate);

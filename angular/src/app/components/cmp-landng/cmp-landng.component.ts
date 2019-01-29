@@ -56,8 +56,11 @@ export class CmpLandngComponent implements OnInit {
         //toast('some error occurred please check the console for more details', 3000);
         //console.log(resp.error);
       }
-      this.authService.loginSuccess(resp);
-      this.router.navigate(['company/myCompany']);
+      else{
+        this.loginModalAction.emit({action:"modal", params:['close']});
+        this.authService.loginSuccess(resp);
+        this.router.navigate(['company/myCompany']);
+      }
     });
   }
 

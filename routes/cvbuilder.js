@@ -102,14 +102,14 @@ const getSignedUrl = (req, res, next) => {
 }
 
 const sendCvDetails = (req, res) => {
+    let canEdit = false;
     if (isSuperAdminOrOwner(req.decoded, req.params.userId)) {
-        User.getUserInfoById(req.tempStore.userId, (err, user) => {
-            if(err) return util.sendError('Error getting user details');
-            res.json({ success: true, canEdit: true, cvdetails: req.tempStore.cvdetails, profileData: user });
-        });
-    } else {
-        res.json({ success: true, canEdit: false, cvdetails: req.tempStore.cvdetails });
+        canEdit = true;
     }
+    User.getUserInfoById(req.tempStore.userId, (err, user) => {
+        if(err) return util.sendError('Error getting user details');
+        res.json({ success: true, canEdit: canEdit, cvdetails: req.tempStore.cvdetails, profileData: user });
+    });
 }
 
 

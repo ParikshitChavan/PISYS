@@ -91,13 +91,7 @@ export class CvBuilderService {
     const extension = 'cv/cvdetails/' + userId;
     this.httpService.get(extension).then(this.applyData);
   }
-
-  // getConfigFiles = () =>{
-  //   this.httpService.get('user/getconfigfile').then(response => {
-  //     this._globalConfig.next(response);
-  //   });
-  // }
-
+  
    setEducations(educations) {
     this._educationsSubject.next(educations);
   }

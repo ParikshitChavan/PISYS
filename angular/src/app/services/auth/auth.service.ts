@@ -49,13 +49,13 @@ export class AuthService {
   }
 
   loginSuccess(data){
-    console.log('time when token saved', new Date())
+    //console.log('time when token saved', new Date());
     this.saveToken(data.token);
-    this.saveHeaderUserInfo(data.userData);
+    this.saveUserInfo(data.userData);
     this.loadHeaderUserInfo();
   }
 
-  saveHeaderUserInfo(userData){
+  saveUserInfo(userData){
     localStorage.setItem('user', JSON.stringify(userData));
     this.user = userData;
   }

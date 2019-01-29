@@ -1,6 +1,75 @@
-<a class="waves-effect waves-light btn" (click)='onLoginOpen()'>Login</a>
-<a class="waves-effect waves-light btn" (click)='onRegisterOpen()'>Sign up</a>
-<a target="_blank" [routerLink]="['/candidateLanding']" >for candidates</a>
+<div class="imgBack1">
+  <div class="topBar">
+    <div class="left topLogo">
+      <img src="../../assets/images/clrLogo.png" alt="logo">
+    </div>
+    <div class="valign-wrapper right topLnkCmp">
+      <a class="" target="_blank" [routerLink]="['/candidateLanding']">For candidates ></a>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="row container10p">
+    <div class="col s12 m6 center">
+      <h3 class="pgTitle bak1Head">Find the most suited candidate for your company</h3>
+      <div class="btnArea">
+        <a class="waves-effect waves-light btn" (click)='onLoginOpen()'>Login</a>
+        <a class="waves-effect waves-light btn" (click)='onRegisterOpen()'>Sign up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="imgBack2">
+  <div class="row container10p">
+    <div class="col s12 m6 center">
+      <h3 class="pgTitle">Build your dream team with highly talented professionals</h3>
+      <p class="greyTxt">
+        That’s right! With the detailed description and introduction video for each candidate,
+        you get an insight of the candidate! Interview determined and well suited candidates for your company.
+        Reach out to active and passive job seekers with just a click and get building your dreamteam!
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="imgBack3">
+  <div class="container transBk center">
+    <h3 class="pgTitle">Why choose Us?</h3>
+    <div class="row">
+      <div class="col s12 m4 iconInfo" id="iconInfo1">
+            <div>
+                <span class="circle"><i class="material-icons">favorite</i></span>
+                <p>Receive likes to analyze which types of jobs are the most attractive</p>
+            </div>
+      </div>
+      <div class="col s12 m4 iconInfo" id="iconInfo2">
+            <div>
+                <span class="circle"><i class="material-icons">play_arrow</i></span>
+                <p>View the candidate introductory video unlimited times</p>
+            </div>
+      </div>
+      <div class="col s12 m4 iconInfo" id="iconInfo3">
+            <div>
+                <span class="circle"><i class="material-icons">send</i></span>
+                <p>Directly send interview offers to candidates</p>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="botBar row">
+  <div class="left botLogo col s12 m6">
+    <img src="../../assets/images/clrLogo.png" alt="logo">
+    <a class="botCmpLnk" target="_blank" [routerLink]="['/candidateLanding']">For candidates ></a>
+  </div>
+  <div class="botBtnArea right col s12 m6 right-align">
+    <a class="waves-effect waves-light btn" (click)='onLoginOpen()'>Login</a>
+    <a class="waves-effect waves-light btn" (click)='onRegisterOpen()'>Sign up</a>
+  </div>
+  <div class="clear"></div>
+</div>
+
 <div id="regCmpModal" class="modal" materialize="modal" [materializeActions]="regModalAction">
     <div class="modal-content">
         <div class="container">

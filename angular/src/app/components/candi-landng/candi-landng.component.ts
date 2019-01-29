@@ -82,6 +82,7 @@ export class CandiLandngComponent implements OnInit {
     const user = { email:this.loginUser.loginEmail, password: this.loginUser.loginPassword };
     this.authService.userLogin(user).subscribe(resp => {
       if(resp.success) {
+        this.loginModalAction.emit({action:"modal", params:['close']});
         this.authService.loginSuccess(resp);
         this.router.navigate(['profile']);
       }

@@ -49,7 +49,7 @@ export class CvBuilderComponent implements OnInit {
     signExpiry: ''
   }
   videoProfileUrl = '';
-  personalDetails: {} = {};
+  personalDetails = { name:'', DOB:'', address:'', DP:{} };
   canEdit : boolean = false;
   uploadedFile : File;
   fileStatus : number = 0;
@@ -294,7 +294,7 @@ export class CvBuilderComponent implements OnInit {
       }
       let userData = JSON.parse(localStorage.getItem('user'));
       userData.company.shrtlstd.push(this.userId);
-      this.authService.saveHeaderUserInfo(userData);
+      this.authService.saveUserInfo(userData);
       this.myCmp = userData.company.shrtlstd;
       toast('User shortlisted successfully', 3000);
     });
@@ -308,7 +308,7 @@ export class CvBuilderComponent implements OnInit {
       }
       let userData = JSON.parse(localStorage.getItem('user'));
       userData.company.cntacd.push(this.userId);
-      this.authService.saveHeaderUserInfo(userData);
+      this.authService.saveUserInfo(userData);
       this.myCmp = userData.company.cntacd;
       toast('User contacted successfully', 3000);
     });
