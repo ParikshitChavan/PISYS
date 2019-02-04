@@ -11,6 +11,8 @@ const Sitelink = require('../models/sitelink');
 const ListCandidate = require('../models/listCandidate');
 //config
 const config = require('../config/cfg');
+//helpers
+const mailer = require('../helpers/mailer');
 
 //setting up AWS authentication and S3
 aws.config.update(config.awsAuthObj);
@@ -65,9 +67,8 @@ router.post('/register', (req, res) => {
                         if(err) return res.json({success: false, message: err});
                         return res.json({success: true, message: 'User registered successfully, email verification sent.'});
                     });
-    
-                })
-            })
+                });
+            });
         }else{
             User.setupEmailVerification(user.email, (err)=>{
                 if(err) return res.json({success: false, message: err});
@@ -257,7 +258,7 @@ router.post('/resetPassword', (req, res) => {
 router.post('/updatePassword', (req, res) => {
     const currPass = req.body.currentPassword;
     let token = req.headers['x-access-token'];
-    User.validateToken(token, (err, serverStatus, decoded)=>{
+    User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, error: err });
         User.getUserPassById(decoded._id, (err, user)=>{
             if(err) throw err;
@@ -270,6 +271,27 @@ router.post('/updatePassword', (req, res) => {
                 });
             });
         });
+    });
+});
+
+router.post('/initCandidateAccount', (req, res) => {
+    User.setPassword(req.body.uId, req.body.newPass, (err, user)=>{
+        if(err) return res.json({success: false, message: "Failed to change the Password"});
+        User.markEmailVerified(user.email, ()=>{        //verified because they came from email invitation
+            Sitelink.deleteSitelinks(user.email, 'candiActivation', (err)=> {
+                if(err) throw err;
+                User.awardStar(req.body.uId, err => {
+                    if(err) throw err;
+                    const userData = {_id:user._id, name: user.name, access:user.access, email: user.email, DPUrl:user.DP.url};
+                    const token = jwt.sign(userData, config.secret, {expiresIn: 604800});   //create token with 1 week validity
+                    res.json({
+                        success: true,
+                        token: token,
+                        userData: userData
+                    });
+                });
+            });
+        });      
     });
 });
 
@@ -331,6 +353,61 @@ router.post('/suggestions', (req, res) => {
         User.getSuggestions(searchTerm, (err, suggestions) => {
             if(err) return res.json({success: false, message:err});
             res.json({success:true, data: suggestions});
+        });
+    });
+});
+
+router.post('/getInviteDetails', (req, res) => {
+    let token = req.headers['x-access-token'];
+    const userId = req.body.userId; 
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access == 1 || (decoded.access == 0 && userId != decoded._id)) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        User.getInviteDetails(userId, (err, user) => {
+            if(err) return res.json({success: false, message: err});
+            res.json({success:true, stars: user.stars, invites: user.invites});
+        });
+    });
+});
+
+router.post('/inviteNewUser', (req, res) => {
+    let token = req.headers['x-access-token'];
+    const inviteMailId = req.body.mailId;
+    User.validateToken(token, (err, serverStatus, decoded) => {
+        if(err) return res.status(serverStatus).json({ success: false, message: err });
+        if(decoded.access == 1) return res.status(401).json({ success: false, message: 'Unauthorised' });
+        User.getUserByEmail(inviteMailId, (err, doc) => {
+            if(err) throw err;
+            if(doc) return res.json({ success: false, message: 'User already exists' });
+            Sitelink.createCandiActivationLink(inviteMailId, (err, link)=>{
+                if (err) throw err;
+                let newCandi = new User({
+                    isActive: true,
+                    name: 'firstName lastName',
+                    email: inviteMailId,
+                    password: link,  //save the link as the password until they use activation link to set password
+                    access: 0,
+                    DP: { key: '', url: "https://s3-ap-northeast-1.amazonaws.com/piitscrm/noDP.png" },
+                    referer: decoded._id
+                });
+                newCandi.save((err, user) => {
+                    if (err) throw err;
+                    CvBuilder.createCv(user._id,(err, cv) => {
+                        if(err) return res.json({success: false, message: err});
+                        // add cv details to user collection
+                        User.addCv(cv.user, cv._id, (err) => {
+                            if(err) return res.json({success: false, message: err});
+                            User.addInvited(decoded._id, newCandi._id, (err, inviter) => {
+                                if (err) throw err;
+                                mailer.sendCandiActivationMail(newCandi.email, inviter.name, link, (err) => {
+                                    if(err) throw err;
+                                    return res.json({ success: true, invites: inviter.invites, message: "Invitation added and activation mail is sent" });
+                                });
+                            });    
+                        });
+                    });
+                });
+            });
         });
     });
 });

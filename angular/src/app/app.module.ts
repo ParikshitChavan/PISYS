@@ -34,6 +34,8 @@ import { TAndCComponent } from './components/t-and-c/t-and-c.component';
 import { CandiLandngComponent } from './components/candi-landng/candi-landng.component';
 import { CmpLandngComponent } from './components/cmp-landng/cmp-landng.component';
 import { CnadiShrtlstComponent } from './components/cnadi-shrtlst/cnadi-shrtlst.component';
+import { InitCandiAccComponent } from './components/init-candi-acc/init-candi-acc.component';
+import { InviteHistoryComponent } from './components/invite-history/invite-history.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
@@ -58,11 +60,13 @@ const appRoutes: Routes =[
   { path: 'candidateLanding', component: CandiLandngComponent, pathMatch: 'full'},
   { path: 'companyLanding', component: CmpLandngComponent, pathMatch: 'full'},
   { path: 'initAccount/:token', component: InitAccountComponent},
+  { path: 'initCandidateAccount/:token', component: InitCandiAccComponent},
   { path: 'forgotPassword', component: ForgotPasswordComponent},
   { path: 'tandc', component: TAndCComponent},
   { path: 'resetPassword/:token', component: ResetPasswordComponent},
   { path: 'verifyEmail/:token', component: VerifyEmailComponent},
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: 'inviteHistory/:id', component: InviteHistoryComponent, canActivate: [AuthGuard]},
   { path: 'company/:id', component: CompanyComponent, canActivate: [AuthGuard]},
   { path: 'companies', component: CompaniesComponent, canActivate: [AuthGuard]},
   { path: 'findOpenings', component: OpeningListingComponent, canActivate: [AuthGuard]},
@@ -124,7 +128,9 @@ const appRoutes: Routes =[
     TAndCComponent,
     CandiLandngComponent,
     CmpLandngComponent,
-    CnadiShrtlstComponent
+    CnadiShrtlstComponent,
+    InitCandiAccComponent,
+    InviteHistoryComponent
   ],
   imports: [
     BrowserModule,

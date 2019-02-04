@@ -146,4 +146,22 @@ export class AuthService {
     return this.http.post(this.apiUrl + 'user/delete', data, {headers: headers}).map(res => res.json());
   }
 
+  getInvitesHistory(userId){
+    let data = {userId: userId};
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    return this.http.post(this.apiUrl + 'user/getInviteDetails', data, {headers: headers}).map(res => res.json());
+  }
+
+  inviteNewUser(mailId){
+    this.loadToken();
+    let headers = new Headers;
+    headers.append('Content-Type', "application/json");
+    headers.append('x-access-token', this.authToken);
+    let data = {mailId: mailId}
+    return this.http.post(this.apiUrl + 'user/inviteNewUser', data, {headers: headers}).map(res => res.json());
+  }
+
 }

@@ -50,7 +50,14 @@ const userSchema = Schema({
             opng: {type: Schema.Types.ObjectId}
         }]
     },           
-    cv: [{type: Schema.Types.ObjectId, ref: 'CvBuilder'}]
+    cv: [{type: Schema.Types.ObjectId, ref: 'CvBuilder'}],
+    stars: { type: Number, default: 1 },
+    invites:[{
+        user: {type: Schema.Types.ObjectId, ref: 'User'},
+        regrd: {type: Boolean, default: false},
+        sentOn: Date
+    }],
+    referer: {type: Schema.Types.ObjectId, ref: 'User'}
     //gender: Number,              //1.Male, 2.Female, 3.Other, 4.Do not wish to disclose
 });
 
@@ -408,4 +415,42 @@ module.exports.archiveUser = function(id, callback){
 
 module.exports.restoreUser = function(id, callback){
     User.findByIdAndUpdate(id, {$set: { disabledAdmin: false }}, callback);
+}
+
+module.exports.getInviteDetails = function(id, callback){
+    User.findById(id, 'stars name invites', {lean: true})
+    .populate({
+        path: 'invites.user',
+        select: '_id email name'
+    })
+    .exec(callback);
+}
+
+module.exports.addInvited = function(id, invited, callback){
+    User.findByIdAndUpdate(id, {$push: { invites: {user: invited, sentOn: new Date()} }}, err =>{
+        if(err) return callback(err, null);
+        this.getInviteDetails(id, callback);
+    });
+}
+
+module.exports.awardStar = function(registered, callback){
+    User.findById(registered, 'referer', {lean: true}, (err, user)=>{
+        if(err) return callback(err);
+        User.findById(user.referer, 'stars invites', (err, referer) =>{
+            if(err) return callback(err);
+            const invitesSize = referer.invites.length;
+            let i;
+            for(i = 0; i < invitesSize; i++){
+                if(referer.invites[i].user == registered ){
+                    referer.invites[i].regrd = true;
+                    referer.stars += 1;
+                    break;
+                }
+            }
+            if(i == invitesSize){
+                return callback('No such invite present');
+            }
+            referer.save(callback);
+        });
+    });
 }

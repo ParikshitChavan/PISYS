@@ -29,6 +29,21 @@ module.exports.createActivationLink = function(email, callback){
     });
 }
 
+module.exports.createCandiActivationLink = function(email, callback){
+    if(!validateEmail(email)) return callback('Invalid Email', null);
+    let newSitelink = new Sitelink({
+        _id: new mongoose.Types.ObjectId(),
+        sentTo: email,
+        expiry: null,
+        type: 'candiActivation'
+    });
+    newSitelink.save((err)=>{
+        if(err) return callback(err, null);
+        let link = "https://onetro.willings.co.jp/initCandidateAccount/" + newSitelink._id;
+        callback(null, link);
+    });
+}
+
 module.exports.createPasswordResetLink = function(email, callback){
     if(!validateEmail(email)) return callback('Invalid Email', null);
     let expiry = new Date();

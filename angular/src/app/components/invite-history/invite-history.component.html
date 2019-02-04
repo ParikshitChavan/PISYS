@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="container" *ngIf='stars'>
+    <h3>Invite new candidate</h3>
+    <form (submit)="inviteCandiSubmit(form.valid)" #form=ngForm>
+      <div class="row">
+        <div class="input-field col s6">
+          <label for="inviteMail">email address</label>
+          <input id="inviteMail" name="inviteMail" [(ngModel)]="newInvite" type="email" #inviteMail="ngModel"
+            required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+          <div [hidden]= "inviteMail.valid || (inviteMail.pristine && !form.submitted)" class="red-text">
+            Please input a correct mail address.
+          </div>
+        </div>
+        <div class="col s6">
+          <button type="submit" class="btn btn-submit">send invite<i class="material-icons right">send</i></button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row inviteDetails">
+    <table class="table striped table-bordered highlight">
+      <thead>
+        <tr>
+          <th>
+            Email
+          </th>
+          <th>
+            Name
+          </th>
+          <th>
+            Invited On
+          </th>
+          <th>
+            Has registered
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let invite of invites" class="linkRow">
+          <td class="name">
+            <a target="_blank" [routerLink]="['/cvbuilder/' + invite.user._id ]">
+              {{ invite.user.email }}
+            </a>
+          </td>
+          <td>{{ invite.user.name }}</td>
+          <td> {{invite.sentOn | date:'longDate'}} </td>
+          <td>
+            <input id="hasRegistered" type="checkbox" name='hasRegistered' disabled [checked]="invite.regrd">
+            <label for="hasRegistered"></label>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

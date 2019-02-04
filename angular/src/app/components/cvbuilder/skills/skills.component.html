@@ -6,10 +6,10 @@
         <div class="row" *ngIf="skills.techSkills.length">
           <div class="col s3">Computing languages :</div>
           <div class="col s9"> 
-              <ul class="list-style">
-                  <li *ngFor='let skill of skills.techSkills'> {{ skill.tag }} </li>
-                </ul>
-             </div>
+            <ul class="list-style">
+              <li *ngFor='let skill of skills.techSkills'> {{ skill.tag }} </li>
+            </ul>
+          </div>
         </div>
 
         <div class="row" *ngIf="skills.otherStrengths">
@@ -22,15 +22,14 @@
         </div>
        
         <div class="row" *ngIf="skills.languageSkills.length">
-            <div class="col s3">Languages spoken :</div>
-         <div class="col s9">
-             <ul class="list-style">
-                <li *ngFor='let skill of skills.languageSkills'> {{ skill.tag }} </li>
-              </ul>
+          <div class="col s3">Languages spoken :</div>
+          <div class="col s9">
+            <ul class="list-style">
+              <li *ngFor='let skill of skills.languageSkills'> {{ skill.tag }} </li>
+            </ul>
          </div>
        </div>
       
-
       </div>
       <div *ngIf="canEdit" class="fltBtnArea">
         <a (click)="editSkills()" id="addBtn" class="btn-floating btn-large waves-effect waves-light red">
@@ -38,7 +37,6 @@
         </a>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -63,14 +61,13 @@
     <h4>Create/Edit Skills</h4>
     <br/>
     <form>
-
-        <div class="input-field chipInp">
-            <label for="techSkills">Computing skills(minimum 2 & maximum of 10):</label>
-            <div id='techSkills' class="chips" materialize="material_chip" (click)="skillValidObject.techSkills = true" [materializeParams]="[chipsInit]" [materializeActions]="techSkillChipsActios" (chip.add)="addTechSkill($event.detail)" (chip.delete)="deleteTechSkill($event.detail)"></div>
-            <div [hidden]="skillValidObject.techSkills" class="red-text">
-                Please input atleast 2 and maximum of 10 skills.
-            </div>
+      <div class="input-field chipInp">
+        <label for="techSkills">Computer/Programming languages(minimum 2 & maximum of 10):</label>
+        <div id='techSkills' class="chips" materialize="material_chip" (click)="skillValidObject.techSkills = true" [materializeParams]="[chipsInit]" [materializeActions]="techSkillChipsActios" (chip.add)="addTechSkill($event.detail)" (chip.delete)="deleteTechSkill($event.detail)"></div>
+        <div [hidden]="skillValidObject.techSkills" class="red-text">
+          Please input at least 2 and maximum of 10 skills.
         </div>
+      </div>
 
       <div class="input-field">
         <label for="otherStrengths">Industry knowledge/expertise(Enter each skill in new line.)</label>
@@ -79,14 +76,12 @@
       </div>
       
       <div class="input-field chipInp">
-          <label for="langSkills">Language Skills(Enter atleast 1 language)</label>
-          <div id='langSkills' class="chips" materialize="material_chip"   (click)="skillValidObject.languageSkills = true"  [materializeActions]="languageSkillChipsActions" (chip.add)="addLanguageSkill($event.detail)" (chip.delete)="deleteLanguageSkill($event.detail)"></div>
-          <div [hidden]="skillValidObject.languageSkills" class="red-text">
-              Please input atleast 1 language.
-          </div>
+        <label for="langSkills">Spoken Language(Enter at least 1 language)</label>
+        <div id='langSkills' class="chips" materialize="material_chip"   (click)="skillValidObject.languageSkills = true"  [materializeActions]="languageSkillChipsActions" (chip.add)="addLanguageSkill($event.detail)" (chip.delete)="deleteLanguageSkill($event.detail)"></div>
+        <div [hidden]="skillValidObject.languageSkills" class="red-text">
+            Please input at least 1 language.
+        </div>
       </div>
-
-
       <br/>
     </form>
   </div>

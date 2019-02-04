@@ -49,6 +49,32 @@ module.exports.sendActivationMail = function(recipient, link, callback){
     });
 }
 
+module.exports.sendCandiActivationMail = function(recipient, InviterName, link, callback){
+    if(!recipient || !link) return callback('Missing data');
+    let htmlBody = `
+        Hi,<br>
+        ${InviterName} just invited you to our recruitment platform that specializes in IT jobs in Japan.<br>
+        Use this link to setup your account<a href='${link}'>${link}</a><br>
+        <br>
+        Onetro is a service provided by Willings, Inc. We connect and give the opportunity to the world to hire and get hired in Japan.<br>
+        <br>
+        We believe in keeping things transparent hence we allow job seekers to upload their 1 minute introductory video for companies to watch. <br>
+        For candidates, it increases the chances of getting interviewed and hired.<br>
+        </p>
+    `;  //es6 template String with back ticks
+    let mailOptions = {
+        from: '"Onetro Team" <onetro@willings.co.jp>',
+        to: recipient,
+        subject: '【Willings】Invitation to open an account on Onetro',
+        text: '',
+        html: htmlBody
+    };
+    config.nodemailerTransporter.sendMail(mailOptions, (err, info) => {
+        if (err) return callback(err);
+        callback(null);
+    });
+}
+
 module.exports.sendPasswordResetMail = function(recipient, link, callback){
     if(!recipient || !link) return callback('Missing data');
     let htmlBody = `
@@ -91,62 +117,6 @@ module.exports.sendEmailVerificationMail = function(recipient, link, callback){
         from: '"Onetro Team" <onetro@willings.co.jp>',
         to: recipient.email,
         subject: 'Link to verifying your email address on Onetro',
-        text: '',
-        html: htmlBody
-    };
-    config.nodemailerTransporter.sendMail(mailOptions, (err, info) => {
-        if (err) return callback(err);
-        callback(null);
-    });
-}
-
-
-module.exports.initiateInternshipMails = function(admins, link, callback){       //callback(success, err)
-    let errArr=[];
-    for(let admin of admins) {
-        let htmlBody = `
-            <p>Hi ${admin.name},<br>
-            <br>
-            We have added a new intership associated with your company.<br>
-            Kindly visit the internship page here:<br>
-            <br>
-            <a href='${link}'>${link}</a><br>
-            <br>
-            We request you to fill in all the necessary basic details for the internship.
-            Thank you.<br>
-        `;  //es6 template String with back ticks
-        let mailOptions = {
-            from: '"PIITs Team" <piits@willings.co.jp>',
-            to: admin.email,
-            subject: 'Invitation to edit basic details of newly added Internship',
-            text: '',
-            html: htmlBody
-        };
-        config.nodemailerTransporter.sendMail(mailOptions, (err, info) => {
-            if (err)  errArr.push({error: err, mail: admin.mail});
-        });
-    }
-    if(errArr.length == admins.length) return callback(false, 'email sending failed to all the admins');
-    else if(errArr.length) return callback(true, 'Email sending failed to some of the admins')
-    callback(true , null);
-}
-
-module.exports.notifyCandidateBasicInfo = function(candidate, link, callback){         //callback(err)
-    if(!candidate.email) return callback('Missing candidate Email');
-    let htmlBody = `
-        <p>Hi ${candidate.name},<br>
-        <br>
-        The basic info of your intership has just been updated.<br>
-        Check it out here:<br>
-        <br>
-        <a href='${link}'>${link}</a><br>
-        <br>
-        Thank you.<br>    
-    `;  //es6 template String with back ticks
-    let mailOptions = {
-        from: '"PIITs Team" <piits@willings.co.jp>',
-        to: candidate.email,
-        subject: 'Basic details of you intership have been updated',
         text: '',
         html: htmlBody
     };
