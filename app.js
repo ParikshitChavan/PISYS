@@ -9,7 +9,6 @@ const config = require('./config/cfg');
 const user = require('./routes/user');
 const company = require('./routes/company');
 const cvbuilder = require('./routes/cvbuilder');
-const listCandidate = require('./routes/listCandidate');
 
 //connect to database and checking connection
 mongoose.set('useFindAndModify', false);
@@ -47,7 +46,6 @@ app.use(function(req, res, next) {
 app.use('/user', user);
 app.use('/company', company);
 app.use('/cv', cvbuilder);
-app.use('/listCandidate', listCandidate);
 
 //invalid route fallback to index.js for angular path based routing strategy 
 app.get('*', function(req, res){

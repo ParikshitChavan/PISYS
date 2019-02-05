@@ -8,7 +8,6 @@ const multerS3 = require('multer-s3');
 const User = require('../models/user');
 const CvBuilder = require('../models/cvbuilder');
 const Sitelink = require('../models/sitelink');
-const ListCandidate = require('../models/listCandidate');
 //config
 const config = require('../config/cfg');
 //helpers

@@ -9,7 +9,6 @@ var multerS3 = require('multer-s3');
 //models
 const User = require('../models/user');
 const cvBuilder = require('../models/cvbuilder');
-const ListCandidate = require('../models/listCandidate');
 const Company = require('../models/company');
 
 const util = require('../helpers/common');
@@ -129,7 +128,6 @@ const updateAllEducations = (req, res, next) => {
     if(education.isLatest){
         cvBuilder.updateAllEducations(req.tempStore.cv, (err, cvdetails) => {
             if(err) return util.sendError(res, err);
-            ListCandidate.updateEducation(req.tempStore.userId, education);
             next();
         })
     }else{
@@ -174,7 +172,6 @@ const deleteEducation = (req, res) => {
             cvBuilder.updateEducation(req.tempStore.cv, lastEducation, (err, cvDetails) => {
                 if (err) {  return util.sendError(res, 'Please manually set at least one of the education as latest'); }
                 if (!cvDetails) return util.sendError(res, 'Please manually set at least one of the education as latest' );
-                ListCandidate.updateEducation(req.tempStore.userId, lastEducation);
                 res.json({ success: true, message: 'Education has been removed successfully', educations: cvDetails.educations });
             });
         }else{
@@ -311,7 +308,6 @@ const updateSkills = (req, res) => {
         if (err) return util.sendError(res, err);
         if (!cvdetails) return util.sendError(res, 'Can not update the skills');
         res.json({ success: true, message: 'Skills has been updated successfully', skills: cvdetails.skills });
-        ListCandidate.updateSkills(req.tempStore.userId, skills.techSkills);
     })
 }
 

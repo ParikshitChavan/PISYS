@@ -77,4 +77,10 @@ export class CmpLandngComponent implements OnInit {
       this.onLoginOpen();
     });
   }
+
+  frgtPassClicked(){
+    this.loginModalAction.emit({action:"modal", params:['close']});
+    this.router.navigate(['forgotPassword']);
+  }
+
 }

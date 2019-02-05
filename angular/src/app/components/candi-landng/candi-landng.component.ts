@@ -92,4 +92,10 @@ export class CandiLandngComponent implements OnInit {
       }
     });
   }
+
+  frgtPassClicked(){
+    this.loginModalAction.emit({action:"modal", params:['close']});
+    this.router.navigate(['forgotPassword']);
+  }
+
 }

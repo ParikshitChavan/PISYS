@@ -12,7 +12,7 @@
         </div>
 
         <div class="row">
-          <div class="col s3">Field Of Study:</div>
+          <div class="col s3">Degree and Major/Field Of Study:</div>
           <div class="col s9">{{ education.fieldOfStudy }} <i *ngIf="education.isLatest" class="material-icons indicator">school</i></div>
         </div>
 
@@ -98,16 +98,16 @@
         </div>
       </div>
       <div class="input-field">
-        <label for="schoolName"> Study </label>
-        <input type="text" id="schoolName" class="materialize-textarea" name="schoolName" [value]="newEducation.fieldOfStudy" (keyup)="onInputChange($event,'fieldOfStudy')"
+        <label for="degMaj">Degree and Major/Field of study </label>
+        <input type="text" id="degMaj" class="materialize-textarea" name="degMaj" [value]="newEducation.fieldOfStudy" (keyup)="onInputChange($event,'fieldOfStudy')"
           required>
         <div [hidden]="isValidCurrentEducation.fieldOfStudy" class="red-text">
-          Please input field of study.
+          Please input a degree and major/field of study.
         </div>
       </div>
       <div class="input-field">
-        <label for="schoolName">Grade</label>
-        <input type="text" id="schoolName" class="materialize-textarea" name="schoolName" [value]="newEducation.grade" (keyup)="onInputChange($event,'grade')"
+        <label for="grade">Grade</label>
+        <input type="text" id="grade" class="materialize-textarea" name="grade" [value]="newEducation.grade" (keyup)="onInputChange($event,'grade')"
           required>
         <div [hidden]="isValidCurrentEducation.grade" class="red-text">
           Please input grade.

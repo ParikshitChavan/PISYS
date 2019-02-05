@@ -6,6 +6,7 @@ import { EventEmitter } from '@angular/core';
 
 import { CvBuilderService } from '../../../services/cvbuilder/cvbuilder.service';
 import { ITSkills } from '../../../helpers/ITSkills.helper';
+import { Spokenlang } from '../../../helpers/SpokenLang.helper';
 
 declare let Materialize: any;
 declare let  $ : any;
@@ -17,7 +18,7 @@ declare let  $ : any;
 })
 export class SkillsComponent implements OnInit {
   modalActions = new EventEmitter<string | MaterializeAction>();   
-  techSkillChipsActios = new EventEmitter<string|MaterializeAction>(); // stores events for chips
+  techSkillChipsActions = new EventEmitter<string|MaterializeAction>(); // stores events for chips
   languageSkillChipsActions = new EventEmitter<string|MaterializeAction>();
 
   canEdit: boolean = false;         // access control to allow or disallow user from adding/ deleting records
@@ -45,8 +46,10 @@ export class SkillsComponent implements OnInit {
     limit: 5,
     minLength: 1
   }
+  spknLangAutoCmplt = { data: Spokenlang.allSpknLang }
   chipsInit = { autocompleteOptions: this.autoCompleteOptions };
 
+  spknLangChipsInit = { autocompleteOptions: this.spknLangAutoCmplt };
   
   constructor(public cvBuilderService: CvBuilderService,
     private route: ActivatedRoute
@@ -94,7 +97,7 @@ export class SkillsComponent implements OnInit {
       this.techSkills.push({tag: chip.tag});
     }
     else{
-      this.techSkillChipsActios.emit({ action:"material_chip", params:[{data: this.techSkills, autocompleteOptions: this.autoCompleteOptions}] });
+      this.techSkillChipsActions.emit({ action:"material_chip", params:[{data: this.techSkills, autocompleteOptions: this.autoCompleteOptions}] });
     }    
   }
 
@@ -114,7 +117,7 @@ export class SkillsComponent implements OnInit {
       this.languageSkills.push({tag: chip.tag});
     }
     else{
-      this.languageSkillChipsActions.emit({ action:"material_chip", params:[{data: this.languageSkills}] });
+      this.languageSkillChipsActions.emit({ action:"material_chip", params:[{data: this.languageSkills, autocompleteOptions: this.spknLangAutoCmplt}] });
     }    
   }
 
@@ -149,8 +152,8 @@ export class SkillsComponent implements OnInit {
     this.modalPurpose = 'edit';
     this.initPrevSkill(this.skills);
     this.openModal();
-    this.techSkillChipsActios.emit({ action:"material_chip", params:[{data: this.skills.techSkills, autocompleteOptions: this.autoCompleteOptions}] });
-    this.languageSkillChipsActions.emit({ action:"material_chip", params:[{data: this.skills.languageSkills}] });
+    this.techSkillChipsActions.emit({ action:"material_chip", params:[{data: this.skills.techSkills, autocompleteOptions: this.autoCompleteOptions}] });
+    this.languageSkillChipsActions.emit({ action:"material_chip", params:[{data: this.skills.languageSkills, autocompleteOptions: this.spknLangAutoCmplt}] });
     setTimeout(() => {
       Materialize.updateTextFields();
       this.autoresizeTextArea();
