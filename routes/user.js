@@ -102,11 +102,11 @@ router.post('/authenticateAdmin', (req, res) => {
     const password = req.body.password;
     User.authAdminByEmail(email, (err, user)=>{
         if(err) throw err;
-        if(!user) return res.json({success: false, message:'email address is not registered with us'});
+        if(!user) return res.json({success: false, message: 'email address is not registered with us'});
         if(user.disabledAdmin) return res.json({success: false, message: 'Your account access has been disabled. please contact your company admins.'});
         User.comparePasswords(password, user.password, (err, isMatch)=>{
             if(err) throw err;
-            if(!isMatch) return res.json({success:false, message:'Wrong password'});
+            if(!isMatch) return res.json({ success: false, message: 'Wrong password' });
             const userData = { 
                 _id: user._id,
                 name: user.name,
@@ -236,15 +236,17 @@ router.post('/validateSitelink', (req, res) => {
 });
 
 router.post('/resetPassword', (req, res) => {
-    User.getUserInfoById(req.body.userId, (err, user)=>{
+    User.getResetPassUser(req.body.userId, (err, user)=>{
         if(err) throw err;
+        res.json(user);
         Sitelink.deleteSitelinks(user.email, 'passwordReset', (err)=>{
             if(err) throw err;
             User.setPassword(user._id, req.body.newPass, (err, user)=>{
-               if(err) return res.json({success: false, message: "Failed to change the Password"});
-               const userData = {_id:user._id, name: user.name, access:user.access, email: user.email, DPUrl:user.DP.url};
-               const token = jwt.sign(userData, config.secret, {expiresIn: 604800});   //create token with 1 week validity
-               res.json({
+                if(err) return res.json({success: false, message: "Failed to change the Password"});
+                let userData = {_id:user._id, name: user.name, access:user.access, email: user.email, DPUrl:user.DP.url};
+                if(user.company) userData['company'] = user.company;
+                const token = jwt.sign(userData, config.secret, {expiresIn: 604800});   //create token with 1 week validity
+                res.json({
                     success: true,
                     token: token,
                     userData: userData
@@ -263,7 +265,7 @@ router.post('/updatePassword', (req, res) => {
             if(err) throw err;
             User.comparePasswords(currPass, user.password, (err, isMatch)=>{
                 if(err) throw err;
-                if(!isMatch) return res.json({success:false, error:'Wrong current password'});
+                if(!isMatch) return res.json({success: false, error: 'Wrong current password'});
                 User.setPassword(decoded._id, req.body.newPassword, (err, user)=>{
                     if(err) throw err;
                     res.json({success: true, message: "Password changed successfully"});
@@ -295,12 +297,12 @@ router.post('/initCandidateAccount', (req, res) => {
 });
 
 router.post('/initPassword', (req, res) => {
-    User.setPassword(req.body.uId, req.body.newPass, (err, user)=>{
+    User.setAdminPassword(req.body.uId, req.body.newPass, (err, user)=>{
         if(err) return res.json({success: false, message: "Failed to change the Password"});
         User.markEmailVerified(user.email, ()=>{        //verified because they came from email invitation
             Sitelink.deleteSitelinks(user.email, 'activation', (err)=> {
                 if(err) throw err;
-                const userData = {_id:user._id, name: user.name, access:user.access, email: user.email, DPUrl:user.DP.url};
+                const userData = {_id:user._id, name: user.name, access:user.access, email: user.email, DPUrl:user.DP.url, company: user.company};
                 const token = jwt.sign(userData, config.secret, {expiresIn: 604800});   //create token with 1 week validity
                 res.json({
                     success: true,

@@ -45,7 +45,7 @@ const cvBuilderSchema = Schema({
         usedSkills: [],
         startDate: Date,
         endDate: Date,
-        isCurr: Boolean,
+        isCurr: { type: Boolean, default: false},
         active: Boolean
     }],
     certificates :[{

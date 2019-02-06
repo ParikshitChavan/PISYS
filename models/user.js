@@ -86,11 +86,17 @@ module.exports.addUser = function(newUser, callback){
 }
 
 module.exports.getUserInfoById = function(userId, callback){
-    User.findById(userId,'name email phNum DP DOB skypeId', callback);
+    User.findById(userId, 'name email phNum DP DOB skypeId', callback);
 }
 
 module.exports.getFullUser = function(userId, callback){
     User.findById(userId, {lean: true}, callback);
+}
+
+module.exports.getResetPassUser = function(userId, callback){
+    User.findById(userId, 'name email access DP', { lean: true })
+    .populate({path: 'company', select: '_id name shrtlstd cntacd'})
+    .exec(callback);
 }
 
 module.exports.getUserPassById = function(userId, callback){
@@ -181,6 +187,22 @@ module.exports.comparePasswords = function(candidatePassword, hash, callback){
 
 module.exports.setPassword = function(userId, newPass, callback){
     User.findById(userId, 'name email password DP', (err, user)=>{
+        if(err) return callback(err, null);
+        bcrypt.genSalt(10, (err, salt)=>{
+            if(err) return callback(err, null);
+            bcrypt.hash(newPass, salt, (err, hash)=>{
+                if(err) return callback(err, null);
+                user.password = hash
+                user.save(callback);
+            });
+        });
+    });
+}
+
+module.exports.setAdminPassword = function(userId, newPass, callback){
+    User.findById(userId, 'name email password DP')
+    .populate({path:'company', select:'_id name shrtlstd cntacd'})
+    .exec((err, user)=>{
         if(err) return callback(err, null);
         bcrypt.genSalt(10, (err, salt)=>{
             if(err) return callback(err, null);

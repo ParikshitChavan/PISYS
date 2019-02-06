@@ -87,19 +87,23 @@
       </div>
 
       <div class="row">
-        <div class="input-field col s6">
+        <div class="input-field col s5">
           <label for="sDate" class="active">Start Date</label>
           <input id="sDate" type="text" name="sDate" class="datepicker" 
           materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy', value: newExperience.startDate}]"
           [(ngModel)]="newExperience.startDate"
           required>
           <div [hidden]="isValidCurrentExperience.startDate" class="red-text">
-              {{ invalidFromDateMsg}}
+              {{ invalidFromDateMsg }}
             </div>
         </div>
-        <div class="input-field col s6">
+        <div class="chkbxArea col s2">
+          <input id="isCurr" type="checkbox" name='isCurr' [(ngModel)]="newExperience.isCurr" (change)="onIsCurrChange($event.target.checked)">
+          <label for="isCurr">Current</label>
+        </div>
+        <div class="input-field col s5">
           <label for="eDate" class="active">End Date</label>
-          <input id="eDate" type="text" name="eDate"  class="datepicker"
+          <input id="eDate" type="text" name="eDate" [disabled]="newExperience.isCurr" class="datepicker"
            materialize="pickadate" [materializeParams]="[{selectYears: 30, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy', value: newExperience.endDate}]"
           [(ngModel)]="newExperience.endDate">
           <div [hidden]="isValidCurrentExperience.endDate" class="red-text">

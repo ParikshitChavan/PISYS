@@ -7,4 +7,5 @@ export class Experience {
     startDate: string;
     endDate?: string;
     active?: boolean;
+    isCurr?: boolean;
 }

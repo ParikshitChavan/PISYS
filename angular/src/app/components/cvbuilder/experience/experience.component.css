@@ -117,3 +117,7 @@ input:not([type]), input[type=text]:not(.browser-default), input[type=password]:
 .greyText{
   color: #8d8d8d;
 }
+
+.chkbxArea{
+  margin-top: 2rem;
+}

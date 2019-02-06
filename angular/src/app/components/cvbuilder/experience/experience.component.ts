@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
 
 import { toast, MaterializeAction } from 'angular2-materialize';
 import { EventEmitter } from '@angular/core';
@@ -53,9 +52,7 @@ export class ExperienceComponent implements OnInit {
   }
   chipsInit = { autocompleteOptions: this.autoCompleteOptions };
 
-  constructor(public cvBuilderService: CvBuilderService,
-    private route: ActivatedRoute
-  ) { }
+  constructor(public cvBuilderService: CvBuilderService) { }
 
   /**
    * initialize the component by setting experience and access control for the page.
@@ -209,7 +206,8 @@ export class ExperienceComponent implements OnInit {
       title: experience.title,
       usedSkills: experience.usedSkills,  
       description: experience.description,
-      startDate: experience.startDate,  endDate: experience.endDate
+      startDate: experience.startDate,  endDate: experience.endDate,
+      isCurr: experience.isCurr
     }
 
     // convert dates in readable format
@@ -242,7 +240,7 @@ export class ExperienceComponent implements OnInit {
    * @memberof ExperienceComponent
    */
   getDummyExperience() {
-    return { _id: '', title: '', description: '', usedSkills: [], startDate: '', endDate: '', active: false };
+    return { _id: '', title: '', description: '', usedSkills: [], startDate: '', endDate: '', active: false, isCurr: false };
   }
 
   
@@ -264,6 +262,10 @@ export class ExperienceComponent implements OnInit {
   onInputChange(event, field) {
     this.newExperience[field] = event.target.value;
     this.isValidCurrentExperience[field] = true;
+  }
+
+  onIsCurrChange(value) {
+    if(value) this.newExperience.endDate = null;
   }
 
   /**
