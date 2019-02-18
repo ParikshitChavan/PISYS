@@ -17,14 +17,14 @@
         </div>
         <div class="col s12 m3 center dspTbl" *ngIf='userAccess != 0'>
             <div class="profileActions">
-                <a class="waves-effect waves-light btn" [ngClass]="{ 'disabled': myCmp.shrtlstd.includes(userId) }" (click)='shortlistClicked()'>Shortlist</a>
-                <a class="waves-effect waves-light btn" [ngClass]="{ 'disabled': myCmp.cntacd.includes(userId) }" (click)='contactClicked()'>Request Interview</a>
+                <a class="waves-effect waves-light btn" [ngClass]="{ 'disabled': myCmp.shrtlstd.includes(userId) }" (click)='shortlistClicked()'>{{'shrtlstBtn' | localeTransform}}</a>
+                <a class="waves-effect waves-light btn" [ngClass]="{ 'disabled': myCmp.cntacd.includes(userId) }" (click)='contactClicked()'>{{'interqBtn' | localeTransform}}</a>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col s12 m9 greyBorder vidContainer">
-            <h5 class="vidTitle">One minute introductory video</h5>
+            <h5 class="vidTitle">{{'vid' | localeTransform}}</h5>
             <div *ngIf="videoDetails.location || canEdit" class="col s12 l12 text-center imgArea vidArea">
                 <video (error)="onVideoError($event)" class="responsive-video profVid" [src]="videoDetails.location | safe" controls #videoPlayer preload="metadata"></video>
             </div>
@@ -38,22 +38,22 @@
             <div id="tabsArea">
                 <ul class="tabs" materialize="tabs">
                     <li class="tab" >
-                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['education']">education</a>
+                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['education']">{{'eduTab' | localeTransform}}</a>
                     </li>
                     <li class="tab">
-                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['experience']">Experience</a>
+                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['experience']">{{'expTab' | localeTransform}}</a>
                     </li>
                     <li class="tab">
-                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['projects']">Projects</a>
+                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['projects']">{{'prjTab' | localeTransform}}</a>
                     </li>
                     <li class="tab">
-                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['skills']">Skills</a>
+                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['skills']">{{'sklTab' | localeTransform}}</a>
                     </li>
                     <li class="tab">
-                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['cert']">Certifications</a>
+                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['cert']">{{'certTab' | localeTransform}}</a>
                     </li>
                     <li class="tab">
-                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['interests']">Interests</a>
+                        <a [routerLinkActive]="['active']" routerLinkActiveOptions="{exact:true}" [routerLink]="['interests']">{{'intrstTab' | localeTransform}}</a>
                     </li>
                 </ul>
             </div>

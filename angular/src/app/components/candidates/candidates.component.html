@@ -6,17 +6,17 @@
           <form class="search-form" (submit)="searchCandidates()">
             <div class="input-field">
                 <i class="material-icons prefix">search</i>
-                <input id="icon_prefix" type="search" class="validate" placeholder="Search by email" [(ngModel)]="candidateEmail" [ngModelOptions]="{standalone: true}">
-                <i class="material-icons postfix" *ngIf="candidateEmail.trim().length" (click)="clearSearch()">cancel</i>
+                <input id="icon_prefix" type="search" class="validate" placeholder="メールアドレスで検索" [(ngModel)]="candidateEmail" [ngModelOptions]="{standalone: true}">
+                <i class="material-icons postfix" *ngIf="candidateEmail.trim().length" (click)="clearSearch()">キャンセル</i>
             </div>
-            <button type="submit" class="btn btn-submit">Search<i class="material-icons right">search</i></button>
+            <button type="submit" class="btn btn-submit">検索する<i class="material-icons right">search</i></button>
           </form>
         </div>
       </div>
   
       <div class="row" *ngIf="!pagedCandidates.length">
         <div class="col s12 text-center no-data-cls">
-          <h4>No Candidates Found!</h4>
+          <h4>候補者が見つかりませんでした。</h4>
         </div>
       </div>
   
@@ -26,13 +26,13 @@
             <thead>
               <tr>
                 <th>
-                  Name
+                  名前
                 </th>
                 <th>
-                  Email
+                  メールアドレス
                 </th>
                 <th>
-                  Options
+                  どうする？
                 </th>
               </tr>
             </thead>
@@ -45,7 +45,7 @@
                 </td>
                 <td><a>{{ candidate.email }}</a></td>
                 <td>
-                  <a class="waves-effect waves-light btn small" [ngClass]="{ 'disabled': myCmp.shrtlstd.includes(candidate._id)}" (click)='shortlistClicked(candidate._id)'>shortlist</a>
+                  <a class="waves-effect waves-light btn small" [ngClass]="{ 'disabled': myCmp.shrtlstd.includes(candidate._id)}" (click)='shortlistClicked(candidate._id)'>お気に入りに追加</a>
                 </td>
               </tr>
             </tbody>
@@ -57,16 +57,16 @@
         <div class="col s12 text-center">
           <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
             <li [ngClass]="{disabled:pager.currentPage === 1}">
-              <a (click)="setPage(1)">First</a>
+              <a (click)="setPage(1)">最初のページ</a>
             </li>
             <li [ngClass]="{disabled:pager.currentPage === 1}">
-              <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+              <a (click)="setPage(pager.currentPage - 1)">前のページ</a>
             </li>
             <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
               <a (click)="setPage(page)">{{page}}</a>
             </li>
             <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-              <a (click)="setPage(pager.currentPage + 1)">Next</a>
+              <a (click)="setPage(pager.currentPage + 1)">次のページ</a>
             </li>
           </ul>
         </div>
@@ -75,7 +75,7 @@
   </div>
   <div class="loaderParent"  [hidden]="!loading" [ngClass]="{'activeModal':loading}">
       <div class="loader"></div>
-      <div class="loading-msg">Please wait...!</div>
+      <div class="loading-msg">少々お待ちください。</div>
   </div>
 </div>
 

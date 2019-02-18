@@ -7,17 +7,18 @@
 
       <ul class="right hide-on-med-and-down pcNav">
         <!-- userAccess ==2 -> visible to only admins *** userAccess == 0 -> candidate -->
-        <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]" i18n>Create CV</a></li>
-        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" i18n>My company</a></li>
-        <li *ngIf="userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" i18n>Companies</a></li>
-        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
-        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/shortlist']" i18n>Shortlist</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']">企業情報</a></li>
+        <li *ngIf="userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']">企業一覧</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']">候補者一覧</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/shortlist']">お気に入りリスト</a></li>
         <li><a class="dropdown-button" data-activates="dropdown1"
           materialize ="dropdown" [materializeParams]="dropdownParams" [materializeActions]="dropdownActions">
           <img [src]="user.DPUrl" alt="Profile Pic" id="headerDP" class="left circle responsive-img"><span>{{user.name}}</span><i class="material-icons right">arrow_drop_down</i>
         </a>
         <ul id="dropdown1" [ngClass]="{ 'dropdown-content' : true}">
           <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile']">Profile</a></li>
+          <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]">My CV</a></li>
+          <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/inviteHistory/'+userId]">My Invites</a></li>
           <li class="divider"></li>
           <li><a href="#" (click)="logout()">Logout</a></li>
         </ul>
@@ -26,17 +27,18 @@
 
       <ul class="side-nav" id="mobile-demo">
         <!-- userAccess ==2 -> visible to only admins *** userAccess == 0 -> candidate --> 
-        <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]" i18n>Create CV</a></li>
-        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" >My company</a></li>
-        <li *ngIf="userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" >Companies</a></li>
-        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" i18n>Candidates</a></li>
-        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/shortlist']" i18n>Shortlist</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/company/myCompany']" >企業情報</a></li>
+        <li *ngIf="userAccess == 2" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/companies']" >企業一覧</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/candidates']" >候補者一覧</a></li>
+        <li *ngIf="userAccess != 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/shortlist']">お気に入りリスト</a></li>
         <li><a class="dropdown-button" data-activates="dropdown2" 
           materialize="dropdown" [materializeParams]="dropdownParams" [materializeActions]="dropdownActions">
           <img [src]="user.DPUrl" alt="Profile Pic" id="headerDP" class="left circle responsive-img"><span>{{user.name}}</span><i class="material-icons right">arrow_drop_down</i>
         </a>
         <ul id="dropdown2" [ngClass]="{ 'dropdown-content' : true}">
           <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile']">Profile</a></li>
+          <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/cvbuilder/'+userId]">My CV</a></li>
+          <li *ngIf="userAccess == 0" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/inviteHistory/'+userId]">My Invites</a></li>
           <li class="divider"></li>
           <li><a href="#" (click)="logout()">Logout</a></li>
         </ul>

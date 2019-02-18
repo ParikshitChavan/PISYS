@@ -1,5 +1,8 @@
 <div class="container">
   <div class="container" *ngIf='stars'>
+    <div class="starArea center">
+      <i class="medium material-icons strIcn">stars</i> <span class="strTxt"> {{stars}} </span>
+    </div>
     <h3>Invite new candidate</h3>
     <form (submit)="inviteCandiSubmit(form.valid)" #form=ngForm>
       <div class="row">
@@ -42,11 +45,10 @@
               {{ invite.user.email }}
             </a>
           </td>
-          <td>{{ invite.user.name }}</td>
+          <td> {{ invite.user.name }} </td>
           <td> {{invite.sentOn | date:'longDate'}} </td>
           <td>
-            <input id="hasRegistered" type="checkbox" name='hasRegistered' disabled [checked]="invite.regrd">
-            <label for="hasRegistered"></label>
+            <i *ngIf='invite.regrd' class="material-icons chkIcn">check</i>
           </td>
         </tr>
       </tbody>

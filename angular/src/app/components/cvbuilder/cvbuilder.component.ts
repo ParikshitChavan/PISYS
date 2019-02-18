@@ -7,6 +7,7 @@ import {MaterializeAction, toast} from 'angular2-materialize';
 import { CvBuilderService } from '../../services/cvbuilder/cvbuilder.service'
 import { AuthService } from "../../services/auth/auth.service";
 import { CompanyApiService } from '../../services/companyAPI/company-api.service';
+import { GetLocaleService } from '../../services/getLocale/get-locale.service'
 
 import * as moment from 'moment';
 
@@ -79,7 +80,8 @@ export class CvBuilderComponent implements OnInit {
   constructor(private cvBuilderService: CvBuilderService,
     private route: ActivatedRoute,
     public authService: AuthService,
-    private companyService: CompanyApiService 
+    private companyService: CompanyApiService,
+    private getLocaleService : GetLocaleService
   ) { }
 
   ngOnInit() {
@@ -93,7 +95,15 @@ export class CvBuilderComponent implements OnInit {
       this.cvBuilderService.personalDetails.subscribe(this.setPersonalDetails);
       this.cvBuilderService.accessControl.subscribe(this.setAccesssControl);
       this.cvBuilderService.isProfilePublished.subscribe(this.setProfilePublished);
+      this.langChange(this.authService.user.access);
      })
+  }
+
+  langChange(access){
+    if(access == 1){      //if company admin
+      this.getLocaleService.getLocale('JP');
+    }
+    else this.getLocaleService.getLocale('EN');
   }
 
   onVideoError(event) {
@@ -209,7 +219,7 @@ export class CvBuilderComponent implements OnInit {
 
   onFileUploadSuccess = (resp) => {
     this.cvBuilderService.setProfileVideo(resp.profileVideo);
-    this.postUploadFile('Your video profile has been added succuessfully');
+    this.postUploadFile('Your video profile has been added successfully');
   }
 
   postUploadFile = (msg) => {
@@ -232,11 +242,11 @@ export class CvBuilderComponent implements OnInit {
     this.uploadedFile = null;
     this.fileStatus = 0;
     this.disabledUpload = true;
-    this.modalActions.emit({action:"modal",params:['open']});
+    this.modalActions.emit({action:"modal", params:['open']});
   }
 
   closeFileUploadModal() {
-    this.modalActions.emit({action:"modal",params:['close']});
+    this.modalActions.emit({action:"modal", params:['close']});
   }
 
   /**

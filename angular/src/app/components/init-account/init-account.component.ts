@@ -30,7 +30,7 @@ export class InitAccountComponent implements OnInit {
         this.validLink = true;
         this.userData.uId = resp.userId;   
       } 
-      else toast('Some error occurred. Please try again later.',3000);
+      else toast('エラーが発生しました。時間をおいてから再度お試しください。', 3000);
     });
   }
 
@@ -40,7 +40,7 @@ export class InitAccountComponent implements OnInit {
     this.userData.newPass = this.pass;
     this.authService.initPassword(this.userData).subscribe( resp =>{
       if(!resp.success) {
-        toast('Some Error occurred. Please try again later.',3000);
+        toast('エラーが発生しました。時間をおいてから再度お試しください。', 3000);
         return null;
       }
       this.authService.loginSuccess(resp);

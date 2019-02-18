@@ -220,3 +220,17 @@ button[type="submit"]{
     vertical-align: top;
     background: none !important;
 }
+
+.posRel{
+    position: relative;
+}
+
+#lrnMr{
+    margin: 0;
+    position: absolute;
+    bottom: 2px;
+    right: 10px;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+}

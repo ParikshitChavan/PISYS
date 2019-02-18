@@ -57,7 +57,8 @@ const cvBuilderSchema = Schema({
         hobbies: String,
         motivation: String
     },
-    remarks: String
+    remarks: String,
+    lkingFr: [String]                   //Internships, Full Time, Part Time, Remote Work, freelancing
 });
 
 const cvBuilder = module.exports = mongoose.model('CvBuilder', cvBuilderSchema);

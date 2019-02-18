@@ -5,13 +5,13 @@
         <thead>
           <tr>
             <th>
-              Name
+              名前
             </th>
             <th>
-              Email
+              メールアドレス
             </th>
             <th>
-              Options
+              どうする？
             </th>
           </tr>
         </thead>
@@ -24,7 +24,7 @@
             </td>
             <td><a>{{ candidate.email }}</a></td>
             <td>
-              <div class="chip" *ngIf='candidates.includes(candidate._id)'>Contacted</div>
+              <div class="chip" *ngIf='candidates.includes(candidate._id)'>コンタクト済み</div>
             </td>
           </tr>
         </tbody>

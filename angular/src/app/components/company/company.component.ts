@@ -146,7 +146,7 @@ export class CompanyComponent implements OnInit {
     if(!validForm) return false;
     this.editing = false;
     this.companyAPIService.updateCmpInfo(this.companyDetails).subscribe(resp =>{
-      resp.success ? this.companyInfoMsg = "Company information updated successfully." : this.companyInfoMsg = "Some error occurred, please try agin later.";
+      resp.success ? this.companyInfoMsg = "企業情報が更新されました！" : this.companyInfoMsg = "エラーが発生しました。時間をおいてから再度お試しください。";
       toast(this.companyInfoMsg, 3000);
     });
   }
@@ -155,7 +155,7 @@ export class CompanyComponent implements OnInit {
     if(!validForm) return false;
     this.editingAdmin = false;
     this.companyAPIService.addAdmin(this.newAdmin, this.urlCmpId).subscribe(resp =>{
-      resp.success ? this.companyInfoMsg = "New admin added successfully." : this.companyInfoMsg = "Some error occurred, please try agin later.";
+      resp.success ? this.companyInfoMsg = "新しい管理者を追加しました。" : this.companyInfoMsg = "エラーが発生しました。時間をおいてから再度お試しください。";
       toast(this.companyInfoMsg, 3000);
     });
   }
@@ -168,10 +168,10 @@ export class CompanyComponent implements OnInit {
     this.companyAPIService.updateLogo(formData).subscribe(resp =>{
       if (resp.success){
         this.companyDetails.logo.url =  resp.newLink;
-        this.logoMsg = "Company logo updated successfully."
+        this.logoMsg = "会社ロゴをアップロードしました。"
       }
       else {
-        this.logoMsg = "Some error occurred, please try agin later."
+        this.logoMsg = "エラーが発生しました。時間をおいてから再度お試しください。"
       }
       toast(this.logoMsg, 3000);
     });
@@ -191,9 +191,9 @@ export class CompanyComponent implements OnInit {
     this.companyAPIService.deactivateAdmin(this.companyDetails._id, this.adminToDeactivate).subscribe( resp => {
       if(!resp.success) {
         console.log(resp.error);
-        return toast('Deactivating admin failed, please check the console for more details', 3000); 
+        return toast('エラーが発生しました。コンソールから詳細を確認してください。', 3000); 
       }
-      toast('Admin deactivated successfully', 3000);
+      toast('管理者権限を無効化しました。', 3000);
       if(!resp.companyData.adminsArcv){
         resp.companyData.adminsArcv = [];
       }
@@ -209,9 +209,9 @@ export class CompanyComponent implements OnInit {
     this.companyAPIService.restoreAdmin(this.companyDetails._id, this.adminToRestore).subscribe( resp => {
       if(!resp.success) {
         console.log(resp.error);
-        return toast('Restoring admin failed, please check the console for more details', 3000); 
+        return toast('エラーが発生しました。コンソールから詳細を確認してください。', 3000); 
       }
-      toast('Admin restored successfully', 3000);
+      toast('管理者権限を再度有効化しました。', 3000);
       if(!resp.companyData.adminsArcv){
         resp.companyData.adminsArcv = [];
       }

@@ -2,23 +2,23 @@
   <div class="row">
     <div *ngIf='validLink' class="col s12">
       <div class="container">
-        <h3>Password setup</h3>
+        <h3>パスワードを設定してください。</h3>
         <form (submit)="passwordInitSubmit(form.valid)" #form=ngForm>
           <div class="input-field col s6">
-            <label for="password">Password</label>
+            <label for="password">パスワード</label>
             <input id="password" name="password" [(ngModel)]="pass" type="password" #password="ngModel"  required validateEqual="cnfPassword" reverse="true">
             <div [hidden]= "password.valid || (password.pristine && !form.submitted)" class="red-text">
-              Please input a Password.
+              パスワードを入力してください。
             </div>
           </div>
           <div class="input-field col s6">
-            <label for="cnfPass">Confirm Password</label>
+            <label for="cnfPass">パスワード確認</label>
             <input id="cnfPass" name="cnfPass" [(ngModel)]="cnfPass" type="password" #cnfPassword="ngModel"  required validateEqual="password" reverse="false">
             <div [hidden]= "cnfPassword.valid || (cnfPassword.pristine && !form.submitted)" class="red-text">
-              Passwords do not match.
+              パスワードが一致していません。
             </div>
           </div>
-          <button type="submit" class="btn btn-submit">Setup password<i class="material-icons right">send</i></button>
+          <button type="submit" class="btn btn-submit">パスワード設定<i class="material-icons right">send</i></button>
         </form>
       </div>
     </div>

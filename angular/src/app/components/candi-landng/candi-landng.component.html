@@ -36,9 +36,10 @@
     <h3 class="pgTitle">Why choose us?</h3>
     <div class="row">
       <div class="col s12 m3 iconInfo" id="iconInfo1">
-        <div>
+        <div class="posRel">
           <span class="circle"><i class="material-icons">star</i></span>
-          <p>Collect stars by Registering yourself and your friends to get cash in return<span class="asterisk">*</span></p>
+          <p>Collect stars by Registering yourself and your friends to encash them for &#165;10,000/star<span class="asterisk">*</span></p>
+          <span id="lrnMr" data-target="starsTnCModal" class="modal-trigger">Learn more ></span>
         </div>
       </div>
       <div class="col s12 m3 iconInfo" id="iconInfo2">
@@ -73,6 +74,24 @@
     <a class="waves-effect waves-light btn-large" (click)='onRegisterOpen()'> Sign up </a>
   </div>
   <div class="clear"></div>
+</div>
+
+<div id="starsTnCModal" class="modal" materialize="modal">
+  <div class="modal-content">
+    <div class="container">
+      <h4>Details for earning stars, and encashing them</h4>
+      <p>
+        1. Every user gets a first star for successfully registering themselves on Onetro. <br>
+        1. User receives a star once the person they invited successfully registers on Onetro using the link they receive through an Email.<br>
+        2. User will be eligible to receive the money only after they you have gotten a job through Onetro.<br>
+        3. Once once the user applies to encash their stars Willings, Inc. members will confirm the invites to be legitimate. Stars awarded for
+         any fake profiles or profiles without a one minute introduction video will be removed and money will be given to you for the rest. <br>
+      </p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+  </div>
 </div>
 
 <div id="regUserModal" class="modal" materialize="modal" [materializeActions]="regModalAction">

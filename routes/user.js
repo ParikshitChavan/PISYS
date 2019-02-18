@@ -261,12 +261,12 @@ router.post('/updatePassword', (req, res) => {
     let token = req.headers['x-access-token'];
     User.validateToken(token, (err, serverStatus, decoded) => {
         if(err) return res.status(serverStatus).json({ success: false, error: err });
-        User.getUserPassById(decoded._id, (err, user)=>{
+        User.getUserPassById(decoded._id, (err, user) => {
             if(err) throw err;
             User.comparePasswords(currPass, user.password, (err, isMatch)=>{
                 if(err) throw err;
                 if(!isMatch) return res.json({success: false, error: 'Wrong current password'});
-                User.setPassword(decoded._id, req.body.newPassword, (err, user)=>{
+                User.setPassword(decoded._id, req.body.newPassword, (err, user) => {
                     if(err) throw err;
                     res.json({success: true, message: "Password changed successfully"});
                 });

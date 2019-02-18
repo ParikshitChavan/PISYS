@@ -36,6 +36,9 @@ import { CmpLandngComponent } from './components/cmp-landng/cmp-landng.component
 import { CnadiShrtlstComponent } from './components/cnadi-shrtlst/cnadi-shrtlst.component';
 import { InitCandiAccComponent } from './components/init-candi-acc/init-candi-acc.component';
 import { InviteHistoryComponent } from './components/invite-history/invite-history.component';
+import { UpcomingFeaturesComponent } from './components/upcoming-features/upcoming-features.component';
+import { SkillsComponent } from './components/cvbuilder/skills/skills.component';
+import { CertificationComponent } from './components/cvbuilder/certification/certification.component';
 
 //services
 import { ValidationService } from './services/validation/validation.service';
@@ -44,21 +47,23 @@ import { SitelinkApiService } from './services/sitelinkAPI/sitelink-api.service'
 import { CompanyApiService } from './services/companyAPI/company-api.service';
 import { AutocompleteApiService } from './services/autocompleteAPI/autocomplete-api.service';
 import { CoreHttpService } from './services/core-http.service';
+import { GetLocaleService } from './services/getLocale/get-locale.service';
 
 //guards
 import { AuthGuard } from "./guards/auth.guard"
 
-//custom directives
+//custom directives and pipes
 import { EqualValidatorDirective } from './directives/equal-validator.directive';
 import { TexttransformPipe } from './pipe/texttransform.pipe';
-import { SkillsComponent } from './components/cvbuilder/skills/skills.component';
-import { CertificationComponent } from './components/cvbuilder/certification/certification.component';
 import { SafePipe } from './pipe/safe.pipe';
+import { LocaleTransformPipe } from './pipe/locale-transform.pipe';
+
 
 const appRoutes: Routes =[
   { path: '', redirectTo: 'candidateLanding', pathMatch: 'full'},
   { path: 'candidateLanding', component: CandiLandngComponent, pathMatch: 'full'},
   { path: 'companyLanding', component: CmpLandngComponent, pathMatch: 'full'},
+  { path: 'upcomingFeatures', component: UpcomingFeaturesComponent},
   { path: 'initAccount/:token', component: InitAccountComponent},
   { path: 'initCandidateAccount/:token', component: InitCandiAccComponent},
   { path: 'forgotPassword', component: ForgotPasswordComponent},
@@ -130,7 +135,9 @@ const appRoutes: Routes =[
     CmpLandngComponent,
     CnadiShrtlstComponent,
     InitCandiAccComponent,
-    InviteHistoryComponent
+    InviteHistoryComponent,
+    LocaleTransformPipe,
+    UpcomingFeaturesComponent
   ],
   imports: [
     BrowserModule,
@@ -149,6 +156,7 @@ const appRoutes: Routes =[
     SitelinkApiService,
     CompanyApiService,
     AutocompleteApiService,
+    GetLocaleService,
     CoreHttpService  // a service for http calls. all http calls should use this
   ],
   bootstrap: [AppComponent]

@@ -1,30 +1,30 @@
 <div class="container">
   <div class="row">
     <div class="col s12 l6" id="basicInfo">
-      <h3>Basic Details</h3>
+      <h3>企業情報</h3>
       <div class="rawInfo" [hidden]="editing">
         <div class="row">
-          <div class="col s5">Name:</div>
+          <div class="col s5">企業名:</div>
           <div class="col s7">{{companyDetails.name}}</div>
         </div>
         <div class="row">
-          <div class="col s5">Address:</div>
+          <div class="col s5">住所:</div>
           <div class="col s7">{{companyDetails.address}}</div>
         </div>
         <div class="row">
-          <div class="col s5">Establishment date:</div>
+          <div class="col s5">設立日:</div>
           <div class="col s7">{{companyDetails.est | date:'longDate'}}</div>
         </div>
         <div class="row">
-          <div class="col s5">Phone:</div>
+          <div class="col s5">電話番号:</div>
           <div class="col s7">{{companyDetails.phNum}}</div>
         </div>
         <div class="row">
-          <div class="col s5">website:</div>
+          <div class="col s5">コーポレートサイト:</div>
           <div class="col s7">{{companyDetails.website}}</div>
         </div>
         <div class="row">
-          <div class="col s5">Company size:</div>
+          <div class="col s5">従業員人数:</div>
           <div class="col s7">{{companyDetails.empSize}}</div>
         </div>
         <a id="infoEditBtn" (click)="editInfoClick()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
@@ -34,76 +34,76 @@
           <div class="row">
             <div class="input-field">
               <input id="name" name="name" [(ngModel)]="companyDetails.name" type="text" #name="ngModel" required>
-              <label for="name" class="active">Name</label>
+              <label for="name" class="active">企業名</label>
               <div [hidden]= "name.valid || (name.pristine && !form.submitted)" class="red-text">
-                Please input a Name.
+                企業名を入力してください。
               </div>
             </div>
           </div>
           <div class="row">
             <div class="input-field">
               <input id="address" type="text" name="address" [(ngModel)]="companyDetails.address">
-              <label for="address" class="active">Address</label>
+              <label for="address" class="active">住所</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field">
               <input id="est" type="text" name="est" [(ngModel)]="companyDetails.est" class="datepicker" materialize="pickadate" [materializeParams]="[{selectYears: 100, selectMonths: true, today: 'Today', clear: 'Clear', close: 'Ok', format:'mmmm d, yyyy'}]">
-              <label for="est" class="active">Established</label>
+              <label for="est" class="active">設立日</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field">
-              <label for="phNum" class="active">Phone Number</label>
+              <label for="phNum" class="active">電話番号</label>
               <input id="phNum" type="text" name="phNum" [(ngModel)]="companyDetails.phNum" >
             </div>
           </div>
           <div class="row">
             <div class="input-field">
-              <label for="website" class="active">Website</label>
+              <label for="website" class="active">コーポレートサイト</label>
               <input id="website" type="text" name="website" [(ngModel)]="companyDetails.website">
             </div>
           </div>
           <div class="row">
             <div class="input-field">
               <select materialize="material_select" name="empSize" [(ngModel)]="companyDetails.empSize">
-                <option value="" disabled selected>Choose your option</option>
-                <option value="1-10 employees">1-10 employees</option>
-                <option value="11-50 employees">11-50 employees</option>
-                <option value="51-200 employees">51-200 employees</option>
-                <option value="201-1000 employees">201-1000 employees</option>
-                <option value="1000+ employees">1000+ employees</option>
+                <option value="" disabled selected>従業員人数を選択してください。</option>
+                <option value="1-10名">1-10名</option>
+                <option value="11-50名">11-50名</option>
+                <option value="51-200名">51-200名</option>
+                <option value="201-1000名">201-1000名</option>
+                <option value="1000名以上">1000名以上</option>
               </select>
-              <label>Company size:</label>
+              <label>従業員人数</label>
             </div>
           </div>
-          <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
-          <button type="button" (click)='cancelInfoEditClick()' class="btn red">cancel</button>
+          <button type="submit" class="btn btn-submit">保存<i class="material-icons right">send</i></button>
+          <button type="button" (click)='cancelInfoEditClick()' class="btn red">キャンセル</button>
         </form>
       </div>
     </div>
     <div class="col s12 l6" id="logo">
-      <h3>Company Logo</h3>
+      <h3>会社のロゴ</h3>
       <div class="imgArea">
-        <img [src]="companyDetails.logo.url" class="responsive-img circle" alt="Company Logo">
+        <img [src]="companyDetails.logo.url" class="responsive-img circle" alt="会社のロゴ">
         <a href="#logoUploadModal" class="btn-floating modal-trigger btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>
       </div>
       <div class="rcPageBtn">
-        <a class="waves-effect waves-light btn" [routerLink]="['/companyProfile/'+companyDetails._id]"><i class="material-icons right">arrow_forward</i>Recruitment Page</a>
+        <a class="waves-effect waves-light btn" [routerLink]="['/companyProfile/'+companyDetails._id]"><i class="material-icons right">arrow_forward</i>募集要項ページへ</a>
       </div>
     </div>
   </div>
   <div class="col s12" id="adminManagement">
       <div class="container">
-        <h3>Admins management</h3>
-        <h4>Active Admins</h4>
+        <h3>管理者一覧</h3>
+        <h4>管理者</h4>
         <table class="striped centered">
           <thead>
             <tr>
-              <th>Index</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Action</th>
+              <th>管理者番号</th>
+              <th>名前</th>
+              <th>メールアドレス</th>
+              <th>権限状況の変更</th>
             </tr>
           </thead>
           <tbody>
@@ -112,7 +112,7 @@
               <td>{{admin.name}}</td>
               <td>{{admin.email}}</td>
               <td>
-                <a *ngIf='admin.email != localUser.email' class="waves-effect waves-light btn small" (click)='onDeactivateAdminClick(admin._id)'>deactivate</a>
+                <a *ngIf='admin.email != localUser.email' class="waves-effect waves-light btn small" (click)='onDeactivateAdminClick(admin._id)'>無効化する</a>
               </td>
             </tr>
           </tbody>      
@@ -125,34 +125,34 @@
             <form (submit)="adminInfoSubmit(adminForm.valid)" #adminForm=ngForm>
               <div class="row">
                 <div class="col s12 l6 input-field">
-                  <label for="adminName">Name</label>
+                  <label for="adminName">名前</label>
                   <input type="text" name="name" id="adminName" [(ngModel)]="newAdmin.name" required #name="ngModel">
                   <div [hidden]= "name.valid || (name.pristine && !adminForm.submitted)" class="red-text">
-                    Please input a name.
+                    名前を入力してください。
                   </div>
                 </div>
                 <div class="col s12 l6 input-field">
-                  <label for="adminEmail">Email</label>
+                  <label for="adminEmail">メールアドレス</label>
                   <input id="adminEmail" type="email" name="email" [(ngModel)]="newAdmin.email" #email="ngModel" required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
                   <div [hidden]= "email.valid || (email.pristine && !adminForm.submitted)" class="red-text">
-                    Please input a valid Email address.
+                   有効なメールアドレスを入力してください。
                   </div>
                 </div>
               </div>
-              <button type="submit" class="btn btn-submit">Save<i class="material-icons right">send</i></button>
-              <button type="button" class="btn red" (click)="cancelAdminEditClick()">Cancel</button>
+              <button type="submit" class="btn btn-submit">保存<i class="material-icons right">send</i></button>
+              <button type="button" class="btn red" (click)="cancelAdminEditClick()">キャンセル</button>
             </form>
           </div>
         </div>
         <div *ngIf='companyDetails.adminsArcv.length' class="deactivatedAdmins">
-          <h4>Deactivated admins</h4>
+          <h4>無効化された管理者</h4>
           <table class="striped centered">
             <thead>
               <tr>
-                <th>Index</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Action</th>
+                <th>管理者番号</th>
+                <th>名前</th>
+                <th>メールアドレス</th>
+                <th>権限状況の変更</th>
               </tr>
             </thead>
             <tbody>
@@ -161,7 +161,7 @@
                 <td>{{admin.name}}</td>
                 <td>{{admin.email}}</td>
                 <td>
-                  <a class="waves-effect waves-light btn small" (click)='onRestoreAdminClick(admin._id)'>Restore admin</a>
+                  <a class="waves-effect waves-light btn small" (click)='onRestoreAdminClick(admin._id)'>権限を有効化する</a>
                 </td>
               </tr>
             </tbody>      
@@ -176,29 +176,29 @@
     <img-cropper [image]="imgData" [settings]="cropperSettings" (onCrop)="cropped($event)"></img-cropper>
   </div>
   <div class="modal-footer">
-    <a (click)="onLogoUploadClick()" class="modal-action modal-close waves-effect waves-green btn-flat">Save</a>
-    <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    <a (click)="onLogoUploadClick()" class="modal-action modal-close waves-effect waves-green btn-flat">保存</a>
+    <a class="modal-action modal-close waves-effect waves-green btn-flat">キャンセル</a>
   </div>
 </div>
 
 <div id="modalArchive" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"
   [materializeActions]="deactivateModalActions">
   <div class="modal-content">
-    <p>Are you sure, you want to deactivate this admin ?</p>
+    <p>管理者権限を無効化してもよろしいですか？</p>
   </div>
   <div class="modal-footer">
-    <button class="modal-action modal-close waves-effect waves-green btn-flat">Close</button>
-    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="deactivateAdmin()">Agree</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat">キャンセル</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="deactivateAdmin()">無効化する</button>
   </div>
 </div>
 
 <div id="modalRestore" class="modal middle-sheet" materialize="modal" [materializeParams]="[{dismissible: false}]"
   [materializeActions]="restoreModalActions">
   <div class="modal-content">
-    <p>Are you sure, you want to restore this admin ?</p>
+    <p>管理者権限を付与しますか？</p>
   </div>
   <div class="modal-footer">
-    <button class="modal-action modal-close waves-effect waves-green btn-flat">Close</button>
-    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="restoreAdmin()">Agree</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat">キャンセル</button>
+    <button class="modal-action modal-close waves-effect waves-green btn-flat" (click)="restoreAdmin()">無効化する</button>
   </div>
 </div>
